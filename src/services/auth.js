@@ -1,16 +1,7 @@
-import api from "../services/api";
-import {Alert} from 'react-native'
+import api from "./api";
+import { showError } from '../Common'
 
-interface Response {
-    token: string;
-    user: {
-        name: string;
-        email: string;
-        id: number;
-    }
-}
-
-export async function signIn(email: string, password: string): Promise<any>{
+export async function signIn(email, password){
     try{
         const res =  await api.post(
             '/login',
@@ -28,5 +19,6 @@ export async function signIn(email: string, password: string): Promise<any>{
         return res.data;
     }catch(e){
         console.log(e)
+        showError(e)
     }
 }

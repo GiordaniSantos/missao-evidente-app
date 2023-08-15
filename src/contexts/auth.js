@@ -1,28 +1,15 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, Component } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as auth from "../services/auth";
 import api from "../services/api";
 
-//typescript
-interface User {
-    name: string;
-    email: string;
-    id: number
-}
+export const AuthContext = createContext();
 
-interface AuthContextData {
-    logado: boolean;
-    user: User | null;
-    loading: boolean;
-    signIn(email: string, password: string): Promise<void>;
-    logout(): void;
-}
-
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
-
-export const AuthProvider: React.FC = ({children}) => {
-    const [user, setUser] = useState<User | null>(null)
+export function AuthProvider({children}) {
+        
+    const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(false); //mudar pra true depois
+    
 
     useEffect(()=> {
         async function loadStoragedData() {
@@ -40,7 +27,7 @@ export const AuthProvider: React.FC = ({children}) => {
         loadStoragedData()
     }, [])
 
-    async function signIn(email: string, password: string) {
+    async function signIn(email, password) {
         const response = await auth.signIn(email, password);
         
         setUser(response.user)
@@ -59,10 +46,11 @@ export const AuthProvider: React.FC = ({children}) => {
 
    
     return( 
-    <AuthContext.Provider value={{ logado: !!user, user, signIn, logout, loading }}>
-        {children}
-    </AuthContext.Provider>
+        <AuthContext.Provider value={{ logado: !!user, user, signIn, logout, loading }}>
+            {children}
+        </AuthContext.Provider>
     )
+    
 }
 
 export function useAuth() {
