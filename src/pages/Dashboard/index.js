@@ -5,11 +5,13 @@ import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/today.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AddTask from './AddTask';
+import AddModal from '../../components/AddModal';
 import Task from './Task';
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError, showSuccess } from '../../Common'
+import Item from '../../components/Item';
 
 const initialState = { 
     showDoneTasks: true,
@@ -78,7 +80,7 @@ export default class Dashboard extends Component {
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
-                <AddTask isVisible={this.state.showModal} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
+                <AddModal isVisible={this.state.showModal} tituloHeader={"Nova membresia"} dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.iconBar}>
                         <TouchableOpacity onPress={this.toggleFilter}>
@@ -91,7 +93,7 @@ export default class Dashboard extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Task {...item} onDelete={this.deleteMembresia}/>} />
+                    <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} onDelete={this.deleteMembresia}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.setState({ showModal: true })} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
