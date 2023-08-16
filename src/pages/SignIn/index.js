@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
-import { ImageBackground, Text, StyleSheet, View, TouchableOpacity, Alert } from 'react-native'
-import axios from 'axios'
+import { ImageBackground, Text, StyleSheet, View, TouchableOpacity } from 'react-native'
+import api from '../../services/api'
 
 import backgroundImage from '../../../assets/imgs/login.jpg'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
-import { useAuth } from '../../contexts/auth';
 
 import { showError, showSuccess } from '../../Common'
 
@@ -40,7 +39,7 @@ export default class SignIn extends Component {
 
     cadastrarUsuario = async () => {
         try{
-            await axios.post(`/signup`, {
+            await api.post(`/signup`, {
                 name: this.state.name,
                 email: this.state.email,
                 password: this.state.password,
