@@ -4,9 +4,7 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/today.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import AddTask from './AddTask';
 import AddModal from '../../components/AddModal';
-import Task from './Task';
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import api from '../../services/api';
@@ -20,7 +18,7 @@ const initialState = {
     membros: []
 }
 
-export default class Dashboard extends Component {
+export default class Membresia extends Component {
     state = {...initialState}
 
     static contextType = AuthContext;

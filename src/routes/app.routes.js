@@ -1,16 +1,37 @@
-import React, {Component} from 'react';
-import Dashboard from "../pages/Dashboard";
+import React, {Component, useContext} from 'react';
+import Membresia from "../pages/Membresia";
+import { AuthContext } from '../contexts/auth';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { createDrawerNavigator,  DrawerContentScrollView,DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
-const AppStack = createNativeStackNavigator();
+
+function CustomDrawerContent(props) {
+    context = useContext(AuthContext);
+    return (
+      <DrawerContentScrollView {...props}>
+        <DrawerItemList {...props} />
+        <DrawerItem
+          label="Teste"
+          onPress={() => {
+            props.navigation.navigate('Membresias');
+          }}
+        />
+        <DrawerItem
+          label="Sair"
+          onPress={context.logout}
+        />
+      </DrawerContentScrollView>
+    );
+  }
+
+const Drawer = createDrawerNavigator();
 
 export default class AppRoutes extends Component{
     render(){
         return(
-            <AppStack.Navigator>
-                <AppStack.Screen name='Dashboard' component={Dashboard} />
-            </AppStack.Navigator>
+            <Drawer.Navigator initialRouteName="Membresias" drawerContent={(props) => <CustomDrawerContent {...props} />}>
+                <Drawer.Screen name="Membresias" component={Membresia} />
+            </Drawer.Navigator>
         )
     }
 }
