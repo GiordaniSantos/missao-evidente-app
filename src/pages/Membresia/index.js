@@ -14,7 +14,6 @@ import Item from '../../components/Item';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
-    visibleTasks: [],
     membros: []
 }
 
