@@ -13,8 +13,8 @@ export function AuthProvider({children}) {
 
     useEffect(()=> {
         async function loadStoragedData() {
-            const storageUser = await AsyncStorage.getItem('@RNAuth:user')
-            const storageToken = await AsyncStorage.getItem('@RNAuth:token')
+            const storageUser = await AsyncStorage.getItem('@MEAuth:user')
+            const storageToken = await AsyncStorage.getItem('@MEAuth:token')
             
             //ver erro loading depois
             if(storageUser && storageToken){
@@ -34,8 +34,8 @@ export function AuthProvider({children}) {
 
         api.defaults.headers.Authorization = `Bearer ${response.token}`
         //console.log(response.token)
-        await AsyncStorage.setItem('@RNAuth:user', JSON.stringify(response.user))
-        await AsyncStorage.setItem('@RNAuth:token', response.token)
+        await AsyncStorage.setItem('@MEAuth:user', JSON.stringify(response.user))
+        await AsyncStorage.setItem('@MEAuth:token', response.token)
     }
 
     function logout() {

@@ -8,7 +8,7 @@ const AuthStack = createNativeStackNavigator();
 export default class AuthRoutes extends Component {
     render() {
         return(
-            <AuthStack.Navigator>
+            <AuthStack.Navigator screenOptions={{ headerShown: false }}>
                 <AuthStack.Screen name='SignIn' component={SignIn} />
             </AuthStack.Navigator>
         )

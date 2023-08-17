@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { ImageBackground, Text, StyleSheet, View, TouchableOpacity } from 'react-native'
 import api from '../../services/api'
 
-import backgroundImage from '../../../assets/imgs/login.jpg'
+import backgroundImage from '../../../assets/imgs/map.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
@@ -124,7 +124,9 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: 'black',
+        
     },
     formContainer: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
