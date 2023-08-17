@@ -37,7 +37,7 @@ export default props => {
                         </View>
                     </TouchableWithoutFeedback>
                     <View>
-                        <Text style={[styles.desc, doneOrNotStyles]}>{props.nome} - {props.quantidade} membros</Text>
+                        <Text style={[styles.desc, doneOrNotStyles]}>{props.nome} - {props.quantidade} {props.textoPosQtd}</Text>
                         <Text style={styles.date}>{props.created_at}</Text>
                     </View>
                 </View>
@@ -56,7 +56,7 @@ function getCheckView(doneAt){
     }else{
         return (
             <View style={styles.done}>
-                <Icon name='edit' size={20} color='#FFF'></Icon>
+                <Icon name='check' size={20} color='#FFF'></Icon>
             </View>
         )
     }
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     done: {
         height: 25,
         width: 25,
-        borderRadius: 13,
+        borderRadius: 33,
         backgroundColor: '#4D7031',
         alignItems: 'center',
         justifyContent: 'center'

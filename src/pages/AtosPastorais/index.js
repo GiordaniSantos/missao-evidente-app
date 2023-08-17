@@ -90,7 +90,7 @@ export default class AtosPastorais extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.atos} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} onDelete={this.deleteAtoPastoral}/>} />
+                    <FlatList data={this.state.atos} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} textoPosQtd={""} onDelete={this.deleteAtoPastoral}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.setState({ showModal: true })} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
