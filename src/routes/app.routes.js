@@ -4,6 +4,8 @@ import AtosPastorais from '../pages/AtosPastorais';
 import Pregacao from '../pages/Pregacao';
 import VisitaCrente from '../pages/VisitaCrente';
 import VisitaNaoCrente from '../pages/VisitaNaoCrente';
+import VisitaPresidio from '../pages/VisitaPresidio';
+import VisitaEnfermo from '../pages/VisitaEnfermo';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -87,6 +89,14 @@ export default class AppRoutes extends Component{
                 <Drawer.Screen name="Visitas aos Não Crentes" component={VisitaNaoCrente} options={{
                     drawerIcon: ({color}) => 
                     <Icon size={23} style={{color:color}} name={'heart-broken'}></Icon>
+                }}  />
+                <Drawer.Screen name="Visitas aos Presídios" component={VisitaPresidio} options={{
+                    drawerIcon: ({color}) => 
+                    <Icon size={23} style={{color:color}} name={'user-lock'}></Icon>
+                }}  />
+                <Drawer.Screen name="Visitas aos Enfermos" component={VisitaEnfermo} options={{
+                    drawerIcon: ({color}) => 
+                    <Icon size={23} style={{color:color}} name={'syringe'}></Icon>
                 }}  />
             </Drawer.Navigator>
         )
