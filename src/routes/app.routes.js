@@ -1,6 +1,9 @@
 import React, {Component, useContext} from 'react';
 import Membresia from "../pages/Membresia";
 import AtosPastorais from '../pages/AtosPastorais';
+import Pregacao from '../pages/Pregacao';
+import VisitaCrente from '../pages/VisitaCrente';
+import VisitaNaoCrente from '../pages/VisitaNaoCrente';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -19,15 +22,7 @@ function CustomDrawerContent(props) {
           <Text style={styles.nome}>{context.user.name}</Text>
           <Text style={styles.email}>{context.user.email}</Text>
         </View>
-      
         <DrawerItemList {...props} />
-        <DrawerItem
-          label="Pregação"
-          icon={config => <Icon size={23} name={'bible'}></Icon>}
-          onPress={() => {
-            props.navigation.navigate('Membresias');
-          }}
-        />
         <DrawerItem
           label="Sair"
           icon={config => <Icon size={23} name={'sign-out-alt'}></Icon>}
@@ -80,6 +75,18 @@ export default class AppRoutes extends Component{
                 <Drawer.Screen name="Atos Pastorais" component={AtosPastorais} options={{
                     drawerIcon: ({color}) => 
                     <Icon size={23} style={{color:color}} name={'user-tie'}></Icon>
+                }}  />
+                  <Drawer.Screen name="Pregações" component={Pregacao} options={{
+                    drawerIcon: ({color}) => 
+                    <Icon size={23} style={{color:color}} name={'bible'}></Icon>
+                }}  />
+                  <Drawer.Screen name="Visitas aos Crentes" component={VisitaCrente} options={{
+                    drawerIcon: ({color}) => 
+                    <Icon size={23} style={{color:color}} name={'cross'}></Icon>
+                }}  />
+                <Drawer.Screen name="Visitas aos Não Crentes" component={VisitaNaoCrente} options={{
+                    drawerIcon: ({color}) => 
+                    <Icon size={23} style={{color:color}} name={'heart-broken'}></Icon>
                 }}  />
             </Drawer.Navigator>
         )
