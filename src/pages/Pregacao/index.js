@@ -90,7 +90,7 @@ export default class Pregacao extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.pregacoes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} textoPosQtd={"pregacoes"} onDelete={this.deletePregacao}/>} />
+                    <FlatList data={this.state.pregacoes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} textoPosQtd={""} onDelete={this.deletePregacao}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.setState({ showModal: true })} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

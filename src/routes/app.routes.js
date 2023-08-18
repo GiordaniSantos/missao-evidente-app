@@ -31,12 +31,13 @@ function CustomDrawerContent(props) {
           label="Membresia"
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
+          labelStyle={{marginLeft:-9}}
           focused={getActiveRouteState(
             props.state.routes,
             props.state.index,
             'Membresia aos Domingos'
           )}
-          icon={({color}) => <Icon size={23} name={'users'} style={{color:color}}></Icon>}
+          icon={({color}) => <Icon size={21} name={'users'} style={{color:color}}></Icon>}
           onPress={() => {
             props.navigation.navigate("Membresia aos Domingos");
           }}
@@ -50,7 +51,7 @@ function CustomDrawerContent(props) {
             props.state.index,
             'Atos Pastorais'
           )}
-          icon={({color}) => <Icon size={23} name={'user-tie'} style={{color:color}}></Icon>}
+          icon={({color}) => <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>}
           onPress={() => {
             props.navigation.navigate("Atos Pastorais");
           }}
@@ -64,7 +65,7 @@ function CustomDrawerContent(props) {
             props.state.index,
             'Pregações'
           )}
-          icon={({color}) => <Icon size={23} name={'bible'} style={{color:color}}></Icon>}
+          icon={({color}) => <Icon size={21} name={'bible'} style={{color:color}}></Icon>}
           onPress={() => {
             props.navigation.navigate("Pregações");
           }}
@@ -80,14 +81,14 @@ function CustomDrawerContent(props) {
         }}></View>
         <DrawerItem
           label="Ir para o Site"
-          icon={({color}) => <Icon size={23} name={'chrome'} style={{color:color}}></Icon>}
+          icon={({color}) => <Icon size={21} name={'chrome'} style={{color:color}}></Icon>}
           onPress={() => {
             props.navigation.navigate("Membresias");
           }}
         />
         <DrawerItem
           label="Sair"
-          icon={config => <Icon size={23} name={'sign-out-alt'}></Icon>}
+          icon={config => <Icon size={21} name={'sign-out-alt'}></Icon>}
           onPress={context.logout}
         />
       </View>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   userArea:{
-    marginTop: 15,
+    marginTop: 13,
     marginLeft: 15,
     marginBottom: 15
   },
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   },
   email:{
     fontFamily: CommonStyles.fontFamily,
-    fontSize: 15
+    fontSize: 14
   }
 })
 
@@ -163,27 +164,40 @@ export default class AppRoutes extends Component{
                       marginTop: -20
                     },
                     drawerIcon: ({color}) => 
-                    <Icon size={23} style={{color:color}} name={'cross'}></Icon>
+                    <Icon size={21} style={{color:color}} name={'cross'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas aos Não Crentes" component={VisitaNaoCrente} options={{
+                    labelStyle:{marginLeft: -15},
+                    drawerLabelStyle:{
+                      marginLeft: -5
+                    },
                     drawerIcon: ({color}) => 
-                    <Icon size={23} style={{color:color}} name={'heart-broken'}></Icon>
+                    <Icon size={21} style={{color:color}} name={'heart-broken'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas aos Presídios" component={VisitaPresidio} options={{
+                    drawerLabelStyle:{
+                      marginLeft: -9
+                    },
                     drawerIcon: ({color}) => 
-                    <Icon size={23} style={{color:color}} name={'user-lock'}></Icon>
+                    <Icon size={21} style={{color:color}} name={'user-lock'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas aos Enfermos" component={VisitaEnfermo} options={{
+                    drawerLabelStyle:{
+                      marginLeft: -3
+                    },
                     drawerIcon: ({color}) => 
-                    <Icon size={23} style={{color:color}} name={'syringe'}></Icon>
+                    <Icon size={21} style={{color:color}} name={'syringe'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas aos Hospitais" component={VisitaHospital} options={{
                     drawerIcon: ({color}) => 
-                    <Icon size={23} style={{color:color}} name={'hospital'}></Icon>
+                    <Icon size={21} style={{color:color}} name={'hospital'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas às Escolas" component={VisitaEscola} options={{
+                    drawerLabelStyle:{
+                      marginLeft: -6
+                    },
                     drawerIcon: ({color}) => 
-                    <Icon size={23} style={{color:color}} name={'school'}></Icon>
+                    <Icon size={21} style={{color:color}} name={'school'}></Icon>
                 }}  />
             </Drawer.Navigator>
         )
