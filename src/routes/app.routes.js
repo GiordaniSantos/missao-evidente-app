@@ -8,6 +8,7 @@ import VisitaPresidio from '../pages/VisitaPresidio';
 import VisitaEnfermo from '../pages/VisitaEnfermo';
 import VisitaHospital from '../pages/VisitaHospital';
 import VisitaEscola from '../pages/VisitaEscola';
+import Dashboard from '../pages/Dashboard';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -28,6 +29,21 @@ function CustomDrawerContent(props) {
           <Text style={styles.nome}>{context.user.name}</Text>
           <Text style={styles.email}>{context.user.email}</Text>
         </View>
+        <DrawerItem
+          label="Dashboard"
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          labelStyle={{marginLeft:-9}}
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Dashboard'
+          )}
+          icon={({color}) => <Icon size={21} name={'digital-tachograph'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Dashboard");
+          }}
+        />
         <DrawerItem
           label="Membresia"
           activeBackgroundColor='#015b41'
@@ -159,7 +175,12 @@ export default class AppRoutes extends Component{
                 </View>
               )
               }} 
-              initialRouteName="Membresia aos Domingos" drawerContent={(props) => <CustomDrawerContent {...props} />}>
+              initialRouteName="Dashboard" drawerContent={(props) => <CustomDrawerContent {...props} />}>
+                <Drawer.Screen name="Dashboard" component={Dashboard} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }} />
                 <Drawer.Screen name="Membresia aos Domingos" component={Membresia} options={{
                     drawerItemStyle:{
                       height:0
