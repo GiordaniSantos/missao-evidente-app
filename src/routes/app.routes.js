@@ -12,6 +12,7 @@ import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
+import Modal from "react-native-modal";
 
 import { createDrawerNavigator,  DrawerContentScrollView,DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
@@ -129,6 +130,12 @@ const styles = StyleSheet.create({
 const Drawer = createDrawerNavigator();
 
 export default class AppRoutes extends Component{
+    state = {
+      isModalVisible:false
+    }
+    toggleModal = () =>{
+      this.setState({isModalVisible: !this.state.isModalVisible});   
+    }
     render(){
         return(
             <Drawer.Navigator screenOptions={{
@@ -139,7 +146,16 @@ export default class AppRoutes extends Component{
               },
               headerRight: () => (
                 <View style={{marginRight: 10}}>
-                <Icon size={24} style={{color: 'black'}} name={'question-circle'}></Icon>
+                  <Icon size={24} style={{color: 'black'}} name={'question-circle'} onPress={this.toggleModal}></Icon>
+                  <Modal isVisible={this.state.isModalVisible} onBackdropPress={() => this.toggleModal(false)}>
+                    <View style={{ flex: 1 }}>
+                      <View style={{backgroundColor: 'white'}}> 
+                        <Text>Hello!</Text>
+
+                        <Button title="Hide modal" onPress={this.toggleModal} />
+                      </View>
+                    </View>
+                  </Modal>
                 </View>
               )
               }} 
