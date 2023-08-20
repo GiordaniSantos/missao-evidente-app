@@ -11,26 +11,46 @@ import api from '../../services/api';
 import { showError, showSuccess } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import SelectDropdown from 'react-native-select-dropdown'
+import ItemRelatorio from '../../components/ItemRelatorio';
+
+const date = new Date();
 
 const initialState = { 
-    showDoneTasks: true,
-    showModal: false,
-    crentes: []
+    visitaCrente: 0,
+    visitaNaoCrente: 0,
+    visitaPresidio: 0,
+    visitaEnfermo: 0,
+    visitaHospital: 0,
+    visitaEscola: 0,
+    mes: date.getMonth()+1,
+    atos: {},
+    membresias: {},
+    pregacoes: {}
 }
+
+
 
 export default class Dashboard extends Component {
     state = {...initialState}
-
     static contextType = AuthContext;
 
     componentDidMount = async () => {
-        this.loadVisitasCrentes()
+        this.loadRelatorios()
     }
-
-    loadVisitasCrentes = async () => {
+   
+    loadRelatorios = async ( mes=date.getMonth()+1 ) => {
         try{
-            const res = await api.get(`/crente?id_usuario=${this.context.user.id}`)
-            this.setState({ crentes: res.data.data })
+            const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}`)
+            
+            this.setState({ atos: res.data[0].atos })
+            this.setState({ membresias: res.data[1].membresias })
+            this.setState({ pregacoes: res.data[2].pregacoes })
+            this.setState({ visitaCrente: res.data[3].crentes })
+            this.setState({ visitaNaoCrente: res.data[4].incredulos })
+            this.setState({ visitaPresidio: res.data[5].presidios })
+            this.setState({ visitaEnfermo: res.data[6].enfermos })
+            this.setState({ visitaHospital: res.data[7].hospitais })
+            this.setState({ visitaEscola: res.data[8].escolas })
         }catch(e) {
             console.log(e)
             showError(e)
@@ -43,7 +63,7 @@ export default class Dashboard extends Component {
                 id_usuario: id_usuario
             })
 
-            this.loadVisitasCrentes()
+            this.loadRelatorios()
 
         } catch (error) {
             console.log(error)
@@ -52,10 +72,15 @@ export default class Dashboard extends Component {
 
     }
 
+    alterarMes = (mes) => {
+        this.setState({mes})
+        this.loadRelatorios()
+    }
+
     deleteVisitaCrente = async crenteId => {
         try {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
-            this.loadVisitasCrentes()
+            this.loadRelatorios()
         } catch (error) {
             showError(error)
         }
@@ -65,118 +90,191 @@ export default class Dashboard extends Component {
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
-                <View style={styles.background}>
-                    <View style={styles.titleBar}>
-                        <Text style={styles.title}>Dashboard</Text>
-                        <Text style={styles.subtitle}>{today}</Text>
+                <ScrollView>
+                    <View style={styles.header}>
+                        <View style={styles.titleBar}>
+                            <Text style={styles.title}>Dashboard</Text>
+                            <Text style={styles.subtitle}>{today}</Text>
+                        </View>
+                        <View style={styles.iconBar}>
+                            <SelectDropdown
+                            data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
+                            buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
+                            buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                            renderDropdownIcon={isOpened => {
+                                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
+                            }}
+                            defaultButtonText='Selecione'
+                            defaultValueByIndex={date.getMonth()}
+                            onSelect={(selectedItem, index) => {
+                                
+                                this.loadRelatorios(index+1)
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item
+                            }}
+                            dropdownIconPosition={'right'}
+                            dropdownStyle={styles.dropdown2DropdownStyle}
+                            rowStyle={styles.dropdown2RowStyle}
+                            rowTextStyle={styles.dropdown2RowTxtStyle}
+                            />
+                        </View>
                     </View>
-                    <View style={styles.iconBar}>
-                        <SelectDropdown
-                        data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
-                        buttonStyle={styles.dropdown2BtnStyle}
-                        buttonTextStyle={styles.dropdown2BtnTxtStyle}
-                        renderDropdownIcon={isOpened => {
-                            return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#444'} size={18} />;
-                        }}
-                        defaultButtonText='Selecione'
-                        defaultValueByIndex={1}
-                        onSelect={(selectedItem, index) => {
-                            this.setState({ nome: selectedItem })
-                        }}
-                        buttonTextAfterSelection={(selectedItem, index) => {
-                            return selectedItem
-                        }}
-                        rowTextForSelection={(item, index) => {
-                            return item
-                        }}
-                        dropdownIconPosition={'right'}
-                        dropdownStyle={styles.dropdown2DropdownStyle}
-                        rowStyle={styles.dropdown2RowStyle}
-                        rowTextStyle={styles.dropdown2RowTxtStyle}
-                        />
-                    </View>
-                </View>
-                
-                <View style={styles.taskList}>
-                    <View style={[styles.card, styles.elevation]}>
-                        <View style={styles.cardBody}>
-                            <View style={styles.itens}>
-                                <View>
-                                    <Text style={styles.titleVisita}>Crentes</Text>
-                                    <Text style={styles.numeroVisita}>7 visitas</Text>
+                    <View style={styles.bodyVisitas}>
+                        <View style={[styles.card, styles.elevation]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={styles.titleVisita}>Crentes</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.visitaCrente} visitas</Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'cross'}></Icon>
+                                    </View>
                                 </View>
-                                <View>
-                                    <Icon size={32} style={styles.iconVisita} name={'cross'}></Icon>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#4e73df'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Não Crentes</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.visitaNaoCrente} visitas</Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'heart-broken'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#d55b2a'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#d55b2a'}]}>Presídios</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.visitaPresidio} visitas</Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'user-lock'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#99443b'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#99443b'}]}>Enfermos</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.visitaEnfermo} visitas</Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'syringe'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Hospitais</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.visitaHospital} visitas</Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'hospital'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color:'#85102f'}]}>Escolas</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.visitaEscola} visitas</Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'school'}></Icon>
+                                    </View>
                                 </View>
                             </View>
                         </View>
                     </View>
-                    <View style={[styles.card, styles.elevation, {borderLeftColor:'#4e73df'}]}>
-                        <View style={styles.cardBody}>
-                            <View style={styles.itens}>
-                                <View>
-                                    <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Não Crentes</Text>
-                                    <Text style={styles.numeroVisita}>4 visitas</Text>
-                                </View>
-                                <View>
-                                    <Icon size={32} style={styles.iconVisita} name={'heart-broken'}></Icon>
+                    <View style={styles.acoes}>
+                        <View style={styles.cardMembros}>
+                            <View style={styles.cardHeader}>
+                                <Text style={{color: '#015b41'}}>
+                                    Membresia aos Domingos
+                                </Text>
+                            </View>
+                            <View style={styles.cardBody}>
+                                <View style={{width: '100%', height: 'auto'}}>
+                                    {this.state.membresias.length != 0 ? Array.from(this.state.membresias).map((item, index)=> 
+                                        (
+                                        <View key={index}>
+                                            <ItemRelatorio {...item} cor="#015b41"/>
+                                        </View>
+                                        )
+                                    ) : (
+                                        <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
+                                        )
+                                    }
                                 </View>
                             </View>
                         </View>
                     </View>
-                    <View style={[styles.card, styles.elevation, {borderLeftColor:'#d55b2a'}]}>
-                        <View style={styles.cardBody}>
-                            <View style={styles.itens}>
-                                <View>
-                                    <Text style={[styles.titleVisita, {color: '#d55b2a'}]}>Presídios</Text>
-                                    <Text style={styles.numeroVisita}>7 visitas</Text>
-                                </View>
-                                <View>
-                                    <Icon size={32} style={styles.iconVisita} name={'user-lock'}></Icon>
+                    <View style={styles.acoes}>
+                        <View style={styles.cardMembros}>
+                            <View style={styles.cardHeader}>
+                                <Text style={{color: '#4e73df'}}>
+                                    Atos Pastorais
+                                </Text>
+                            </View>
+                            <View style={styles.cardBody}>
+                                <View style={{width: '100%', height: 'auto'}}>
+                                    {this.state.atos.length != 0 ? Array.from(this.state.atos).map((item, index)=> 
+                                        (
+                                        <View key={index}>
+                                            <ItemRelatorio {...item} cor="#4e73df"/>
+                                        </View>
+                                        )
+                                    ) : (
+                                        <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
+                                        )
+                                    }
                                 </View>
                             </View>
                         </View>
                     </View>
-                    <View style={[styles.card, styles.elevation, {borderLeftColor: '#99443b'}]}>
-                        <View style={styles.cardBody}>
-                            <View style={styles.itens}>
-                                <View>
-                                    <Text style={[styles.titleVisita, {color: '#99443b'}]}>Enfermos</Text>
-                                    <Text style={styles.numeroVisita}>8 visitas</Text>
-                                </View>
-                                <View>
-                                    <Icon size={32} style={styles.iconVisita} name={'syringe'}></Icon>
+                    <View style={[styles.acoes, {marginBottom: 15}]}>
+                        <View style={styles.cardMembros}>
+                            <View style={styles.cardHeader}>
+                                <Text style={{color: '#85102f'}}>
+                                    Pregações
+                                </Text>
+                            </View>
+                            <View style={styles.cardBody}>
+                                <View style={{width: '100%', height: 'auto'}}>
+                                    {this.state.pregacoes.length != 0 ? Array.from(this.state.pregacoes).map((item, index)=> 
+                                        (
+                                        <View key={index}>
+                                            <ItemRelatorio {...item} cor="#85102f"/>
+                                        </View>
+                                        )
+                                    ) : (
+                               
+                                            <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
+                                      
+                                        )
+                                    }
                                 </View>
                             </View>
                         </View>
                     </View>
-                    <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
-                        <View style={styles.cardBody}>
-                            <View style={styles.itens}>
-                                <View>
-                                    <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Hospitais</Text>
-                                    <Text style={styles.numeroVisita}>3 visitas</Text>
-                                </View>
-                                <View>
-                                    <Icon size={32} style={styles.iconVisita} name={'hospital'}></Icon>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
-                        <View style={styles.cardBody}>
-                            <View style={styles.itens}>
-                                <View>
-                                    <Text style={[styles.titleVisita, {color:'#85102f'}]}>Escolas</Text>
-                                    <Text style={styles.numeroVisita}>2 visitas</Text>
-                                </View>
-                                <View>
-                                    <Icon size={32} style={styles.iconVisita} name={'school'}></Icon>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </View>
+                </ScrollView>
             </View>
         )
     }
@@ -191,7 +289,7 @@ const styles = StyleSheet.create({
     dropdown2BtnStyle: {
         width: '100%',
         height: 50,
-        backgroundColor: '#0a251b',
+        backgroundColor: '#134b36',
         borderRadius: 8,
     },
     dropdown2BtnTxtStyle: {
@@ -200,25 +298,36 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     dropdown2DropdownStyle: {
-        backgroundColor: '#0a251b',
+        backgroundColor: '#134b36',
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
     },
-    dropdown2RowStyle: {backgroundColor: '#0a251b', borderBottomColor: '#C5C5C5'},
+    dropdown2RowStyle: {backgroundColor: '#134b36', borderBottomColor: '#C5C5C5'},
     dropdown2RowTxtStyle: {
         color: '#FFF',
         textAlign: 'center',
         fontWeight: 'bold',
     },
-    background:{
-        flex: 2,
+    header:{
+        height: 115,
         justifyContent: "space-between",
         flexDirection: "row",
-        backgroundColor: '#015b41'
     },
     elevation: {
         elevation: 18,
         shadowColor: 'rgba(58,59,69)',
+    },
+    acoes:{
+        
+    },
+    cardHeader:{
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingLeft: 20,
+        paddingRight: 20,
+        backgroundColor: '#f8f9fc',
+        borderBottomColor: '#e3e6f0',
+        borderBottomWidth: 1
     },
     card:{
         height:90,
@@ -233,6 +342,19 @@ const styles = StyleSheet.create({
         width: 185,
         borderRadius: 5,
       
+    },
+    cardMembros:{
+        minHeight: 300,
+        height:'auto',
+        backgroundColor: '#fff',
+        borderTopColor: '#e3e6f0',
+        borderBottomColor: '#e3e6f0',
+        borderRightColor: '#e3e6f0',
+        borderWidth: 1,
+        margin: 10,
+        borderLeftColor: '#e3e6f0',
+        width: 390,
+        borderRadius: 5,
     },
     cardBody:{
         padding: 20
@@ -257,7 +379,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 32
     },
-    taskList: {
+    bodyVisitas: {
         flex: 7,
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -273,8 +395,8 @@ const styles = StyleSheet.create({
         color: commonStyles.colors.secondary,
         fontSize: 30,
         marginLeft: 20,
-        marginBottom: 20,
-        color: 'black'
+        marginBottom: 7,
+        color: '#585b58'
     },
     subtitle: {
         fontFamily: commonStyles.fontFamily,
@@ -282,12 +404,14 @@ const styles = StyleSheet.create({
         fontSize: 17,
         marginLeft: 20,
         marginBottom: 30,
-        color: 'black'
+        color: 'black',
+        fontWeight: '400',
+        color: '#585b58'
     },
     iconBar: {
         height: 100,
         width: 150,
         marginTop: Platform.OS === 'ios' ? 40 : 35,
-        marginRight: 30,
+        marginRight: 20,
     },
 })

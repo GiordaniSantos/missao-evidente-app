@@ -162,7 +162,7 @@ export default class AppRoutes extends Component{
               },
               headerRight: () => (
                 <View style={{marginRight: 10}}>
-                  <Icon size={24} style={{color: 'black'}} name={'question-circle'} onPress={this.toggleModal}></Icon>
+                  <Icon size={24} style={{color: '#015b41'}} name={'question-circle'} onPress={this.toggleModal}></Icon>
                   <Modal isVisible={this.state.isModalVisible} onBackdropPress={() => this.toggleModal(false)}>
                     <View style={{ flex: 1 }}>
                       <View style={{backgroundColor: 'white'}}> 
