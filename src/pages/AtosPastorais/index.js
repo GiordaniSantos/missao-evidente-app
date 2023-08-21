@@ -1,4 +1,4 @@
-import React, {Component, useContext} from 'react';
+import React, {Component} from 'react';
 import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
@@ -8,7 +8,7 @@ import AddModal from '../../components/AddModal';
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import api from '../../services/api';
-import { showError, showSuccess } from '../../Common'
+import { showError } from '../../Common'
 import Item from '../../components/Item';
 
 const initialState = { 
@@ -79,11 +79,6 @@ export default class AtosPastorais extends Component {
             <View style={styles.container}>
                 <AddModal isVisible={this.state.showModal} tituloHeader={"Novo Ato Pastoral"} dataSelect={["Batismo Infantil", "Batismo e Profissão de Fé", "Benção Nupcial", "Santa Ceia"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addAtoPastoral}/>
                 <ImageBackground source={todayImage} style={styles.background}>
-                    <View style={styles.iconBar}>
-                        <TouchableOpacity onPress={this.toggleFilter}>
-                            <Icon  name={this.state.showDoneTasks ? 'eye' : 'eye-slash'} size={20} color={commonStyles.colors.secondary} />
-                        </TouchableOpacity>
-                    </View>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Atos Pastorais</Text>
                         <Text style={styles.subtitle}>{today}</Text>
@@ -106,10 +101,10 @@ const styles = StyleSheet.create({
         flex: 1
     },
     background:{
-        flex: 3
+        flex: 2
     },
     taskList: {
-        flex: 7
+        flex: 6
     },
     titleBar: {
         flex: 1,
@@ -128,13 +123,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginLeft: 20,
         marginBottom: 30
-    },
-    iconBar: {
-        flexDirection: 'row',
-        marginHorizontal: 20,
-        justifyContent: 'flex-end',
-        marginTop: Platform.OS === 'ios' ? 40 : 10
-
     },
     addButton: {
         position: 'absolute',

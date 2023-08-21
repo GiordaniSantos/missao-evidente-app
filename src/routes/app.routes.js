@@ -168,7 +168,7 @@ export default class AppRoutes extends Component{
                       <View style={{backgroundColor: 'white'}}> 
                         <Text>Hello!</Text>
 
-                        <Button title="Hide modal" onPress={this.toggleModal} />
+                        <Button title="Fechar" onPress={this.toggleModal} />
                       </View>
                     </View>
                   </Modal>

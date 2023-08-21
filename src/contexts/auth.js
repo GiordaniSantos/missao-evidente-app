@@ -8,19 +8,21 @@ export const AuthContext = createContext();
 export function AuthProvider({children}) {
         
     const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(false); //mudar pra true depois
+    const [loading, setLoading] = useState(true); //mudar pra true depois
     
 
     useEffect(()=> {
         async function loadStoragedData() {
             const storageUser = await AsyncStorage.getItem('@MEAuth:user')
             const storageToken = await AsyncStorage.getItem('@MEAuth:token')
-            
+
             //ver erro loading depois
             if(storageUser && storageToken){
                 api.defaults.headers.Authorization = `Bearer ${storageToken}`
 
                 setUser(JSON.parse(storageUser))
+                setLoading(false)
+            }else{
                 setLoading(false)
             }
         }   

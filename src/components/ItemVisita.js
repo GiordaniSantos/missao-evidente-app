@@ -8,7 +8,6 @@ import CommonStyles from '../CommonStyles'
 
 export default props => {
     resultadoData = props.created_at.split(" ")
-    const doneOrNotStyles = props.doneAt != null ? { textDecorationLine: 'line-through' } : {}
 
     const getRightContent = () => {
         return (
@@ -31,13 +30,13 @@ export default props => {
         <GestureHandlerRootView>
             <Swipeable renderRightActions={getRightContent} renderLeftActions={getLeftContent} onSwipeableLeftOpen={() => props.onDelete && props.onDelete(props.id)}>
                 <View style={styles.container}>
-                    <TouchableWithoutFeedback onPress={() => props.toggleTask(props.id)}>
-                        <View style={styles.cheackContainer}>
-                            {getCheckView(props.doneAt)}
+                    <View style={styles.cheackContainer}>
+                        <View style={styles.done}>
+                            <Icon name='check' size={20} color='#FFF'></Icon>
                         </View>
-                    </TouchableWithoutFeedback>
+                    </View>
                     <View>
-                        <Text style={[styles.desc, doneOrNotStyles]}>Visita realizada no dia {resultadoData[0]}</Text>
+                        <Text style={styles.desc}>Visita realizada no dia {resultadoData[0]}</Text>
                         <Text style={styles.date}>às {resultadoData[1]}h</Text>
                     </View>
                 </View>
@@ -45,22 +44,6 @@ export default props => {
         </GestureHandlerRootView>
     )
 }   
-
-function getCheckView(doneAt){
-    if(doneAt != null){
-        return (
-            <View style={styles.done}>
-                <Icon name='check' size={20} color='#FFF'></Icon>
-            </View>
-        )
-    }else{
-        return (
-            <View style={styles.done}>
-                <Icon name='check' size={20} color='#FFF'></Icon>
-            </View>
-        )
-    }
-}
 
 const styles = StyleSheet.create({
     container: {
