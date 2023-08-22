@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
-import todayImage from '../../../assets/imgs/today.jpg'
+import todayImage from '../../../assets/imgs/fundo-ipb2.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AddModal from '../../components/AddModal';
 import moment from 'moment'
