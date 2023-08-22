@@ -65,7 +65,7 @@ export default class SignIn extends Component {
 
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
-                <StatusBar backgroundColor="rgba(6, 3, 21, .99)"/>
+                <StatusBar backgroundColor="rgb(15, 7, 54)"/>
                 <Text style={styles.title}>Missão Evidente</Text>
                 <View style={styles.formContainer}>
                     <Text style={styles.subTitle}>{this.state.telaCriacao ? 'Crie a sua conta' : 'Informe seus dados'}</Text>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(6, 3, 21, .99)',
+        backgroundColor: 'rgb(15, 7, 54)',
         
     },
     formContainer: {
