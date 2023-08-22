@@ -1,9 +1,10 @@
 import React, {Component, useContext} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
+import {View, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/today.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import IconRefresh from 'react-native-vector-icons/FontAwesome'
 import AddModal from '../../components/AddModal';
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -22,6 +23,7 @@ const initialState = {
     visitaEnfermo: 0,
     visitaHospital: 0,
     visitaEscola: 0,
+    loading: true,
     mes: date.getMonth()+1,
     atos: {},
     membresias: {},
@@ -51,9 +53,16 @@ export default class Dashboard extends Component {
             this.setState({ visitaEnfermo: res.data[6].enfermos })
             this.setState({ visitaHospital: res.data[7].hospitais })
             this.setState({ visitaEscola: res.data[8].escolas })
+            this.setState({ loading: false })
         }catch(e) {
             console.log(e)
             showError(e)
+        }
+    }
+
+    loadingRequest = async () => {
+        if(this.state.loading){
+            return ( <ActivityIndicator size="large" color="#00ff00" /> )
         }
     }
 
@@ -97,6 +106,11 @@ export default class Dashboard extends Component {
                             <Text style={styles.subtitle}>{today}</Text>
                         </View>
                         <View style={styles.iconBar}>
+                            <View style={{alignItems: 'flex-end', marginBottom: 8}}>
+                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.mes)} activeOpacity={0.7}>
+                                    <IconRefresh name={'refresh'} color={'#585b58'} size={16} />
+                                </TouchableOpacity>
+                            </View>
                             <SelectDropdown
                             data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
                             buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
@@ -107,7 +121,7 @@ export default class Dashboard extends Component {
                             defaultButtonText='Selecione'
                             defaultValueByIndex={date.getMonth()}
                             onSelect={(selectedItem, index) => {
-                                
+                                this.setState({mes: index+1})
                                 this.loadRelatorios(index+1)
                             }}
                             buttonTextAfterSelection={(selectedItem, index) => {
@@ -212,6 +226,7 @@ export default class Dashboard extends Component {
                             </View>
                             <View style={styles.cardBody}>
                                 <View style={{width: '100%', height: 'auto'}}>
+                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
                                     {this.state.membresias.length != 0 ? Array.from(this.state.membresias).map((item, index)=> 
                                         (
                                         <View key={index}>
@@ -235,6 +250,7 @@ export default class Dashboard extends Component {
                             </View>
                             <View style={styles.cardBody}>
                                 <View style={{width: '100%', height: 'auto'}}>
+                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#4e73df" />}
                                     {this.state.atos.length != 0 ? Array.from(this.state.atos).map((item, index)=> 
                                         (
                                         <View key={index}>
@@ -258,6 +274,7 @@ export default class Dashboard extends Component {
                             </View>
                             <View style={styles.cardBody}>
                                 <View style={{width: '100%', height: 'auto'}}>
+                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#85102f" />}
                                     {this.state.pregacoes.length != 0 ? Array.from(this.state.pregacoes).map((item, index)=> 
                                         (
                                         <View key={index}>
@@ -411,7 +428,7 @@ const styles = StyleSheet.create({
     iconBar: {
         height: 100,
         width: 150,
-        marginTop: Platform.OS === 'ios' ? 40 : 35,
+        marginTop: Platform.OS === 'ios' ? 40 : 10,
         marginRight: 20,
     },
 })

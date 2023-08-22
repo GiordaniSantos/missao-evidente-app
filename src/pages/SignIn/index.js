@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ImageBackground, Text, StyleSheet, View, TouchableOpacity } from 'react-native'
+import { ImageBackground, Text, StyleSheet, View, TouchableOpacity, StatusBar } from 'react-native'
 import api from '../../services/api'
 
 import backgroundImage from '../../../assets/imgs/map.png'
@@ -65,6 +65,7 @@ export default class SignIn extends Component {
 
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
+                <StatusBar backgroundColor="rgba(6, 3, 21, .99)"/>
                 <Text style={styles.title}>Missão Evidente</Text>
                 <View style={styles.formContainer}>
                     <Text style={styles.subTitle}>{this.state.telaCriacao ? 'Crie a sua conta' : 'Informe seus dados'}</Text>
