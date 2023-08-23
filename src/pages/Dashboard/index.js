@@ -106,7 +106,7 @@ export default class Dashboard extends Component {
                             <Text style={styles.subtitle}>{today}</Text>
                         </View>
                         <View style={styles.iconBar}>
-                            <View style={{alignItems: 'flex-end', marginBottom: 8}}>
+                            <View style={{alignItems: 'flex-end', marginBottom: 12}}>
                                 <TouchableOpacity onPress={() => this.loadRelatorios(this.state.mes)} activeOpacity={0.7}>
                                     <IconRefresh name={'refresh'} color={'#585b58'} size={16} />
                                 </TouchableOpacity>
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
         margin: 10,
         borderLeftColor: '#1cc88a',
         borderLeftWidth: 4,
-        width: '44%',
+        width: '44.7%',
         borderRadius: 5,
       
     },
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         margin: 10,
         borderLeftColor: '#e3e6f0',
-        width: '93%',
+        width: '93.9%',
         borderRadius: 5,
     },
     cardBody:{
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     iconBar: {
         height: 100,
         width: 150,
-        marginTop: Platform.OS === 'ios' ? 40 : 10,
+        marginTop: Platform.OS === 'ios' ? 40 : 15,
         marginRight: 20,
     },
 })

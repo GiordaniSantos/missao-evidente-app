@@ -10,7 +10,7 @@ import VisitaHospital from '../pages/VisitaHospital';
 import VisitaEscola from '../pages/VisitaEscola';
 import Dashboard from '../pages/Dashboard';
 import { AuthContext } from '../contexts/auth';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
 import Modal from "react-native-modal";
@@ -23,6 +23,7 @@ function CustomDrawerContent(props) {
   context = useContext(AuthContext);
   return (
     <DrawerContentScrollView {...props}>
+      <StatusBar backgroundColor="rgb(106, 105, 110)"/>
       <View style={styles.container}>
         <View style={styles.userArea}>
           {/*<Image  styles={styles.user} />*/}

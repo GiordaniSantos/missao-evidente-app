@@ -11,8 +11,8 @@ import { showError, showSuccess } from '../../Common'
 
 const initialState = { 
     name: '',
-    email: 'giordani.santos.silveira@gmail.com',
-    password: 'Dani@war13',
+    email: '',
+    password: '',
     confirmPassword: '',
     telaCriacao: false,
     user: {}
