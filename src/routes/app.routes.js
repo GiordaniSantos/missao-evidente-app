@@ -23,7 +23,7 @@ function CustomDrawerContent(props) {
   context = useContext(AuthContext);
   return (
     <DrawerContentScrollView {...props}>
-      <StatusBar backgroundColor="rgb(106, 105, 110)"/>
+      <StatusBar backgroundColor="rgb(255, 255, 255)" barStyle="dark-content"/>
       <View style={styles.container}>
         <View style={styles.userArea}>
           {/*<Image  styles={styles.user} />*/}

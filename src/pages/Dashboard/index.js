@@ -107,8 +107,8 @@ export default class Dashboard extends Component {
                         </View>
                         <View style={styles.iconBar}>
                             <View style={{alignItems: 'flex-end', marginBottom: 12}}>
-                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.mes)} activeOpacity={0.7}>
-                                    <IconRefresh name={'refresh'} color={'#585b58'} size={16} />
+                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.mes)} activeOpacity={0.1}>
+                                    <IconRefresh name={'refresh'} color={'#585b58'} size={18} />
                                 </TouchableOpacity>
                             </View>
                             <SelectDropdown
