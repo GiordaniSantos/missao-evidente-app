@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     title: {
         fontFamily: commonStyles.fontFamily,
         color: commonStyles.colors.secondary,
-        fontSize: 32,
+        fontSize: 26,
         marginLeft: 20,
         marginBottom: 20
     },

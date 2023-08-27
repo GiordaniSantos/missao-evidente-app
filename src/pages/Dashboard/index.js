@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
         margin: 10,
         borderLeftColor: '#1cc88a',
         borderLeftWidth: 4,
-        width: '44.7%',
+        width: '44%',
         borderRadius: 5,
       
     },
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         margin: 10,
         borderLeftColor: '#e3e6f0',
-        width: '93.9%',
+        width: '93%',
         borderRadius: 5,
     },
     cardBody:{
