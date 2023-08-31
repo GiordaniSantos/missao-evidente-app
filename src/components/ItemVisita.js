@@ -36,7 +36,7 @@ export default props => {
                         </View>
                     </View>
                     <View>
-                        <Text style={styles.desc}>Visita realizada no dia {resultadoData[0]}</Text>
+                        <Text style={styles.desc}>{props.textoAntesHora} {resultadoData[0]}</Text>
                         <Text style={styles.date}>às {resultadoData[1]}h</Text>
                     </View>
                 </View>

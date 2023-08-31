@@ -9,6 +9,10 @@ import VisitaEnfermo from '../pages/VisitaEnfermo';
 import VisitaHospital from '../pages/VisitaHospital';
 import VisitaEscola from '../pages/VisitaEscola';
 import Dashboard from '../pages/Dashboard';
+import BatismoInfantil from '../pages/BatismoInfantil';
+import BatismoProfissaoFe from '../pages/BatismoProfissaoFe';
+import BencaoNupcial from '../pages/BencaoNupcial';
+import SantaCeia from '../pages/SantaCeia';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -86,6 +90,72 @@ function CustomDrawerContent(props) {
           icon={({color}) => <Icon size={21} name={'bible'} style={{color:color}}></Icon>}
           onPress={() => {
             props.navigation.navigate("Pregações");
+          }}
+        />
+         <View style={{
+          borderTopColor: '#cfcfcf',
+          borderTopWidth: 1,
+        }}></View>
+        <DrawerItem
+          label="Batismo Infantil"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Batismo Infantil'
+          )}
+          icon={({color}) => <Icon size={21} name={'child'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Batismo Infantil");
+          }}
+        />
+        <DrawerItem
+          label="Batismo e Profissão de Fé"
+          labelStyle={{marginLeft: -15}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Batismo e Profissão de Fé'
+          )}
+          icon={({color}) => <Icon size={21} name={'praying-hands'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Batismo e Profissão de Fé");
+          }}
+        />
+        <DrawerItem
+          label="Benção Nupcial"
+          labelStyle={{marginLeft: -13}}
+          drawerLabelStyle={{marginLeft: -3}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Benção Nupcial'
+          )}
+          icon={({color}) => <Icon size={21} name={'hand-holding-heart'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Benção Nupcial");
+          }}
+        />
+        <DrawerItem
+          label="Santa Ceia"
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Santa Ceia'
+          )}
+          icon={({color}) => <Icon size={21} name={'wine-glass-alt'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Santa Ceia");
           }}
         />
         <View style={{
@@ -197,9 +267,29 @@ export default class AppRoutes extends Component{
                     height:0
                   },
                 }}  />
+                <Drawer.Screen name="Batismo Infantil" component={BatismoInfantil} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Batismo e Profissão de Fé" component={BatismoProfissaoFe} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Benção Nupcial" component={BencaoNupcial} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Santa Ceia" component={SantaCeia} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
                   <Drawer.Screen name="Visitas aos Crentes" component={VisitaCrente} options={{
                     drawerItemStyle:{
-                      marginTop: -20
+                      marginTop: -55
                     },
                     drawerIcon: ({color}) => 
                     <Icon size={21} style={{color:color}} name={'cross'}></Icon>

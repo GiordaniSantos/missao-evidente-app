@@ -23,6 +23,10 @@ const initialState = {
     visitaEnfermo: 0,
     visitaHospital: 0,
     visitaEscola: 0,
+    batismosInfantis: 0,
+    batismosProfissoes: 0,
+    bencoesNupciais: 0,
+    santasCeias: 0,
     loading: true,
     mes: date.getMonth()+1,
     atos: {},
@@ -53,6 +57,10 @@ export default class Dashboard extends Component {
             this.setState({ visitaEnfermo: res.data[6].enfermos })
             this.setState({ visitaHospital: res.data[7].hospitais })
             this.setState({ visitaEscola: res.data[8].escolas })
+            this.setState({ batismosInfantis: res.data[9].batismoInfantil })
+            this.setState({ batismosProfissoes: res.data[10].batismoProfissao })
+            this.setState({ bencoesNupciais: res.data[11].bencaoNupcial })
+            this.setState({ santasCeias: res.data[12].santaCeia })
             this.setState({ loading: false })
         }catch(e) {
             console.log(e)
@@ -212,6 +220,58 @@ export default class Dashboard extends Component {
                                     </View>
                                     <View>
                                         <Icon size={32} style={styles.iconVisita} name={'school'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#359d93'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#359d93'}]}>Batismos Infantis</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.batismosInfantis} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'child'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#909274'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color:'#909274'}]}>Batismos/Prof. Fé</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.batismosProfissoes} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'praying-hands'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#211f11'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#211f11'}]}>Benção Nupcial</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.bencoesNupciais} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'hand-holding-heart'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#338767'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color:'#338767'}]}>Santa Ceia</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.santasCeias} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'wine-glass-alt'}></Icon>
                                     </View>
                                 </View>
                             </View>

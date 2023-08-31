@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform} from 'react-native'
+import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/fundo-ipb3.jpg'
@@ -13,35 +13,35 @@ import ItemVisita from '../../components/ItemVisita';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
-    naoCrentes: []
+    bencaoNupcial: []
 }
 
-export default class VisitaNaoCrente extends Component {
+export default class BencaoNupcial extends Component {
     state = {...initialState}
 
     static contextType = AuthContext;
 
     componentDidMount = async () => {
-        this.loadVisitasNaoCrentes()
+        this.loadBencaoNupcial()
     }
 
-    loadVisitasNaoCrentes = async () => {
+    loadBencaoNupcial = async () => {
         try{
-            const res = await api.get(`/incredulo?id_usuario=${this.context.user.id}`)
-            this.setState({ naoCrentes: res.data.data })
+            const res = await api.get(`/bencao-nupcial?id_usuario=${this.context.user.id}`)
+            this.setState({ bencaoNupcial: res.data.data })
         }catch(e) {
             console.log(e)
             showError(e)
         }
     }
 
-    addVisitaNaoCrente = async id_usuario => {
+    addBencaoNupcial = async id_usuario => {
         try {
-            await api.post(`/incredulo`, {
+            await api.post(`/bencao-nupcial`, {
                 id_usuario: id_usuario
             })
 
-            this.loadVisitasNaoCrentes()
+            this.loadBencaoNupcial()
 
         } catch (error) {
             console.log(error)
@@ -50,10 +50,10 @@ export default class VisitaNaoCrente extends Component {
 
     }
 
-    deleteVisitaNaoCrente = async crenteId => {
+    deleteBencaoNupcial = async crenteId => {
         try {
-            await api.delete(`/incredulo/${crenteId}?id_usuario=${this.context.user.id}`)
-            this.loadVisitasNaoCrentes()
+            await api.delete(`/bencao-nupcial/${crenteId}?id_usuario=${this.context.user.id}`)
+            this.loadBencaoNupcial()
         } catch (error) {
             showError(error)
         }
@@ -65,14 +65,14 @@ export default class VisitaNaoCrente extends Component {
             <View style={styles.container}>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
-                        <Text style={styles.title}>Visitas aos Não Crentes</Text>
+                        <Text style={styles.title}>Benção Nupcial</Text>
                         <Text style={styles.subtitle}>{today}</Text>
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.naoCrentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaNaoCrente}/>} />
+                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaNaoCrente(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addBencaoNupcial(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     title: {
         fontFamily: commonStyles.fontFamily,
         color: commonStyles.colors.secondary,
-        fontSize: 23,
+        fontSize: 28,
         marginLeft: 20,
         marginBottom: 20
     },
