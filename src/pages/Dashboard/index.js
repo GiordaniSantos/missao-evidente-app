@@ -343,7 +343,7 @@ export default class Dashboard extends Component {
                             <View style={styles.cardBody}>
                                 <View style={{width: '100%', height: 'auto'}}>
                                     {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
-                                    {this.state.membresias.length != 0 ? Array.from(this.state.membresias).map((item, index)=> 
+                                    {this.state.membresias && this.state.membresias.length != 0 ? Array.from(this.state.membresias).map((item, index)=> 
                                         (
                                         <View key={index}>
                                             <ItemRelatorio {...item} cor="#015b41"/>

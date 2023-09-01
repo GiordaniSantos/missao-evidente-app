@@ -16,10 +16,9 @@ import Sermao from '../pages/Sermao';
 import EstudoBiblico from '../pages/EstudoBiblico';
 import Discipulado from '../pages/Discipulado';
 import { AuthContext } from '../contexts/auth';
-import { Text, View, StyleSheet, Button, StatusBar } from 'react-native';
+import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
-import Modal from "react-native-modal";
 
 import { createDrawerNavigator,  DrawerContentScrollView,DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
@@ -257,7 +256,49 @@ const styles = StyleSheet.create({
   email:{
     fontFamily: CommonStyles.fontFamily,
     fontSize: 14
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
 })
 
 const Drawer = createDrawerNavigator();
@@ -280,12 +321,22 @@ export default class AppRoutes extends Component{
               headerRight: () => (
                 <View style={{marginRight: 10}}>
                   <Icon size={24} style={{color: '#000'}} name={'question-circle'} onPress={this.toggleModal}></Icon>
-                  <Modal isVisible={this.state.isModalVisible} onBackdropPress={() => this.toggleModal(false)}>
-                    <View style={{ flex: 1 }}>
-                      <View style={{backgroundColor: 'white'}}> 
-                        <Text>Hello!</Text>
-
-                        <Button title="Fechar" onPress={this.toggleModal} />
+                
+                  <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.isModalVisible}
+                    onRequestClose={() => {
+                      this.toggleModal(false);
+                    }}>
+                    <View style={styles.centeredView}>
+                      <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Hello World!</Text>
+                        <Pressable
+                          style={[styles.button, styles.buttonClose]}
+                          onPress={() => this.toggleModal(false)}>
+                          <Text style={styles.textStyle}>Hide Modal</Text>
+                        </Pressable>
                       </View>
                     </View>
                   </Modal>
