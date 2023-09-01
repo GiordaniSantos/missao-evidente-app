@@ -1,7 +1,5 @@
 import React, {Component, useContext} from 'react';
 import Membresia from "../pages/Membresia";
-import AtosPastorais from '../pages/AtosPastorais';
-import Pregacao from '../pages/Pregacao';
 import VisitaCrente from '../pages/VisitaCrente';
 import VisitaNaoCrente from '../pages/VisitaNaoCrente';
 import VisitaPresidio from '../pages/VisitaPresidio';
@@ -13,6 +11,10 @@ import BatismoInfantil from '../pages/BatismoInfantil';
 import BatismoProfissaoFe from '../pages/BatismoProfissaoFe';
 import BencaoNupcial from '../pages/BencaoNupcial';
 import SantaCeia from '../pages/SantaCeia';
+import Estudo from '../pages/Estudo';
+import Sermao from '../pages/Sermao';
+import EstudoBiblico from '../pages/EstudoBiblico';
+import Discipulado from '../pages/Discipulado';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -64,35 +66,79 @@ function CustomDrawerContent(props) {
             props.navigation.navigate("Membresia aos Domingos");
           }}
         />
+        <View style={{
+          borderTopColor: '#cfcfcf',
+          borderTopWidth: 1,
+        }}></View>
         <DrawerItem
-          label="Atos Pastorais"
+          label="Estudo"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
           focused={getActiveRouteState(
             props.state.routes,
             props.state.index,
-            'Atos Pastorais'
+            'Estudo'
+          )}
+          icon={({color}) => <Icon size={21} name={'book'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Estudo");
+          }}
+        />
+        <DrawerItem
+          label="Sermão"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Sermão'
           )}
           icon={({color}) => <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>}
           onPress={() => {
-            props.navigation.navigate("Atos Pastorais");
+            props.navigation.navigate("Sermão");
           }}
         />
         <DrawerItem
-          label="Pregações"
+          label="Estudo Biblico"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -3}}
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
           focused={getActiveRouteState(
             props.state.routes,
             props.state.index,
-            'Pregações'
+            'Aprendizados Biblicos'
           )}
           icon={({color}) => <Icon size={21} name={'bible'} style={{color:color}}></Icon>}
           onPress={() => {
-            props.navigation.navigate("Pregações");
+            props.navigation.navigate("Aprendizados Biblicos");
           }}
         />
-         <View style={{
+        <DrawerItem
+          label="Discipulado"
+          activeBackgroundColor='#015b41'
+          labelStyle={{marginLeft: -10}}
+          drawerLabelStyle={{marginLeft: -3}}
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Discipulado'
+          )}
+          icon={({color}) => <Icon size={21} name={'people-arrows'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Discipulado");
+          }}
+        />
+        <View style={{
+          borderTopColor: '#cfcfcf',
+          borderTopWidth: 1,
+        }}></View>
+        <View style={{
           borderTopColor: '#cfcfcf',
           borderTopWidth: 1,
         }}></View>
@@ -257,22 +303,32 @@ export default class AppRoutes extends Component{
                       height:0
                     },
                 }} />
-                <Drawer.Screen name="Atos Pastorais" component={AtosPastorais} options={{
-                    drawerItemStyle:{
-                      height:0
-                    },
-                }}  />
-                <Drawer.Screen name="Pregações" component={Pregacao} options={{
-                  drawerItemStyle:{
-                    height:0
-                  },
-                }}  />
                 <Drawer.Screen name="Batismo Infantil" component={BatismoInfantil} options={{
                   drawerItemStyle:{
                     height:0
                   },
                 }}  />
                 <Drawer.Screen name="Batismo e Profissão de Fé" component={BatismoProfissaoFe} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Estudo" component={Estudo} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Sermão" component={Sermao} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Aprendizados Biblicos" component={EstudoBiblico} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Discipulado" component={Discipulado} options={{
                   drawerItemStyle:{
                     height:0
                   },
@@ -289,7 +345,7 @@ export default class AppRoutes extends Component{
                 }}  />
                   <Drawer.Screen name="Visitas aos Crentes" component={VisitaCrente} options={{
                     drawerItemStyle:{
-                      marginTop: -55
+                      marginTop: -73
                     },
                     drawerIcon: ({color}) => 
                     <Icon size={21} style={{color:color}} name={'cross'}></Icon>

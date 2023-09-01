@@ -27,11 +27,13 @@ const initialState = {
     batismosProfissoes: 0,
     bencoesNupciais: 0,
     santasCeias: 0,
+    estudos: 0,
+    sermoes: 0,
+    estudosBiblicos: 0,
+    discipulados: 0,
     loading: true,
     mes: date.getMonth()+1,
-    atos: {},
     membresias: {},
-    pregacoes: {}
 }
 
 
@@ -48,19 +50,21 @@ export default class Dashboard extends Component {
         try{
             const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}`)
             
-            this.setState({ atos: res.data[0].atos })
-            this.setState({ membresias: res.data[1].membresias })
-            this.setState({ pregacoes: res.data[2].pregacoes })
-            this.setState({ visitaCrente: res.data[3].crentes })
-            this.setState({ visitaNaoCrente: res.data[4].incredulos })
-            this.setState({ visitaPresidio: res.data[5].presidios })
-            this.setState({ visitaEnfermo: res.data[6].enfermos })
-            this.setState({ visitaHospital: res.data[7].hospitais })
-            this.setState({ visitaEscola: res.data[8].escolas })
-            this.setState({ batismosInfantis: res.data[9].batismoInfantil })
-            this.setState({ batismosProfissoes: res.data[10].batismoProfissao })
-            this.setState({ bencoesNupciais: res.data[11].bencaoNupcial })
-            this.setState({ santasCeias: res.data[12].santaCeia })
+            this.setState({ membresias: res.data[0].membresias })
+            this.setState({ visitaCrente: res.data[1].crentes })
+            this.setState({ visitaNaoCrente: res.data[2].incredulos })
+            this.setState({ visitaPresidio: res.data[3].presidios })
+            this.setState({ visitaEnfermo: res.data[4].enfermos })
+            this.setState({ visitaHospital: res.data[5].hospitais })
+            this.setState({ visitaEscola: res.data[6].escolas })
+            this.setState({ batismosInfantis: res.data[7].batismoInfantil })
+            this.setState({ batismosProfissoes: res.data[8].batismoProfissao })
+            this.setState({ bencoesNupciais: res.data[9].bencaoNupcial })
+            this.setState({ santasCeias: res.data[10].santaCeia })
+            this.setState({ estudos: res.data[11].estudo })
+            this.setState({ sermoes: res.data[12].sermao })
+            this.setState({ estudosBiblicos: res.data[13].estudoBiblico })
+            this.setState({ discipulados: res.data[14].discipulado })
             this.setState({ loading: false })
         }catch(e) {
             console.log(e)
@@ -224,11 +228,63 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#d15268'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#d15268'}]}>Estudo</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.estudos} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'book'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#1f1956'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color:'#1f1956'}]}>Sermão</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.sermoes} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'user-tie'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#d27322'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#d27322'}]}>Estudo Biblico</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.estudosBiblicos} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'bible'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#2ddfae'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color:'#2ddfae'}]}>Discipulado</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.discipulados} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'people-arrows'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#359d93'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#359d93'}]}>Batismos Infantis</Text>
+                                        <Text style={[styles.titleVisita, {color: '#359d93'}]}>Batismo Infantil</Text>
                                         <Text style={styles.numeroVisita}>{this.state.batismosInfantis} </Text>
                                     </View>
                                     <View>
@@ -241,7 +297,7 @@ export default class Dashboard extends Component {
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color:'#909274'}]}>Batismos/Prof. Fé</Text>
+                                        <Text style={[styles.titleVisita, {color:'#909274'}]}>Batismo/Prof. Fé</Text>
                                         <Text style={styles.numeroVisita}>{this.state.batismosProfissoes} </Text>
                                     </View>
                                     <View>
@@ -295,56 +351,6 @@ export default class Dashboard extends Component {
                                         )
                                     ) : (
                                         <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
-                                        )
-                                    }
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.acoes}>
-                        <View style={styles.cardMembros}>
-                            <View style={styles.cardHeader}>
-                                <Text style={{color: '#4e73df'}}>
-                                    Atos Pastorais
-                                </Text>
-                            </View>
-                            <View style={styles.cardBody}>
-                                <View style={{width: '100%', height: 'auto'}}>
-                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#4e73df" />}
-                                    {this.state.atos.length != 0 ? Array.from(this.state.atos).map((item, index)=> 
-                                        (
-                                        <View key={index}>
-                                            <ItemRelatorio {...item} cor="#4e73df"/>
-                                        </View>
-                                        )
-                                    ) : (
-                                        <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
-                                        )
-                                    }
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={[styles.acoes, {marginBottom: 15}]}>
-                        <View style={styles.cardMembros}>
-                            <View style={styles.cardHeader}>
-                                <Text style={{color: '#85102f'}}>
-                                    Pregações
-                                </Text>
-                            </View>
-                            <View style={styles.cardBody}>
-                                <View style={{width: '100%', height: 'auto'}}>
-                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#85102f" />}
-                                    {this.state.pregacoes.length != 0 ? Array.from(this.state.pregacoes).map((item, index)=> 
-                                        (
-                                        <View key={index}>
-                                            <ItemRelatorio {...item} cor="#85102f"/>
-                                        </View>
-                                        )
-                                    ) : (
-                               
-                                            <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
-                                      
                                         )
                                     }
                                 </View>
