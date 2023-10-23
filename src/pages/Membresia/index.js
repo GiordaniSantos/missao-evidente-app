@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native'
+import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/fundo-ipb3.jpg'
@@ -10,6 +10,7 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import Item from '../../components/Item';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showModal: false,
@@ -40,11 +41,11 @@ export default class Membresia extends Component {
 
     addMembresia = async newMembro => {
         if(!newMembro.nome || !newMembro.nome.trim()){
-            Alert.alert('Dados Inválidos', 'Nome não informado!')
+            showError("Dados Inválidos, Informe um nome!")
             return
         }
         if(!newMembro.quantidade || !newMembro.quantidade.trim()){
-            Alert.alert('Dados Inválidos', 'Quantidade não informada!')
+            showError('Dados Inválidos, Informe a Quantidade!')
             return
         }
         
@@ -54,7 +55,7 @@ export default class Membresia extends Component {
                 quantidade: newMembro.quantidade,
                 id_usuario: newMembro.id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.setState({ showModal: false }, this.loadMembros)
 
         } catch (error) {
@@ -66,6 +67,7 @@ export default class Membresia extends Component {
     deleteMembresia = async membroId => {
         try {
             await api.delete(`/membresia/${membroId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadMembros()
         } catch (error) {
             showError(error)

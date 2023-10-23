@@ -10,6 +10,7 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -43,7 +44,7 @@ export default class Estudo extends Component {
                 created_at: estudo.date,
                 id_usuario: estudo.id_usuario
             })
-
+            Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadEstudo)
 
         } catch (error) {
@@ -57,7 +58,7 @@ export default class Estudo extends Component {
             await api.post(`/estudo`, {
                 id_usuario: id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.loadEstudo()
 
         } catch (error) {
@@ -70,6 +71,7 @@ export default class Estudo extends Component {
     deleteEstudo = async crenteId => {
         try {
             await api.delete(`/estudo/${crenteId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadEstudo()
         } catch (error) {
             showError(error)

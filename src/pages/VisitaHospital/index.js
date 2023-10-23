@@ -10,7 +10,7 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
-import SweetAlert from 'react-native-sweet-alert';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -43,14 +43,8 @@ export default class VisitaHospital extends Component {
             await api.post(`/hospital`, {
                 id_usuario: id_usuario
             })
-            SweetAlert.showAlertWithOptions({
-                title: 'Sucesso!',
-                subTitle: 'Adicionado com Sucesso!',
-                confirmButtonTitle: 'OK',
-                otherButtonTitle: 'Cancel',
-                style: 'success',
-                cancellable: true
-            });
+          
+            Alert('Adicionado com Sucesso');
             this.loadVisitasHospital()
 
         } catch (error) {
@@ -66,15 +60,7 @@ export default class VisitaHospital extends Component {
                 created_at: hospital.date,
                 id_usuario: hospital.id_usuario
             })
-
-            SweetAlert.showAlertWithOptions({
-                title: 'Sucesso!',
-                subTitle: 'Atualizado com Sucesso!',
-                confirmButtonTitle: 'OK',
-                //otherButtonTitle: 'Cancel',
-                style: 'success',
-                cancellable: false
-            });
+            Alert('Atualizado com Sucesso');
 
             this.setState({ showModal: false }, this.loadVisitasHospital)
         } catch (error) {
@@ -86,14 +72,7 @@ export default class VisitaHospital extends Component {
     deleteVisitaHospital = async hospitalId => {
         try {
             await api.delete(`/hospital/${hospitalId}?id_usuario=${this.context.user.id}`)
-            SweetAlert.showAlertWithOptions({
-                title: 'Sucesso!',
-                subTitle: 'Deletado com Sucesso!',
-                confirmButtonTitle: 'OK',
-                //otherButtonTitle: 'Cancel',
-                style: 'success',
-                cancellable: false
-            }/*, callback => this.loadVisitasHospital()*/);
+            Alert('Deletado com Sucesso');
             this.loadVisitasHospital()
         } catch (error) {
             showError(error)

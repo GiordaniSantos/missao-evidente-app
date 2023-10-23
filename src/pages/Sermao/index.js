@@ -10,6 +10,7 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -42,7 +43,7 @@ export default class Sermao extends Component {
             await api.post(`/sermao`, {
                 id_usuario: id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.loadSermao()
 
         } catch (error) {
@@ -57,7 +58,7 @@ export default class Sermao extends Component {
                 created_at: sermao.date,
                 id_usuario: sermao.id_usuario
             })
-
+            Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadSermao)
 
         } catch (error) {
@@ -69,6 +70,7 @@ export default class Sermao extends Component {
     deleteSermao = async crenteId => {
         try {
             await api.delete(`/sermao/${crenteId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadSermao()
         } catch (error) {
             showError(error)

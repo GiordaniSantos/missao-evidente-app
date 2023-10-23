@@ -10,6 +10,7 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -42,11 +43,10 @@ export default class SantaCeia extends Component {
             await api.post(`/santa-ceia`, {
                 id_usuario: id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.loadSantaCeia()
 
         } catch (error) {
-            console.log(error)
             showError(error)
         }
 
@@ -58,7 +58,7 @@ export default class SantaCeia extends Component {
                 created_at: santaCeia.date,
                 id_usuario: santaCeia.id_usuario
             })
-
+            Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadSantaCeia)
 
         } catch (error) {
@@ -70,6 +70,7 @@ export default class SantaCeia extends Component {
     deleteSantaCeia = async crenteId => {
         try {
             await api.delete(`/santa-ceia/${crenteId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadSantaCeia()
         } catch (error) {
             showError(error)

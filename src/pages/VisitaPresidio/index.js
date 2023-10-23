@@ -10,6 +10,7 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -42,7 +43,7 @@ export default class VisitaPresidio extends Component {
             await api.post(`/presidio`, {
                 id_usuario: id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.loadVisitasPresidios()
 
         } catch (error) {
@@ -58,7 +59,7 @@ export default class VisitaPresidio extends Component {
                 created_at: presidio.date,
                 id_usuario: presidio.id_usuario
             })
-
+            Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadVisitasPresidios)
 
         } catch (error) {
@@ -70,6 +71,7 @@ export default class VisitaPresidio extends Component {
     deleteVisitaPresidio = async presidioId => {
         try {
             await api.delete(`/presidio/${presidioId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadVisitasPresidios()
         } catch (error) {
             showError(error)

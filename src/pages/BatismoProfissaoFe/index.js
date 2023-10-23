@@ -10,6 +10,7 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -42,7 +43,7 @@ export default class BatismoProfissaoFe extends Component {
             await api.post(`/batismo-profissao`, {
                 id_usuario: id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.loadBatismoProfissao()
 
         } catch (error) {
@@ -58,7 +59,7 @@ export default class BatismoProfissaoFe extends Component {
                 created_at: batismoProfissao.date,
                 id_usuario: batismoProfissao.id_usuario
             })
-
+            Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadBatismoProfissao)
 
         } catch (error) {
@@ -70,6 +71,7 @@ export default class BatismoProfissaoFe extends Component {
     deleteBatismoProfissao = async crenteId => {
         try {
             await api.delete(`/batismo-profissao/${crenteId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadBatismoProfissao()
         } catch (error) {
             showError(error)
