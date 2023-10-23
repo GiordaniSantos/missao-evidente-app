@@ -19,6 +19,7 @@ import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
+import Web from '../pages/Web';
 
 import { createDrawerNavigator,  DrawerContentScrollView,DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
@@ -216,7 +217,7 @@ function CustomDrawerContent(props) {
           label="Ir para o Site"
           icon={({color}) => <Icon size={21} name={'chrome'} style={{color:color}}></Icon>}
           onPress={() => {
-            props.navigation.navigate("Membresias");
+            props.navigation.navigate("Site");
           }}
         />
         <DrawerItem
@@ -390,6 +391,11 @@ export default class AppRoutes extends Component{
                   },
                 }}  />
                 <Drawer.Screen name="Santa Ceia" component={SantaCeia} options={{
+                  drawerItemStyle:{
+                    height:0
+                  },
+                }}  />
+                <Drawer.Screen name="Site" component={Web} options={{
                   drawerItemStyle:{
                     height:0
                   },

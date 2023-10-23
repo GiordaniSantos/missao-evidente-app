@@ -27,7 +27,8 @@
     "react-native-screens": "^3.24.0",
     "react-native-select-dropdown": "^3.3.4",
     "react-native-sweet-alert": "^3.5.0",
-    "react-native-vector-icons": "^9.0.0"
+    "react-native-vector-icons": "^9.0.0",
+    "react-native-webview": "^13.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
