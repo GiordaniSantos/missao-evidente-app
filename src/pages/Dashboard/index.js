@@ -1,5 +1,5 @@
 import React, {Component, useContext} from 'react';
-import {View, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
+import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/today.jpg'
@@ -32,6 +32,7 @@ const initialState = {
     estudosBiblicos: 0,
     discipulados: 0,
     loading: true,
+    refresh: false,
     mes: date.getMonth()+1,
     membresias: {},
 }
@@ -43,6 +44,11 @@ export default class Dashboard extends Component {
     static contextType = AuthContext;
 
     componentDidMount = async () => {
+        this.loadRelatorios()
+    }
+
+    onRefresh = () => {
+        this.setState({ refresh: true })
         this.loadRelatorios()
     }
    
@@ -66,6 +72,7 @@ export default class Dashboard extends Component {
             this.setState({ estudosBiblicos: res.data[13].estudoBiblico })
             this.setState({ discipulados: res.data[14].discipulado })
             this.setState({ loading: false })
+            this.setState({ refresh: false })
         }catch(e) {
             console.log(e)
             showError(e)
@@ -111,7 +118,7 @@ export default class Dashboard extends Component {
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
-                <ScrollView>
+                <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>
                     <View style={styles.header}>
                         <View style={styles.titleBar}>
                             <Text style={styles.title}>Dashboard</Text>
