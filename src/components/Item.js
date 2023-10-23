@@ -11,7 +11,7 @@ export default props => {
     const getRightContent = () => {
         return (
             <TouchableOpacity style={styles.right} onPress={() => props.onDelete && props.onDelete(props.id)}>
-                <Icon name='trash' size={30} color='#FFF'/>
+                <Icon name='edit' size={30} color='#FFF'/>
             </TouchableOpacity>
         )
     }

@@ -11,8 +11,8 @@ export default props => {
 
     const getRightContent = () => {
         return (
-            <TouchableOpacity style={styles.right} onPress={() => props.onDelete && props.onDelete(props.id)}>
-                <Icon name='trash' size={30} color='#FFF'/>
+            <TouchableOpacity style={styles.right} onPress={() => props.openModal(props.id)}>
+                <Icon name='edit' size={30} color='#FFF'/>
             </TouchableOpacity>
         )
     }
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     right: {
-        backgroundColor: 'red',
+        backgroundColor: '#4D7031',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',

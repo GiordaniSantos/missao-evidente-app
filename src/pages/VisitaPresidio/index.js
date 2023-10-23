@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    presidioBuscado: [],
     presidios: []
 }
 
@@ -50,6 +52,21 @@ export default class VisitaPresidio extends Component {
 
     }
 
+    updatePresidio = async presidio => {
+        try {
+            await api.put(`/presidio/${presidio.id}?id_usuario=${presidio.id_usuario}`, {
+                created_at: presidio.date,
+                id_usuario: presidio.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadVisitasPresidios)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteVisitaPresidio = async presidioId => {
         try {
             await api.delete(`/presidio/${presidioId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,25 @@ export default class VisitaPresidio extends Component {
         }
     }
 
+    buscarPresidio = async id => {
+        try {
+            const res = await api.get(`/presidio/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ presidioBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarPresidio(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.presidioBuscado} tituloHeader={"Editar Data de Visita ao Presidio"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updatePresidio}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Visitas aos Presidios</Text>
@@ -70,7 +102,7 @@ export default class VisitaPresidio extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.presidios} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaPresidio}/>} />
+                    <FlatList data={this.state.presidios} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaPresidio}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaPresidio(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

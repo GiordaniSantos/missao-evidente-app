@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    batismoInfantilBuscado: [],
     batismoInfantil: []
 }
 
@@ -50,6 +52,21 @@ export default class BatismoInfantil extends Component {
 
     }
 
+    updateBatismoInfantil = async batismoInfantil => {
+        try {
+            await api.put(`/batismo-infantil/${batismoInfantil.id}?id_usuario=${batismoInfantil.id_usuario}`, {
+                created_at: batismoInfantil.date,
+                id_usuario: batismoInfantil.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadBatismoInfantil)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteBatismoInfantil = async crenteId => {
         try {
             await api.delete(`/batismo-infantil/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,25 @@ export default class BatismoInfantil extends Component {
         }
     }
 
+    buscarBatismoInfantil = async id => {
+        try {
+            const res = await api.get(`/batismo-infantil/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ batismoInfantilBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarBatismoInfantil(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.batismoInfantilBuscado} tituloHeader={"Editar Data de Batismo Infantil"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBatismoInfantil}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Batismo Infantil</Text>
@@ -70,7 +102,7 @@ export default class BatismoInfantil extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.batismoInfantil} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoInfantil}/>} />
+                    <FlatList data={this.state.batismoInfantil} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoInfantil}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoInfantil(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

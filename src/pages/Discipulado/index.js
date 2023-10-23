@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    discipuladoBuscado: [],
     discipulado: []
 }
 
@@ -50,6 +52,21 @@ export default class Discipulado extends Component {
 
     }
 
+    updateDiscipulado = async discipulado => {
+        try {
+            await api.put(`/discipulado/${discipulado.id}?id_usuario=${discipulado.id_usuario}`, {
+                created_at: discipulado.date,
+                id_usuario: discipulado.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadDiscipulado)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteDiscipulado = async discipuladoId => {
         try {
             await api.delete(`/discipulado/${discipuladoId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,25 @@ export default class Discipulado extends Component {
         }
     }
 
+    buscarDiscipulado = async id => {
+        try {
+            const res = await api.get(`/discipulado/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ discipuladoBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarDiscipulado(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.discipuladoBuscado} tituloHeader={"Editar Data de Discipulado"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateDiscipulado}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Discipulados</Text>
@@ -70,7 +102,7 @@ export default class Discipulado extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.discipulado} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteDiscipulado}/>} />
+                    <FlatList data={this.state.discipulado} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteDiscipulado}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addDiscipulado(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

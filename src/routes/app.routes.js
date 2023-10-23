@@ -331,11 +331,11 @@ export default class AppRoutes extends Component{
                     }}>
                     <View style={styles.centeredView}>
                       <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Hello World!</Text>
+                        <Text style={styles.modalText}>Missão Evidente!</Text>
                         <Pressable
                           style={[styles.button, styles.buttonClose]}
                           onPress={() => this.toggleModal(false)}>
-                          <Text style={styles.textStyle}>Hide Modal</Text>
+                          <Text style={styles.textStyle}>Fechar</Text>
                         </Pressable>
                       </View>
                     </View>

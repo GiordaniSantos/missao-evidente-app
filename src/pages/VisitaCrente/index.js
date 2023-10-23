@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    crenteBuscado: [],
     crentes: []
 }
 
@@ -50,6 +52,22 @@ export default class VisitaCrente extends Component {
 
     }
 
+    updateCrente = async crente => {
+        try {
+            await api.put(`/crente/${crente.id}?id_usuario=${crente.id_usuario}`, {
+                created_at: crente.date,
+                id_usuario: crente.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadVisitasCrentes)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
+
     deleteVisitaCrente = async crenteId => {
         try {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +77,25 @@ export default class VisitaCrente extends Component {
         }
     }
 
+    buscarCrente = async id => {
+        try {
+            const res = await api.get(`/crente/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ crenteBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarCrente(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.crenteBuscado} tituloHeader={"Editar Data de Visita ao Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateCrente}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Visitas aos Crentes</Text>
@@ -70,7 +103,7 @@ export default class VisitaCrente extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.crentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Visita realizada no dia"} textoPosQtd={"crentes"} onDelete={this.deleteVisitaCrente}/>} />
+                    <FlatList data={this.state.crentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} textoPosQtd={"crentes"} onDelete={this.deleteVisitaCrente}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaCrente(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

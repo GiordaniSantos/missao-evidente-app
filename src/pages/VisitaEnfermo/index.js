@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    enfermoBuscado: [],
     enfermos: []
 }
 
@@ -50,6 +52,21 @@ export default class VisitaEnfermo extends Component {
 
     }
 
+    updateEnfermo = async enfermo => {
+        try {
+            await api.put(`/enfermo/${enfermo.id}?id_usuario=${enfermo.id_usuario}`, {
+                created_at: enfermo.date,
+                id_usuario: enfermo.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadVisitasEnfermos)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteVisitaEnfermo = async enfermoId => {
         try {
             await api.delete(`/enfermo/${enfermoId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,26 @@ export default class VisitaEnfermo extends Component {
         }
     }
 
+    buscarEnfermo = async id => {
+        try {
+            const res = await api.get(`/enfermo/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ enfermoBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarEnfermo(id)
+        this.setState({ showModal: true })
+    }
+
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.enfermoBuscado} tituloHeader={"Editar Data de Visita ao Enfermo"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEnfermo}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Visitas aos Enfermos</Text>
@@ -70,7 +103,7 @@ export default class VisitaEnfermo extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.enfermos} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEnfermo}/>} />
+                    <FlatList data={this.state.enfermos} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEnfermo}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaEnfermo(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

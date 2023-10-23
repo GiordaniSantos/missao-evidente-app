@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    estudoBuscado: [],
     estudo: []
 }
 
@@ -33,6 +35,21 @@ export default class Estudo extends Component {
             console.log(e)
             showError(e)
         }
+    }
+
+    updateEstudo = async estudo => {
+        try {
+            await api.put(`/estudo/${estudo.id}?id_usuario=${estudo.id_usuario}`, {
+                created_at: estudo.date,
+                id_usuario: estudo.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadEstudo)
+
+        } catch (error) {
+            showError(error)
+        }
+
     }
 
     addEstudo = async id_usuario => {
@@ -59,10 +76,25 @@ export default class Estudo extends Component {
         }
     }
 
+    buscarEstudo = async id => {
+        try {
+            const res = await api.get(`/estudo/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ estudoBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarEstudo(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.estudoBuscado} tituloHeader={"Editar Data de Estudo"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudo}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Estudos</Text>
@@ -70,7 +102,7 @@ export default class Estudo extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
+                    <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudo(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

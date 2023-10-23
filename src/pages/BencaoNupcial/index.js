@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    bencaoNupcialBuscado: [],
     bencaoNupcial: []
 }
 
@@ -50,6 +52,21 @@ export default class BencaoNupcial extends Component {
 
     }
 
+    updateBencaoNupcial = async bencaoNupcial => {
+        try {
+            await api.put(`/bencao-nupcial/${bencaoNupcial.id}?id_usuario=${bencaoNupcial.id_usuario}`, {
+                created_at: bencaoNupcial.date,
+                id_usuario: bencaoNupcial.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadBencaoNupcial)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteBencaoNupcial = async crenteId => {
         try {
             await api.delete(`/bencao-nupcial/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,25 @@ export default class BencaoNupcial extends Component {
         }
     }
 
+    buscarBencaoNupcial = async id => {
+        try {
+            const res = await api.get(`/bencao-nupcial/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ bencaoNupcialBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarBencaoNupcial(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.bencaoNupcialBuscado} tituloHeader={"Editar Data de Bencão Nupcial"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBencaoNupcial}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Benção Nupcial</Text>
@@ -70,7 +102,7 @@ export default class BencaoNupcial extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
+                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBencaoNupcial(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    sermaoBuscado: [],
     sermao: []
 }
 
@@ -44,7 +46,21 @@ export default class Sermao extends Component {
             this.loadSermao()
 
         } catch (error) {
-            console.log(error)
+            showError(error)
+        }
+
+    }
+
+    updateSermao = async sermao => {
+        try {
+            await api.put(`/sermao/${sermao.id}?id_usuario=${sermao.id_usuario}`, {
+                created_at: sermao.date,
+                id_usuario: sermao.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadSermao)
+
+        } catch (error) {
             showError(error)
         }
 
@@ -59,10 +75,25 @@ export default class Sermao extends Component {
         }
     }
 
+    buscarSermao = async id => {
+        try {
+            const res = await api.get(`/sermao/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ sermaoBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarSermao(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.sermaoBuscado} tituloHeader={"Editar Data de Sermão"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSermao}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Sermões</Text>
@@ -70,7 +101,7 @@ export default class Sermao extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
+                    <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addSermao(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

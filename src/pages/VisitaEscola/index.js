@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    escolaBuscado: [],
     escola: []
 }
 
@@ -33,6 +35,21 @@ export default class VisitaEscola extends Component {
             console.log(e)
             showError(e)
         }
+    }
+
+    updateEscola = async escola => {
+        try {
+            await api.put(`/escola/${escola.id}?id_usuario=${escola.id_usuario}`, {
+                created_at: escola.date,
+                id_usuario: escola.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadVisitasEscolas)
+
+        } catch (error) {
+            showError(error)
+        }
+
     }
 
     addVisitaEscola = async id_usuario => {
@@ -59,10 +76,25 @@ export default class VisitaEscola extends Component {
         }
     }
 
+    buscarEscola = async id => {
+        try {
+            const res = await api.get(`/escola/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ escolaBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarEscola(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.escolaBuscado} tituloHeader={"Editar Data de Visita à Escola"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEscola}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Visitas às Escolas</Text>
@@ -70,7 +102,7 @@ export default class VisitaEscola extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.escola} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEscola}/>} />
+                    <FlatList data={this.state.escola} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEscola}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaEscola(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

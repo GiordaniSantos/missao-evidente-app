@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    naoCrenteBuscado: [],
     naoCrentes: []
 }
 
@@ -33,6 +35,21 @@ export default class VisitaNaoCrente extends Component {
             console.log(e)
             showError(e)
         }
+    }
+
+    updateNaoCrente = async naoCrente => {
+        try {
+            await api.put(`/incredulo/${naoCrente.id}?id_usuario=${naoCrente.id_usuario}`, {
+                created_at: naoCrente.date,
+                id_usuario: naoCrente.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadVisitasNaoCrentes)
+
+        } catch (error) {
+            showError(error)
+        }
+
     }
 
     addVisitaNaoCrente = async id_usuario => {
@@ -59,10 +76,25 @@ export default class VisitaNaoCrente extends Component {
         }
     }
 
+    buscarNaoCrente = async id => {
+        try {
+            const res = await api.get(`/incredulo/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ naoCrenteBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarNaoCrente(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.naoCrenteBuscado} tituloHeader={"Editar Data de Visita ao Não Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateNaoCrente}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Visitas aos Não Crentes</Text>
@@ -70,7 +102,7 @@ export default class VisitaNaoCrente extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.naoCrentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaNaoCrente}/>} />
+                    <FlatList data={this.state.naoCrentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaNaoCrente}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaNaoCrente(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

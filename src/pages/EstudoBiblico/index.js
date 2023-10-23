@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    estudoBiblicoBuscado: [],
     estudoBiblico: []
 }
 
@@ -50,6 +52,21 @@ export default class EstudoBiblico extends Component {
 
     }
 
+    updateEstudoBiblico = async estudoBiblico => {
+        try {
+            await api.put(`/estudo-biblico/${estudoBiblico.id}?id_usuario=${estudoBiblico.id_usuario}`, {
+                created_at: estudoBiblico.date,
+                id_usuario: estudoBiblico.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadEstudoBiblico)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteEstudoBiblico = async EstudoBiblicoId => {
         try {
             await api.delete(`/estudo-biblico/${EstudoBiblicoId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,25 @@ export default class EstudoBiblico extends Component {
         }
     }
 
+    buscarEstudoBiblico = async id => {
+        try {
+            const res = await api.get(`/estudo-biblico/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ estudoBiblicoBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarEstudoBiblico(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.estudoBiblicoBuscado} tituloHeader={"Editar Data de Estudo Biblico"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudoBiblico}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Estudos Biblicos</Text>
@@ -70,7 +102,7 @@ export default class EstudoBiblico extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
+                    <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudoBiblico(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

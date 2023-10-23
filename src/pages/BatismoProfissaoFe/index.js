@@ -9,10 +9,12 @@ import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
+import EditModal from '../../components/EditModal';
 
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    batismoProfissaoBuscado: [],
     batismoProfissao: []
 }
 
@@ -50,6 +52,21 @@ export default class BatismoProfissaoFe extends Component {
 
     }
 
+    updateBatismoProfissao = async batismoProfissao => {
+        try {
+            await api.put(`/batismo-profissao/${batismoProfissao.id}?id_usuario=${batismoProfissao.id_usuario}`, {
+                created_at: batismoProfissao.date,
+                id_usuario: batismoProfissao.id_usuario
+            })
+
+            this.setState({ showModal: false }, this.loadBatismoProfissao)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
     deleteBatismoProfissao = async crenteId => {
         try {
             await api.delete(`/batismo-profissao/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -59,10 +76,25 @@ export default class BatismoProfissaoFe extends Component {
         }
     }
 
+    buscarBatismoProfissao = async id => {
+        try {
+            const res = await api.get(`/batismo-profissao/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ batismoProfissaoBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarBatismoProfissao(id)
+        this.setState({ showModal: true })
+    }
+
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
+                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.batismoProfissaoBuscado} tituloHeader={"Editar Data de Batismo/Profissão de Fé"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBatismoProfissao}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Batismo e Profissão de Fé</Text>
@@ -70,7 +102,7 @@ export default class BatismoProfissaoFe extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.batismoProfissao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoProfissao}/>} />
+                    <FlatList data={this.state.batismoProfissao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoProfissao}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoProfissao(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
