@@ -3,11 +3,12 @@ import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpaci
 import CommonStyles from '../CommonStyles'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { AuthContext } from '../contexts/auth'
+import SelectDropdown from 'react-native-select-dropdown'
 import moment from 'moment'
 
 const initialState = { showDatePicker: false, showTimePicker: false  }
 
-export default class EditModal extends Component {
+export default class EditModalMembresia extends Component {
 
     static contextType = AuthContext;
     
@@ -18,17 +19,23 @@ export default class EditModal extends Component {
     static getDerivedStateFromProps(props, state) {
         if(props.itemBuscado.id != state.id && props.itemBuscado.created_at !== state.date){
             return {
+                nome: props.itemBuscado.nome,
+                quantidade: props.itemBuscado.quantidade,
                 date: props.itemBuscado.created_at,
                 id: props.itemBuscado.id
             };
         }
         if (!state.date && props.itemBuscado.created_at !== state.date) {
-          return {
-            date: props.itemBuscado.created_at,
-            id: props.itemBuscado.id
-          };
+            return {
+                nome: props.itemBuscado.nome,
+                quantidade: props.itemBuscado.quantidade,
+                date: props.itemBuscado.created_at,
+                id: props.itemBuscado.id
+            };
         }if(state.date && props.itemBuscado.id === state.id){
             return {
+                nome: state.nome,
+                quantidade: state.quantidade,
                 date: state.date,
             };
         }
@@ -38,6 +45,8 @@ export default class EditModal extends Component {
     update = () => {
         const editItem = {
             id: this.state.id,
+            nome: this.state.nome,
+            quantidade: this.state.quantidade,
             date: this.state.date,
             id_usuario: this.context.user.id
         }
@@ -45,7 +54,7 @@ export default class EditModal extends Component {
         if(this.props.onUpdate){
             this.props.onUpdate(editItem)
         }
-        this.setState({...initialState, date: this.state.date})
+        this.setState({...initialState, date: this.state.date, nome: this.state.nome, quantidade: this.state.quantidade})
     }
 
     getDatePicker = () => {
@@ -77,7 +86,7 @@ export default class EditModal extends Component {
         return datePicker
     }
 
-    getTimePicker = () => {
+    /*getTimePicker = () => {
         let datePicker = <DateTimePicker value={this.state.date} onChange={
             (event, date) => {
                 //se cancelar o seletor de data, dele define o valor para indefinido
@@ -104,7 +113,7 @@ export default class EditModal extends Component {
             )
         }
         return datePicker
-    }
+    }*/
 
     render(){
         return (
@@ -114,8 +123,24 @@ export default class EditModal extends Component {
                 </TouchableWithoutFeedback>
                 <View style={styles.container}>
                     <Text style={styles.header}>{this.props.tituloHeader}</Text>
+                    <SelectDropdown
+                        data={this.props.dataSelect}
+                        buttonStyle={styles.input}
+                        defaultValue={this.state.nome}
+                        rowStyle={{with:'100%'}}
+                        defaultButtonText='Selecione uma Opção'
+                        onSelect={(selectedItem, index) => {
+                            this.setState({ nome: selectedItem })
+                        }}
+                        buttonTextAfterSelection={(selectedItem, index) => {
+                            return selectedItem
+                        }}
+                        rowTextForSelection={(item, index) => {
+                            return item
+                        }}
+                    />
+                    <TextInput style={styles.input} keyboardType="numeric" placeholder='Informe a quantidade...' onChangeText={newQuantidade => this.setState({quantidade: newQuantidade})} value={this.state.quantidade && this.state.quantidade.toString()}/>
                     {this.getDatePicker()}
-                    {this.getTimePicker()}
                     <View style={styles.buttons}>
                         <TouchableOpacity onPress={this.props.onCancel}>
                             <Text style={styles.button}>Cancelar</Text>
@@ -161,21 +186,23 @@ const styles = StyleSheet.create({
     },
     input: {
         fontFamily: CommonStyles.fontFamily,
-        //height: 40,
-        //margin: 15,
+        height: 60,
+        margin: 15,
         padding: 15,
         backgroundColor: '#FFF',
         borderWidth: 1,
         borderColor: '#E3E3E3',
         borderRadius: 6,
+        textAlign: 'center',
+        fontSize: 18,
         width: 'auto'
     },
     date: {
         fontFamily: CommonStyles.fontFamily,
-        fontSize: 20,
-        marginLeft: 20,
-        marginRight: 20,
+        fontSize: 18,
+        //marginLeft: 20,
+        //marginRight: 20,
         textAlign: 'center',
-        marginTop: 15
+        margin: 15
     }
 })

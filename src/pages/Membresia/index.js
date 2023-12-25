@@ -11,9 +11,12 @@ import api from '../../services/api';
 import { showError } from '../../Common'
 import Item from '../../components/Item';
 import Alert from '../../components/SweetAlert';
+import EditModalMembresia from '../../components/EditModalMembresia';
 
 const initialState = { 
     showModal: false,
+    showModalEdit: false,
+    membresiaBuscado: [],
     membros: []
 }
 
@@ -37,6 +40,37 @@ export default class Membresia extends Component {
         }catch(e) {
             showError(e)
         }
+    }
+
+    updateMembresia = async membresia => {
+        try {
+            await api.put(`/membresia/${membresia.id}?id_usuario=${membresia.id_usuario}`, {
+                nome: membresia.nome,
+                quantidade: membresia.quantidade,
+                created_at: membresia.date,
+                id_usuario: membresia.id_usuario
+            })
+            Alert('Atualizado com Sucesso');
+            this.setState({ showModalEdit: false }, this.loadMembros)
+
+        } catch (error) {
+            showError(error)
+        }
+
+    }
+
+    buscarMembresia = async id => {
+        try {
+            const res = await api.get(`/membresia/${id}?id_usuario=${this.context.user.id}`)
+            this.setState({ membresiaBuscado: res.data })
+        } catch (error) {
+            showError(error)
+        }
+    }
+
+    abrirModal = async id => {
+        this.buscarMembresia(id)
+        this.setState({ showModalEdit: true })
     }
 
     addMembresia = async newMembro => {
@@ -79,6 +113,7 @@ export default class Membresia extends Component {
         return (
             <View style={styles.container}>
                 <AddModal isVisible={this.state.showModal} tituloHeader={"Nova membresia"} dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
+                <EditModalMembresia isVisible={this.state.showModalEdit} itemBuscado={this.state.membresiaBuscado}  dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} tituloHeader={"Editar Membresia"} onCancel={() => { this.setState({showModalEdit:false}) }} onUpdate={this.updateMembresia}/>
                 <ImageBackground source={todayImage} style={styles.background}>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Membresias</Text>
@@ -86,7 +121,7 @@ export default class Membresia extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} textoPosQtd={"membros"} onDelete={this.deleteMembresia}/>} />
+                    <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} openModal={this.abrirModal} textoPosQtd={"membros"} onDelete={this.deleteMembresia}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.setState({ showModal: true })} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
