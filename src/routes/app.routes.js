@@ -16,7 +16,7 @@ import Sermao from '../pages/Sermao';
 import EstudoBiblico from '../pages/EstudoBiblico';
 import Discipulado from '../pages/Discipulado';
 import { AuthContext } from '../contexts/auth';
-import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal } from 'react-native';
+import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
 import Web from '../pages/Web';
@@ -26,6 +26,9 @@ import { createDrawerNavigator,  DrawerContentScrollView,DrawerItemList, DrawerI
 //estilizando o menu
 //items, itemList do Drawer.screens e items
 function CustomDrawerContent(props) {
+  const [isShowAtoPastoral,showAtoPastoral] = React.useState(false)
+  const [isShowPregacao,showPregacao] = React.useState(false)
+  const [isShowVisitacao,showVisitacao] = React.useState(false)
   context = useContext(AuthContext);
   return (
     <DrawerContentScrollView {...props}>
@@ -70,6 +73,22 @@ function CustomDrawerContent(props) {
           borderTopColor: '#cfcfcf',
           borderTopWidth: 1,
         }}></View>
+         <DrawerItem
+          label="Ato Pastoral"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Ato Pastoral'
+          )}
+          icon={({color}) => <Icon size={21} name={isShowAtoPastoral ? 'angle-up' : 'angle-down'} style={{color:color}}></Icon>}
+          onPress={()=>{showAtoPastoral(!isShowAtoPastoral)}}
+        />
+        {isShowAtoPastoral ? (
+          <View>
         <DrawerItem
           label="Estudo"
           labelStyle={{marginLeft: -5}}
@@ -134,14 +153,28 @@ function CustomDrawerContent(props) {
             props.navigation.navigate("Discipulado");
           }}
         />
+        </View>
+        ):null}
         <View style={{
           borderTopColor: '#cfcfcf',
           borderTopWidth: 1,
         }}></View>
-        <View style={{
-          borderTopColor: '#cfcfcf',
-          borderTopWidth: 1,
-        }}></View>
+        <DrawerItem
+          label="Pregação"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Pregação'
+          )}
+          icon={({color}) => <Icon size={21} name={isShowPregacao ? 'angle-up' : 'angle-down'} style={{color:color}}></Icon>}
+          onPress={()=>{showPregacao(!isShowPregacao)}}
+        />
+        {isShowPregacao ? (
+          <View>
         <DrawerItem
           label="Batismo Infantil"
           labelStyle={{marginLeft: -5}}
@@ -204,11 +237,126 @@ function CustomDrawerContent(props) {
             props.navigation.navigate("Santa Ceia");
           }}
         />
+        </View>
+        ):null}
         <View style={{
           borderTopColor: '#cfcfcf',
           borderTopWidth: 1,
         }}></View>
-        <DrawerItemList {...props} />
+        <DrawerItem
+          label="Visitação"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitação'
+          )}
+          icon={({color}) => <Icon size={21} name={isShowVisitacao ? 'angle-up' : 'angle-down'} style={{color:color}}></Icon>}
+          onPress={()=>{showVisitacao(!isShowVisitacao)}}
+        />
+        {isShowVisitacao ? (
+          <View>
+        <DrawerItem
+          label="Visitas aos Crentes"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitas aos Crentes'
+          )}
+          icon={({color}) => <Icon size={21} name={'cross'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Visitas aos Crentes");
+          }}
+        />
+        <DrawerItem
+          label="Visitas aos Não Crentes"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitas aos Não Crentes'
+          )}
+          icon={({color}) => <Icon size={21} name={'heart-broken'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Visitas aos Não Crentes");
+          }}
+        />
+        <DrawerItem
+          label="Visitas aos Presídios"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitas aos Presídios'
+          )}
+          icon={({color}) => <Icon size={21} name={'user-lock'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Visitas aos Presídios");
+          }}
+        />
+           <DrawerItem
+          label="Visitas aos Enfermos"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitas aos Enfermos'
+          )}
+          icon={({color}) => <Icon size={21} name={'syringe'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Visitas aos Enfermos");
+          }}
+        />
+           <DrawerItem
+          label="Visitas aos Hospitais"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitas aos Hospitais'
+          )}
+          icon={({color}) => <Icon size={21} name={'hospital'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Visitas aos Hospitais");
+          }}
+        />
+        <DrawerItem
+          label="Visitas às Escolas"
+          labelStyle={{marginLeft: -5}}
+          drawerLabelStyle={{marginLeft: -5}}
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Visitas às Escolas'
+          )}
+          icon={({color}) => <Icon size={21} name={'school'} style={{color:color}}></Icon>}
+          onPress={() => {
+            props.navigation.navigate("Visitas às Escolas");
+          }}
+        />
+        </View>
+        ):null}
         <View style={{
           borderTopColor: '#cfcfcf',
           borderTopWidth: 1,
@@ -401,44 +549,34 @@ export default class AppRoutes extends Component{
                   },
                 }}  />
                   <Drawer.Screen name="Visitas aos Crentes" component={VisitaCrente} options={{
-                    drawerItemStyle:{
-                      marginTop: -73
+                     drawerItemStyle:{
+                      height:0
                     },
-                    drawerIcon: ({color}) => 
-                    <Icon size={21} style={{color:color}} name={'cross'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas aos Não Crentes" component={VisitaNaoCrente} options={{
-                    labelStyle:{marginLeft: -15},
-                    drawerLabelStyle:{
-                      marginLeft: -5
-                    },
-                    drawerIcon: ({color}) => 
-                    <Icon size={21} style={{color:color}} name={'heart-broken'}></Icon>
+                  drawerItemStyle:{
+                    height:0
+                  },
                 }}  />
                 <Drawer.Screen name="Visitas aos Presídios" component={VisitaPresidio} options={{
-                    drawerLabelStyle:{
-                      marginLeft: -9
-                    },
-                    drawerIcon: ({color}) => 
-                    <Icon size={21} style={{color:color}} name={'user-lock'}></Icon>
+                      drawerItemStyle:{
+                        height:0
+                      },
                 }}  />
                 <Drawer.Screen name="Visitas aos Enfermos" component={VisitaEnfermo} options={{
-                    drawerLabelStyle:{
-                      marginLeft: -3
+                     drawerItemStyle:{
+                      height:0
                     },
-                    drawerIcon: ({color}) => 
-                    <Icon size={21} style={{color:color}} name={'syringe'}></Icon>
                 }}  />
                 <Drawer.Screen name="Visitas aos Hospitais" component={VisitaHospital} options={{
-                    drawerIcon: ({color}) => 
-                    <Icon size={21} style={{color:color}} name={'hospital'}></Icon>
+                   drawerItemStyle:{
+                    height:0
+                  },
                 }}  />
                 <Drawer.Screen name="Visitas às Escolas" component={VisitaEscola} options={{
-                    drawerLabelStyle:{
-                      marginLeft: -6
-                    },
-                    drawerIcon: ({color}) => 
-                    <Icon size={21} style={{color:color}} name={'school'}></Icon>
+                  drawerItemStyle:{
+                    height:0
+                  },
                 }}  />
             </Drawer.Navigator>
         )
