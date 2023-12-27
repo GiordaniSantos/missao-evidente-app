@@ -16,7 +16,7 @@ import Sermao from '../pages/Sermao';
 import EstudoBiblico from '../pages/EstudoBiblico';
 import Discipulado from '../pages/Discipulado';
 import { AuthContext } from '../contexts/auth';
-import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
 import Web from '../pages/Web';
@@ -56,6 +56,9 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'chart-bar'} style={{color:color}}></Icon>
           }
           onPress={() => {
+            {showAtoPastoral(false)}
+            {showPregacao(false)}
+            {showVisitacao(false)}
             props.navigation.navigate("Dashboard");
           }}
         />
@@ -73,14 +76,17 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'users'} style={{color:color}}></Icon>
           }
           onPress={() => {
+            {showAtoPastoral(false)}
+            {showPregacao(false)}
+            {showVisitacao(false)}
             props.navigation.navigate("Membresia aos Domingos");
           }}
         />
-        <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View>
+        {isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Ato Pastoral"
-          labelStyle={{marginLeft: -5}}
-          drawerLabelStyle={{marginLeft: -5}}
+          labelStyle={{marginLeft: -2}}
+          drawerLabelStyle={{marginLeft: -2}}
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
           focused={getActiveRouteState(
@@ -89,7 +95,7 @@ function CustomDrawerContent(props) {
             'Ato Pastoral'
           )}
           icon={({color}) => 
-            <Icon size={21} name={isShowAtoPastoral ? 'angle-up' : 'angle-down'} style={{color:color}}></Icon>
+            <Icon size={23} name={isShowAtoPastoral ? 'angle-up' : 'angle-down'} style={{color:color, marginLeft: 4}}></Icon>
           }
           onPress={()=>
             {showAtoPastoral(!isShowAtoPastoral)}
@@ -101,6 +107,7 @@ function CustomDrawerContent(props) {
               label="Estudo"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -112,6 +119,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'book'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showPregacao(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Estudo");
               }}
             />
@@ -119,6 +128,7 @@ function CustomDrawerContent(props) {
               label="Sermão"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -130,6 +140,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showPregacao(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Sermão");
               }}
             />
@@ -137,6 +149,7 @@ function CustomDrawerContent(props) {
               label="Estudo Biblico"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -3}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -148,6 +161,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'bible'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showPregacao(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Aprendizados Biblicos");
               }}
             />
@@ -156,6 +171,7 @@ function CustomDrawerContent(props) {
               activeBackgroundColor='#015b41'
               labelStyle={{marginLeft: -10}}
               drawerLabelStyle={{marginLeft: -3}}
+              style={{marginLeft:20, marginRight:20}}
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -166,16 +182,18 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'people-arrows'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showPregacao(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Discipulado");
               }}
             />
           </View>
         ):null}
-        <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View>
+        {isShowAtoPastoral || isShowPregacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Pregação"
-          labelStyle={{marginLeft: -5}}
-          drawerLabelStyle={{marginLeft: -5}}
+          labelStyle={{marginLeft: -2}}
+          drawerLabelStyle={{marginLeft: -2}}
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
           focused={getActiveRouteState(
@@ -184,7 +202,7 @@ function CustomDrawerContent(props) {
             'Pregação'
           )}
           icon={({color}) => 
-            <Icon size={21} name={isShowPregacao ? 'angle-up' : 'angle-down'} style={{color:color}}></Icon>
+            <Icon size={23} name={isShowPregacao ? 'angle-up' : 'angle-down'} style={{color:color, marginLeft: 4}}></Icon>
           }
           onPress={()=>
             {showPregacao(!isShowPregacao)}
@@ -196,6 +214,7 @@ function CustomDrawerContent(props) {
               label="Batismo Infantil"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -207,6 +226,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'child'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Batismo Infantil");
               }}
             />
@@ -214,6 +235,7 @@ function CustomDrawerContent(props) {
               label="Batismo e Profissão de Fé"
               labelStyle={{marginLeft: -15}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -225,6 +247,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'praying-hands'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Batismo e Profissão de Fé");
               }}
             />
@@ -232,6 +256,7 @@ function CustomDrawerContent(props) {
               label="Benção Nupcial"
               labelStyle={{marginLeft: -13}}
               drawerLabelStyle={{marginLeft: -3}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -241,12 +266,15 @@ function CustomDrawerContent(props) {
               )}
               icon={({color}) => <Icon size={21} name={'hand-holding-heart'} style={{color:color}}></Icon>}
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Benção Nupcial");
               }}
             />
             <DrawerItem
               label="Santa Ceia"
               activeBackgroundColor='#015b41'
+              style={{marginLeft:20, marginRight:20}}
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -257,16 +285,18 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'wine-glass-alt'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showVisitacao(false)}
                 props.navigation.navigate("Santa Ceia");
               }}
             />
           </View>
         ):null}
-        <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View>
+        {isShowPregacao || isShowVisitacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Visitação"
-          labelStyle={{marginLeft: -5}}
-          drawerLabelStyle={{marginLeft: -5}}
+          labelStyle={{marginLeft: -2}}
+          drawerLabelStyle={{marginLeft: -2}}
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
           focused={getActiveRouteState(
@@ -275,7 +305,7 @@ function CustomDrawerContent(props) {
             'Visitação'
           )}
           icon={({color}) => 
-            <Icon size={21} name={isShowVisitacao ? 'angle-up' : 'angle-down'} style={{color:color}}></Icon>
+            <Icon size={23} name={isShowVisitacao ? 'angle-up' : 'angle-down'} style={{color:color, marginLeft: 4}}></Icon>
           }
           onPress={()=>
             {showVisitacao(!isShowVisitacao)}
@@ -287,6 +317,7 @@ function CustomDrawerContent(props) {
               label="Visitas aos Crentes"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -298,6 +329,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'cross'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Crentes");
               }}
             />
@@ -305,6 +338,7 @@ function CustomDrawerContent(props) {
               label="Visitas aos Não Crentes"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -316,6 +350,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'heart-broken'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Não Crentes");
               }}
             />
@@ -323,6 +359,7 @@ function CustomDrawerContent(props) {
               label="Visitas aos Presídios"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -334,6 +371,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'user-lock'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Presídios");
               }}
             />
@@ -341,6 +380,7 @@ function CustomDrawerContent(props) {
               label="Visitas aos Enfermos"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -350,6 +390,8 @@ function CustomDrawerContent(props) {
               )}
               icon={({color}) => <Icon size={21} name={'syringe'} style={{color:color}}></Icon>}
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Enfermos");
               }}
             />
@@ -357,6 +399,7 @@ function CustomDrawerContent(props) {
               label="Visitas aos Hospitais"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -368,6 +411,8 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'hospital'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Hospitais");
               }}
             />
@@ -375,6 +420,7 @@ function CustomDrawerContent(props) {
               label="Visitas às Escolas"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
+              style={{marginLeft:20, marginRight:20}}
               activeBackgroundColor='#015b41'
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -386,18 +432,23 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'school'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showAtoPastoral(false)}
+                {showPregacao(false)}
                 props.navigation.navigate("Visitas às Escolas");
               }}
             />
           </View>
         ):null}
-        <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View>
+        {isShowVisitacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Ir para o Site"
           icon={({color}) => 
             <Icon size={21} name={'chrome'} style={{color:color}}></Icon>
           }
           onPress={() => {
+            {showAtoPastoral(false)}
+            {showPregacao(false)}
+            {showVisitacao(false)}
             props.navigation.navigate("Site");
           }}
         />
