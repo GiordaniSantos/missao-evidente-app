@@ -14,6 +14,7 @@ import SantaCeia from '../pages/SantaCeia';
 import Estudo from '../pages/Estudo';
 import Sermao from '../pages/Sermao';
 import EstudoBiblico from '../pages/EstudoBiblico';
+import RelatorioAnual from '../pages/RelatorioAnual';
 import Discipulado from '../pages/Discipulado';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity, Image } from 'react-native';
@@ -43,14 +44,34 @@ function CustomDrawerContent(props) {
           <Text style={styles.email}>{context.user.email}</Text>
         </View>
         <DrawerItem
-          label="Dashboard"
+          label="Início"
           activeBackgroundColor='#015b41'
           activeTintColor='#fff'
           labelStyle={{marginLeft:-9}}
           focused={getActiveRouteState(
             props.state.routes,
             props.state.index,
-            'Dashboard'
+            'Início'
+          )}
+          icon={({color}) => 
+            <Icon size={21} name={'home'} style={{color:color}}></Icon>
+          }
+          onPress={() => {
+            {showAtoPastoral(false)}
+            {showPregacao(false)}
+            {showVisitacao(false)}
+            props.navigation.navigate("Início");
+          }}
+        />
+        <DrawerItem
+          label="Relatório Anual"
+          activeBackgroundColor='#015b41'
+          activeTintColor='#fff'
+          labelStyle={{marginLeft:-9}}
+          focused={getActiveRouteState(
+            props.state.routes,
+            props.state.index,
+            'Relatorio Anual'
           )}
           icon={({color}) => 
             <Icon size={21} name={'chart-bar'} style={{color:color}}></Icon>
@@ -59,7 +80,7 @@ function CustomDrawerContent(props) {
             {showAtoPastoral(false)}
             {showPregacao(false)}
             {showVisitacao(false)}
-            props.navigation.navigate("Dashboard");
+            props.navigation.navigate("Relatorio Anual");
           }}
         />
         <DrawerItem
@@ -510,9 +531,14 @@ export default class AppRoutes extends Component{
             </View>
           )
         }} 
-        initialRouteName="Dashboard" drawerContent={(props) => <CustomDrawerContent {...props} />}
+        initialRouteName="Início" drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
-        <Drawer.Screen name="Dashboard" component={Dashboard} options={{
+        <Drawer.Screen name="Início" component={Dashboard} options={{
+          drawerItemStyle:{
+            height:0
+          },
+        }} />
+         <Drawer.Screen name="Relatorio Anual" component={RelatorioAnual} options={{
           drawerItemStyle:{
             height:0
           },

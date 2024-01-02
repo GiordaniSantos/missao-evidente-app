@@ -1,4 +1,4 @@
-import React, {Component, useContext, useEffect} from 'react';
+import React, {Component, useContext} from 'react';
 import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
@@ -34,13 +34,12 @@ const initialState = {
     loading: true,
     refresh: false,
     mes: date.getMonth()+1,
-    ano: date.getFullYear(),
     membresias: {},
 }
 
 
 
-export default class Dashboard extends Component {
+export default class RelatorioAnual extends Component {
     state = {...initialState}
     static contextType = AuthContext;
 
@@ -53,7 +52,7 @@ export default class Dashboard extends Component {
         this.loadRelatorios()
     }
    
-    loadRelatorios = async ( mes=date.getMonth()+1, ano=this.state.ano ) => {
+    loadRelatorios = async ( mes=date.getMonth()+1 ) => {
         try{
             const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}`)
             
@@ -101,6 +100,11 @@ export default class Dashboard extends Component {
 
     }
 
+    alterarMes = (mes) => {
+        this.setState({mes})
+        this.loadRelatorios()
+    }
+
     deleteVisitaCrente = async crenteId => {
         try {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -117,55 +121,38 @@ export default class Dashboard extends Component {
                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>
                     <View style={styles.header}>
                         <View style={styles.titleBar}>
-                            <SelectDropdown
-                                data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
-                                buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
-                                buttonTextStyle={styles.dropdown2BtnTxtStyle}
-                                renderDropdownIcon={isOpened => {
-                                    return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
-                                }}
-                                defaultButtonText='Selecione'
-                                defaultValueByIndex={date.getMonth()}
-                                onSelect={(selectedItem, index) => {
-                                    this.setState({mes: index+1})
-                                    this.loadRelatorios(index+1)
-                                }}
-                                buttonTextAfterSelection={(selectedItem, index) => {
-                                    return selectedItem
-                                }}
-                                rowTextForSelection={(item, index) => {
-                                    return item
-                                }}
-                                dropdownIconPosition={'right'}
-                                dropdownStyle={styles.dropdown2DropdownStyle}
-                                rowStyle={styles.dropdown2RowStyle}
-                                rowTextStyle={styles.dropdown2RowTxtStyle}
-                            />
+                            <Text style={styles.title}>Relatório Anual</Text>
+                            <Text style={styles.subtitle}>{today}</Text>
                         </View>
                         <View style={styles.iconBar}>
+                            <View style={{alignItems: 'flex-end', marginBottom: 12}}>
+                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.mes)} activeOpacity={0.1}>
+                                    <IconRefresh name={'refresh'} color={'#585b58'} size={18} />
+                                </TouchableOpacity>
+                            </View>
                             <SelectDropdown
-                                data={['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032']}
-                                buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
-                                buttonTextStyle={styles.dropdown2BtnTxtStyle}
-                                renderDropdownIcon={isOpened => {
-                                    return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
-                                }}
-                                defaultButtonText='Selecione'
-                                defaultValue={this.state.ano}
-                                onSelect={(selectedItem, index) => {
-                                    this.setState({ano: selectedItem})
-                                    this.loadRelatorios()
-                                }}
-                                buttonTextAfterSelection={(selectedItem, index) => {
-                                    return selectedItem
-                                }}
-                                rowTextForSelection={(item, index) => {
-                                    return item
-                                }}
-                                dropdownIconPosition={'right'}
-                                dropdownStyle={styles.dropdown2DropdownStyle}
-                                rowStyle={styles.dropdown2RowStyle}
-                                rowTextStyle={styles.dropdown2RowTxtStyle}
+                            data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
+                            buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
+                            buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                            renderDropdownIcon={isOpened => {
+                                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
+                            }}
+                            defaultButtonText='Selecione'
+                            defaultValueByIndex={date.getMonth()}
+                            onSelect={(selectedItem, index) => {
+                                this.setState({mes: index+1})
+                                this.loadRelatorios(index+1)
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item
+                            }}
+                            dropdownIconPosition={'right'}
+                            dropdownStyle={styles.dropdown2DropdownStyle}
+                            rowStyle={styles.dropdown2RowStyle}
+                            rowTextStyle={styles.dropdown2RowTxtStyle}
                             />
                         </View>
                     </View>
@@ -412,13 +399,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     header:{
+        height: 115,
         justifyContent: "space-between",
         flexDirection: "row",
-        marginBottom: -35,
     },
     elevation: {
         elevation: 18,
         shadowColor: 'rgba(58,59,69)',
+    },
+    acoes:{
+        
     },
     cardHeader:{
         paddingTop: 12,
@@ -441,6 +431,7 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
         width: '44%',
         borderRadius: 5,
+      
     },
     cardMembros:{
         minHeight: 300,
@@ -488,16 +479,6 @@ const styles = StyleSheet.create({
         height: 100,
         width: 150,
         marginTop: 18,
-        marginLeft: 15,
-        marginRight: 10,
-    },
-    iconBar: {
-        flex: 1,
-        height: 100,
-        width: 150,
-        marginTop: 18,
-        marginLeft: 10,
-        marginRight: 15,
     },
     title: {
         fontFamily: commonStyles.fontFamily,
@@ -517,5 +498,10 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         color: '#585b58'
     },
-   
+    iconBar: {
+        height: 100,
+        width: 150,
+        marginTop: Platform.OS === 'ios' ? 40 : 15,
+        marginRight: 20,
+    },
 })
