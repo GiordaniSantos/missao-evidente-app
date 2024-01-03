@@ -53,9 +53,9 @@ export default class Dashboard extends Component {
         this.loadRelatorios()
     }
    
-    loadRelatorios = async ( mes=date.getMonth()+1, ano=this.state.ano ) => {
+    loadRelatorios = async ( mes=this.state.mes, ano=this.state.ano ) => {
         try{
-            const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}`)
+            const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}&ano=${ano}`)
             
             this.setState({ membresias: res.data[0].membresias })
             this.setState({ visitaCrente: res.data[1].crentes })
@@ -116,7 +116,7 @@ export default class Dashboard extends Component {
             <View style={styles.container}>
                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>
                     <View style={styles.header}>
-                        <View style={styles.titleBar}>
+                        <View style={styles.firstSelectButton}>
                             <SelectDropdown
                                 data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
                                 buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
@@ -128,7 +128,7 @@ export default class Dashboard extends Component {
                                 defaultValueByIndex={date.getMonth()}
                                 onSelect={(selectedItem, index) => {
                                     this.setState({mes: index+1})
-                                    this.loadRelatorios(index+1)
+                                    this.loadRelatorios(index+1, this.state.ano)
                                 }}
                                 buttonTextAfterSelection={(selectedItem, index) => {
                                     return selectedItem
@@ -142,7 +142,7 @@ export default class Dashboard extends Component {
                                 rowTextStyle={styles.dropdown2RowTxtStyle}
                             />
                         </View>
-                        <View style={styles.iconBar}>
+                        <View style={styles.secondSelectButton}>
                             <SelectDropdown
                                 data={['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032']}
                                 buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
@@ -154,7 +154,7 @@ export default class Dashboard extends Component {
                                 defaultValue={this.state.ano}
                                 onSelect={(selectedItem, index) => {
                                     this.setState({ano: selectedItem})
-                                    this.loadRelatorios()
+                                    this.loadRelatorios(this.state.mes, selectedItem)
                                 }}
                                 buttonTextAfterSelection={(selectedItem, index) => {
                                     return selectedItem
@@ -353,7 +353,7 @@ export default class Dashboard extends Component {
                             </View>
                         </View>
                     </View>
-                    <View style={styles.acoes}>
+                    <View style={styles.sectionMembresia}>
                         <View style={styles.cardMembros}>
                             <View style={styles.cardHeader}>
                                 <Text style={{color: '#015b41'}}>
@@ -450,9 +450,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e3e6f0',
         borderRightColor: '#e3e6f0',
         borderWidth: 1,
-        margin: 10,
+        margin: 15,
         borderLeftColor: '#e3e6f0',
-        width: '93%',
         borderRadius: 5,
     },
     cardBody:{
@@ -483,7 +482,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
-    titleBar: {
+    firstSelectButton: {
         flex: 1,
         height: 100,
         width: 150,
@@ -491,7 +490,7 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         marginRight: 10,
     },
-    iconBar: {
+    secondSelectButton: {
         flex: 1,
         height: 100,
         width: 150,
@@ -517,5 +516,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         color: '#585b58'
     },
-   
+    sectionMembresia:{
+        flex: 1,
+    }
 })
