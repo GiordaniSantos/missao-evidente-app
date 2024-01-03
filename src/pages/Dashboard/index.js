@@ -169,7 +169,7 @@ export default class Dashboard extends Component {
                             />
                         </View>
                     </View>
-                    <View style={styles.bodyVisitas}>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -196,6 +196,8 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor:'#d55b2a'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -222,6 +224,8 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -248,6 +252,8 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#d15268'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -274,6 +280,8 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#d27322'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -300,6 +308,8 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#359d93'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -326,6 +336,8 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#211f11'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -405,6 +417,10 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
     },
+    rowCards:{
+        display: 'flex', 
+        flexDirection: 'row'
+    },
     dropdown2RowStyle: {backgroundColor: '#134b36', borderBottomColor: '#C5C5C5'},
     dropdown2RowTxtStyle: {
         color: '#FFF',
@@ -439,7 +455,7 @@ const styles = StyleSheet.create({
         margin: 10,
         borderLeftColor: '#1cc88a',
         borderLeftWidth: 4,
-        width: '44%',
+        flex: 1,
         borderRadius: 5,
     },
     cardMembros:{
@@ -450,7 +466,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e3e6f0',
         borderRightColor: '#e3e6f0',
         borderWidth: 1,
-        margin: 15,
+        margin: 10,
         borderLeftColor: '#e3e6f0',
         borderRadius: 5,
     },
@@ -477,17 +493,13 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 32
     },
-    bodyVisitas: {
-        flex: 7,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
+
     firstSelectButton: {
         flex: 1,
         height: 100,
         width: 150,
         marginTop: 18,
-        marginLeft: 15,
+        marginLeft: 10,
         marginRight: 10,
     },
     secondSelectButton: {
@@ -496,7 +508,7 @@ const styles = StyleSheet.create({
         width: 150,
         marginTop: 18,
         marginLeft: 10,
-        marginRight: 15,
+        marginRight: 10,
     },
     title: {
         fontFamily: commonStyles.fontFamily,
