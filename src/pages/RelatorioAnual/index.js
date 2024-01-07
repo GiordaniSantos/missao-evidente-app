@@ -1,5 +1,5 @@
 import React, {Component, useContext} from 'react';
-import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
+import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView, Dimensions} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import todayImage from '../../../assets/imgs/today.jpg'
@@ -13,6 +13,7 @@ import { showError, showSuccess } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import SelectDropdown from 'react-native-select-dropdown'
 import ItemRelatorio from '../../components/ItemRelatorio';
+import {LineChart,BarChart,PieChart,ProgressChart,ContributionGraph,StackedBarChart} from "react-native-chart-kit";
 
 const date = new Date();
 
@@ -33,7 +34,7 @@ const initialState = {
     discipulados: 0,
     loading: true,
     refresh: false,
-    mes: date.getMonth()+1,
+    ano: date.getFullYear(),
     membresias: {},
 }
 
@@ -122,7 +123,7 @@ export default class RelatorioAnual extends Component {
                     <View style={styles.header}>
                         <View style={styles.titleBar}>
                             <Text style={styles.title}>Relatório Anual</Text>
-                            <Text style={styles.subtitle}>{today}</Text>
+                            <Text style={styles.subtitle}>de {this.state.ano}</Text>
                         </View>
                         <View style={styles.iconBar}>
                             <View style={{alignItems: 'flex-end', marginBottom: 12}}>
@@ -131,32 +132,32 @@ export default class RelatorioAnual extends Component {
                                 </TouchableOpacity>
                             </View>
                             <SelectDropdown
-                            data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
-                            buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
-                            buttonTextStyle={styles.dropdown2BtnTxtStyle}
-                            renderDropdownIcon={isOpened => {
-                                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
-                            }}
-                            defaultButtonText='Selecione'
-                            defaultValueByIndex={date.getMonth()}
-                            onSelect={(selectedItem, index) => {
-                                this.setState({mes: index+1})
-                                this.loadRelatorios(index+1)
-                            }}
-                            buttonTextAfterSelection={(selectedItem, index) => {
-                                return selectedItem
-                            }}
-                            rowTextForSelection={(item, index) => {
-                                return item
-                            }}
-                            dropdownIconPosition={'right'}
-                            dropdownStyle={styles.dropdown2DropdownStyle}
-                            rowStyle={styles.dropdown2RowStyle}
-                            rowTextStyle={styles.dropdown2RowTxtStyle}
+                                data={['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032']}
+                                buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
+                                buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                                renderDropdownIcon={isOpened => {
+                                    return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
+                                }}
+                                defaultButtonText='Selecione'
+                                defaultValue={this.state.ano}
+                                onSelect={(selectedItem, index) => {
+                                    this.setState({ano: selectedItem})
+                                    this.loadRelatorios(selectedItem)
+                                }}
+                                buttonTextAfterSelection={(selectedItem, index) => {
+                                    return selectedItem
+                                }}
+                                rowTextForSelection={(item, index) => {
+                                    return item
+                                }}
+                                dropdownIconPosition={'right'}
+                                dropdownStyle={styles.dropdown2DropdownStyle}
+                                rowStyle={styles.dropdown2RowStyle}
+                                rowTextStyle={styles.dropdown2RowTxtStyle}
                             />
                         </View>
                     </View>
-                    <View style={styles.bodyVisitas}>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -183,6 +184,8 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor:'#d55b2a'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -209,6 +212,8 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -235,6 +240,8 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#d15268'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -261,6 +268,8 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#d27322'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -287,6 +296,8 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#359d93'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -313,6 +324,8 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.rowCards}>
                         <View style={[styles.card, styles.elevation, {borderLeftColor: '#211f11'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
@@ -335,6 +348,21 @@ export default class RelatorioAnual extends Component {
                                     </View>
                                     <View>
                                         <Icon size={32} style={styles.iconVisita} name={'wine-glass-alt'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.rowCards}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#211f11'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#211f11'}]}>Média de Membros aos Domingos</Text>
+                                        <Text style={styles.numeroVisita}>15 </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'hand-holding-heart'}></Icon>
                                     </View>
                                 </View>
                             </View>
@@ -363,6 +391,64 @@ export default class RelatorioAnual extends Component {
                                 </View>
                             </View>
                         </View>
+                    </View>
+                    <View style={styles.acoes}>
+                        <View style={[styles.cardHeader, {backgroundColor: '#fff',borderTopColor: '#e3e6f0',borderBottomColor: '#e3e6f0', borderRightColor: '#e3e6f0',borderWidth: 1,borderLeftColor: '#e3e6f0', backgroundColor: '#f8f9fc', marginLeft: 10, marginRight: 10}]}>
+                            <Text style={{color: '#015b41'}}>
+                                Média de membros aos Domingos/mês
+                            </Text>
+                        </View>
+                        <LineChart
+                            data={{
+                            labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                            datasets: [
+                                {
+                                data: [
+                                    10,
+                                    15,
+                                    24,
+                                    14,
+                                    12,
+                                    10,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ]
+                                }
+                            ]
+                            }}
+                            width={Dimensions.get("window").width} // from react-native
+                            height={300}
+                            yAxisInterval={1} // optional, defaults to 1
+                            chartConfig={{
+                                backgroundColor: "#015b41",
+                                backgroundGradientFrom: "#0a251b",
+                                backgroundGradientTo: "#071405",
+                                decimalPlaces: 0, // optional, defaults to 2dp
+                                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                style: {
+                                    borderRadius: 16,
+                                    marginLeft:10,
+                                    marginRight:10,
+                                },
+                                propsForDots: {
+                                    r: "6",
+                                    strokeWidth: "2",
+                                    stroke: "#ffa726"
+                                }
+                            }}
+                            bezier
+                            style={{
+                                marginVertical: 0,
+                                marginBottom: 10,
+                                marginLeft:10,
+                                marginRight:20,
+                            }}
+                        />
                     </View>
                 </ScrollView>
             </View>
@@ -407,8 +493,9 @@ const styles = StyleSheet.create({
         elevation: 18,
         shadowColor: 'rgba(58,59,69)',
     },
-    acoes:{
-        
+    rowCards:{
+        display: 'flex', 
+        flexDirection: 'row'
     },
     cardHeader:{
         paddingTop: 12,
@@ -429,7 +516,7 @@ const styles = StyleSheet.create({
         margin: 10,
         borderLeftColor: '#1cc88a',
         borderLeftWidth: 4,
-        width: '44%',
+        flex: 1,
         borderRadius: 5,
       
     },
@@ -443,7 +530,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         margin: 10,
         borderLeftColor: '#e3e6f0',
-        width: '93%',
+        flex: 1,
         borderRadius: 5,
     },
     cardBody:{
@@ -478,13 +565,13 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 100,
         width: 150,
-        marginTop: 18,
+        marginTop: 25,
     },
     title: {
         fontFamily: commonStyles.fontFamily,
         color: commonStyles.colors.secondary,
-        fontSize: 30,
-        marginLeft: 20,
+        fontSize: 25,
+        marginLeft: 15,
         marginBottom: 7,
         color: '#585b58'
     },
@@ -502,6 +589,6 @@ const styles = StyleSheet.create({
         height: 100,
         width: 150,
         marginTop: Platform.OS === 'ios' ? 40 : 15,
-        marginRight: 20,
+        marginRight: 15,
     },
 })
