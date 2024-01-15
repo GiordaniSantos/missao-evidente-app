@@ -398,7 +398,7 @@ export default class RelatorioAnual extends Component {
                                 Média de membros aos Domingos/mês
                             </Text>
                         </View>
-                        <LineChart
+                        <BarChart
                             data={{
                             labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
                             datasets: [
@@ -441,7 +441,6 @@ export default class RelatorioAnual extends Component {
                                     stroke: "#ffa726"
                                 }
                             }}
-                            bezier
                             style={{
                                 marginVertical: 0,
                                 marginBottom: 10,
