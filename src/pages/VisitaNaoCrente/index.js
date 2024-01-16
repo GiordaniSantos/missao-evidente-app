@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform} from 'react-native'
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
-import todayImage from '../../../assets/imgs/fundo-ipb3.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     showDoneTasks: true,
@@ -43,7 +41,7 @@ export default class VisitaNaoCrente extends Component {
                 created_at: naoCrente.date,
                 id_usuario: naoCrente.id_usuario
             })
-
+            Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadVisitasNaoCrentes)
 
         } catch (error) {
@@ -57,7 +55,7 @@ export default class VisitaNaoCrente extends Component {
             await api.post(`/incredulo`, {
                 id_usuario: id_usuario
             })
-
+            Alert('Adicionado com Sucesso');
             this.loadVisitasNaoCrentes()
 
         } catch (error) {
@@ -70,6 +68,7 @@ export default class VisitaNaoCrente extends Component {
     deleteVisitaNaoCrente = async crenteId => {
         try {
             await api.delete(`/incredulo/${crenteId}?id_usuario=${this.context.user.id}`)
+            Alert('Deletado com Sucesso');
             this.loadVisitasNaoCrentes()
         } catch (error) {
             showError(error)
@@ -91,16 +90,9 @@ export default class VisitaNaoCrente extends Component {
     }
 
     render(){
-        const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.naoCrenteBuscado} tituloHeader={"Editar Data de Visita ao Não Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateNaoCrente}/>
-                <ImageBackground source={todayImage} style={styles.background}>
-                    <View style={styles.titleBar}>
-                        <Text style={styles.title}>Visitas aos Não Crentes</Text>
-                        <Text style={styles.subtitle}>{today}</Text>
-                    </View>
-                </ImageBackground>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.naoCrentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaNaoCrente}/>} />
                 </View>
@@ -115,31 +107,8 @@ export default class VisitaNaoCrente extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    background:{
-        flex: 2
-    },
-    taskList: {
-        flex: 6
-    },
-    titleBar: {
         flex: 1,
-        justifyContent: 'flex-end'
-    },
-    title: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 23,
-        marginLeft: 20,
-        marginBottom: 20
-    },
-    subtitle: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 20,
-        marginLeft: 20,
-        marginBottom: 30
+        backgroundColor: '#f8f9fc',
     },
     addButton: {
         position: 'absolute',

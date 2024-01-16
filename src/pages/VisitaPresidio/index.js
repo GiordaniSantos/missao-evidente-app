@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform} from 'react-native'
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
-import todayImage from '../../../assets/imgs/fundo-ipb3.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
@@ -93,16 +90,9 @@ export default class VisitaPresidio extends Component {
     }
 
     render(){
-        const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.presidioBuscado} tituloHeader={"Editar Data de Visita ao Presidio"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updatePresidio}/>
-                <ImageBackground source={todayImage} style={styles.background}>
-                    <View style={styles.titleBar}>
-                        <Text style={styles.title}>Visitas aos Presidios</Text>
-                        <Text style={styles.subtitle}>{today}</Text>
-                    </View>
-                </ImageBackground>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.presidios} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaPresidio}/>} />
                 </View>
@@ -117,31 +107,8 @@ export default class VisitaPresidio extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    background:{
-        flex: 2
-    },
-    taskList: {
-        flex: 6
-    },
-    titleBar: {
         flex: 1,
-        justifyContent: 'flex-end'
-    },
-    title: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 26,
-        marginLeft: 20,
-        marginBottom: 20
-    },
-    subtitle: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 20,
-        marginLeft: 20,
-        marginBottom: 30
+        backgroundColor: '#f8f9fc',
     },
     addButton: {
         position: 'absolute',
