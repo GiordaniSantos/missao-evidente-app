@@ -1,8 +1,9 @@
 import React from 'react'
-import {View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import {GestureHandlerRootView} from 'react-native-gesture-handler'
 import  Icon  from 'react-native-vector-icons/FontAwesome'
+import  IconCheck  from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import CommonStyles from '../CommonStyles'
 
@@ -31,7 +32,7 @@ export default props => {
                 <View style={styles.container}>
                     <View style={styles.cheackContainer}>
                         <View style={styles.done}>
-                            <Icon name='check' size={20} color='#FFF'></Icon>
+                            <IconCheck name='account-multiple-check' size={20} color='#FFF'></IconCheck>
                         </View>
                     </View>
                     <View>
@@ -47,11 +48,19 @@ export default props => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        borderColor: '#AAA',
-        borderBottomWidth: 1,
         alignItems: 'center',
+        marginRight: 10,
+        marginLeft: 10,
+        marginTop: 10,
         paddingVertical: 10,
-        backgroundColor: '#FFF'
+        backgroundColor: '#FFF',
+        borderTopColor: '#e3e6f0',
+        borderBottomColor: '#e3e6f0',
+        borderRightColor: '#e3e6f0',
+        borderLeftColor: '#e3e6f0',
+        borderWidth: 1,
+        borderRadius: 5,
+        
     },
     cheackContainer: {
         width: '20%',
@@ -59,16 +68,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
 
     },
-    pending: {
-        height: 25,
-        width: 25,
-        borderRadius: 13,
-        borderWidth: 1,
-        borderColor: '#555'
-    },
     done: {
-        height: 25,
-        width: 25,
+        height: 30,
+        width: 30,
         borderRadius: 33,
         backgroundColor: '#4D7031',
         alignItems: 'center',
@@ -89,12 +91,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
+        marginTop: 10,
+        marginLeft: -13,
+        marginRight: 10
     },
     left: {
         flex: 1,
         backgroundColor: 'red',
         flexDirection: 'row',
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginTop: 10,
+        marginLeft: 10,
+        marginRight: 10,
         alignItems: 'center'
     },
     excludeText: {

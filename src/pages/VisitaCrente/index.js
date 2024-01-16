@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
-import todayImage from '../../../assets/imgs/fundo-ipb3.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
@@ -68,7 +65,6 @@ export default class VisitaCrente extends Component {
 
     }
 
-
     deleteVisitaCrente = async crenteId => {
         try {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -94,16 +90,9 @@ export default class VisitaCrente extends Component {
     }
 
     render(){
-        const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.crenteBuscado} tituloHeader={"Editar Data de Visita ao Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateCrente}/>
-                <ImageBackground source={todayImage} style={styles.background}>
-                    <View style={styles.titleBar}>
-                        <Text style={styles.title}>Visitas aos Crentes</Text>
-                        <Text style={styles.subtitle}>{today}</Text>
-                    </View>
-                </ImageBackground>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.crentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} textoPosQtd={"crentes"} onDelete={this.deleteVisitaCrente}/>} />
                 </View>
@@ -118,31 +107,11 @@ export default class VisitaCrente extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    background:{
-        flex: 2
+        flex: 1,
+        backgroundColor: '#f8f9fc',
     },
     taskList: {
-        flex: 6
-    },
-    titleBar: {
-        flex: 1,
-        justifyContent: 'flex-end'
-    },
-    title: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 28,
-        marginLeft: 20,
-        marginBottom: 20
-    },
-    subtitle: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 20,
-        marginLeft: 20,
-        marginBottom: 30
+        
     },
     addButton: {
         position: 'absolute',
@@ -154,5 +123,5 @@ const styles = StyleSheet.create({
         backgroundColor: commonStyles.colors.today,
         justifyContent: 'center',
         alignItems: 'center' 
-    }
+    },
 })

@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
-import {View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
-import todayImage from '../../../assets/imgs/fundo-ipb3.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AddModal from '../../components/AddModal';
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import Item from '../../components/Item';
@@ -109,17 +106,10 @@ export default class Membresia extends Component {
     }
 
     render(){
-        const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <AddModal isVisible={this.state.showModal} tituloHeader={"Nova membresia"} dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
                 <EditModalMembresia isVisible={this.state.showModalEdit} itemBuscado={this.state.membresiaBuscado}  dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} tituloHeader={"Editar Membresia"} onCancel={() => { this.setState({showModalEdit:false}) }} onUpdate={this.updateMembresia}/>
-                <ImageBackground source={todayImage} style={styles.background}>
-                    <View style={styles.titleBar}>
-                        <Text style={styles.title}>Membresias</Text>
-                        <Text style={styles.subtitle}>{today}</Text>
-                    </View>
-                </ImageBackground>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} openModal={this.abrirModal} textoPosQtd={"membros"} onDelete={this.deleteMembresia}/>} />
                 </View>
@@ -134,31 +124,11 @@ export default class Membresia extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    background:{
-        flex: 2
+        flex: 1,
+        backgroundColor: '#f8f9fc',
     },
     taskList: {
-        flex: 6
-    },
-    titleBar: {
-        flex: 1,
-        justifyContent: 'flex-end'
-    },
-    title: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 36,
-        marginLeft: 20,
-        marginBottom: 20
-    },
-    subtitle: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 20,
-        marginLeft: 20,
-        marginBottom: 30
+
     },
     addButton: {
         position: 'absolute',
@@ -170,5 +140,5 @@ const styles = StyleSheet.create({
         backgroundColor: commonStyles.colors.today,
         justifyContent: 'center',
         alignItems: 'center' 
-    }
+    },
 })
