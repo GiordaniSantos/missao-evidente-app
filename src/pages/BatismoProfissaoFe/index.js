@@ -94,7 +94,7 @@ export default class BatismoProfissaoFe extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.batismoProfissaoBuscado} tituloHeader={"Editar Data de Batismo/Profissão de Fé"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBatismoProfissao}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.batismoProfissao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoProfissao}/>} />
+                    <FlatList data={this.state.batismoProfissao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoProfissao}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoProfissao(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

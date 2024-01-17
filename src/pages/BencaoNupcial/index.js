@@ -94,7 +94,7 @@ export default class BencaoNupcial extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.bencaoNupcialBuscado} tituloHeader={"Editar Data de Bencão Nupcial"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBencaoNupcial}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
+                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBencaoNupcial(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

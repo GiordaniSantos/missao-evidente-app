@@ -94,7 +94,7 @@ export default class EstudoBiblico extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.estudoBiblicoBuscado} tituloHeader={"Editar Data de Estudo Biblico"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudoBiblico}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
+                    <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudoBiblico(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

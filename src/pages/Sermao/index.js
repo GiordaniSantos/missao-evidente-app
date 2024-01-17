@@ -93,7 +93,7 @@ export default class Sermao extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.sermaoBuscado} tituloHeader={"Editar Data de Sermão"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSermao}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
+                    <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addSermao(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

@@ -9,6 +9,12 @@ import CommonStyles from '../CommonStyles'
 
 export default props => {
     resultadoData = props.created_at.split(" ")
+    let nameIcon = null
+    if(props.icon == "atoPastoral"){
+        nameIcon = "check"
+    }else{
+        nameIcon = "user-check"
+    }
 
     const getRightContent = () => {
         return (
@@ -33,7 +39,7 @@ export default props => {
                 <View style={styles.container}>
                     <View style={styles.cheackContainer}>
                         <View style={styles.done}>
-                            <IconCheck name='user-check' size={17} color='#FFF'></IconCheck>
+                            <IconCheck name={nameIcon} size={17} color='#FFF'></IconCheck>
                         </View>
                     </View>
                     <View>

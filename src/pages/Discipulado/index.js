@@ -94,7 +94,7 @@ export default class Discipulado extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.discipuladoBuscado} tituloHeader={"Editar Data de Discipulado"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateDiscipulado}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.discipulado} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteDiscipulado}/>} />
+                    <FlatList data={this.state.discipulado} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteDiscipulado}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addDiscipulado(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

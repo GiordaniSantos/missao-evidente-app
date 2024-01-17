@@ -93,7 +93,7 @@ export default class SantaCeia extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.santaCeiaBuscado} tituloHeader={"Editar Data de Santa Ceia"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSantaCeia}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.santaCeia} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSantaCeia}/>} />
+                    <FlatList data={this.state.santaCeia} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSantaCeia}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addSantaCeia(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

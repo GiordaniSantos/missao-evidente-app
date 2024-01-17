@@ -94,7 +94,7 @@ export default class BatismoInfantil extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.batismoInfantilBuscado} tituloHeader={"Editar Data de Batismo Infantil"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBatismoInfantil}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.batismoInfantil} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoInfantil}/>} />
+                    <FlatList data={this.state.batismoInfantil} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoInfantil}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoInfantil(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

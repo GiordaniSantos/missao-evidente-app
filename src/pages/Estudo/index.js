@@ -94,7 +94,7 @@ export default class Estudo extends Component {
             <View style={styles.container}>
                 <EditModal isVisible={this.state.showModal} itemBuscado={this.state.estudoBuscado} tituloHeader={"Editar Data de Estudo"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudo}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
+                    <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudo(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
