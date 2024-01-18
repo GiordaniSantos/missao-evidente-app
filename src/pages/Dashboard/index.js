@@ -71,7 +71,11 @@ export default class Dashboard extends Component {
             this.setState({ loading: false })
             this.setState({ refresh: false })
         }catch(e) {
-            showError(e.response.data.message)
+            if(e.response.data.message == "Unauthenticated."){
+                this.loadRelatorios()
+            }else{
+                showError(e.response.data.message)
+            }
         }
     }
 

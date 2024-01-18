@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { ImageBackground, Text, StyleSheet, View, TouchableOpacity, StatusBar, Linking } from 'react-native'
 import api from '../../services/api'
 
-import backgroundImage from '../../../assets/imgs/fundo-login.png'
+import backgroundImage from '../../../assets/imgs/map.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
@@ -66,7 +66,7 @@ export default class SignIn extends Component {
 
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
-                <StatusBar translucent backgroundColor="rgb(15, 7, 54)" hidden={true}/>
+                <StatusBar backgroundColor="rgb(15, 7, 54)"/>
                 <Text style={[styles.title, styles.elevation]}>Missão Evidente</Text>
                 <View style={styles.formContainer}>
                     <Text style={styles.subTitle}>{this.state.telaCriacao ? 'Crie a sua conta' : 'Informe seus dados'}</Text>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         fontFamily: CommonStyles.fontFamily,
         color: CommonStyles.colors.secondary,
         fontSize: 26,
-        backgroundColor: '#43A047',
+        backgroundColor: '#015b41',
         borderRadius: 8,
         paddingTop:20,
         paddingLeft:45,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF'
     },
     button: {
-        backgroundColor: '#43A047',
+        backgroundColor: '#015b41',
         marginTop: 25,
         padding: 10,
         alignItems: 'center',
