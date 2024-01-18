@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { ImageBackground, Text, StyleSheet, View, TouchableOpacity, StatusBar, Linking } from 'react-native'
 import api from '../../services/api'
 
-import backgroundImage from '../../../assets/imgs/map.png'
+import backgroundImage from '../../../assets/imgs/fundo-login.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
@@ -66,8 +66,8 @@ export default class SignIn extends Component {
 
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
-                <StatusBar backgroundColor="rgb(15, 7, 54)"/>
-                <Text style={styles.title}>Missão Evidente</Text>
+                <StatusBar translucent backgroundColor="rgb(15, 7, 54)" hidden={true}/>
+                <Text style={[styles.title, styles.elevation]}>Missão Evidente</Text>
                 <View style={styles.formContainer}>
                     <Text style={styles.subTitle}>{this.state.telaCriacao ? 'Crie a sua conta' : 'Informe seus dados'}</Text>
                     {this.state.telaCriacao && 
@@ -119,8 +119,15 @@ const styles = StyleSheet.create({
     title: {
         fontFamily: CommonStyles.fontFamily,
         color: CommonStyles.colors.secondary,
-        fontSize: 30,
-        marginBottom: 10
+        fontSize: 26,
+        backgroundColor: '#43A047',
+        borderRadius: 8,
+        paddingTop:20,
+        paddingLeft:45,
+        paddingRight:45,
+        paddingBottom:20,
+        marginBottom: -40,
+        zIndex:1
     }, 
     subTitle: {
         fontFamily: CommonStyles.fontFamily,
@@ -138,18 +145,18 @@ const styles = StyleSheet.create({
         
     },
     formContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: '#fff',
         padding: 20,
-        borderRadius: 5,
-        width: '90%'
+        width: '90%',
+        borderRadius: 10
     },
     input: {
         marginTop: 10,
         backgroundColor: '#FFF'
     },
     button: {
-        backgroundColor: '#080',
-        marginTop: 10,
+        backgroundColor: '#43A047',
+        marginTop: 25,
         padding: 10,
         alignItems: 'center',
         borderRadius: 7
@@ -158,5 +165,9 @@ const styles = StyleSheet.create({
         fontFamily: CommonStyles.fontFamily,
         color: '#FFF',
         fontSize: 20
-    }
+    },
+    elevation: {
+        elevation: 18,
+        shadowColor: '#3a3b45',
+    },
 })

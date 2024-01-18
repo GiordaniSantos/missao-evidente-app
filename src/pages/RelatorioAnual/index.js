@@ -2,18 +2,13 @@ import React, {Component, useContext} from 'react';
 import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView, Dimensions} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
-import todayImage from '../../../assets/imgs/today.jpg'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import IconRefresh from 'react-native-vector-icons/FontAwesome'
-import AddModal from '../../components/AddModal';
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError, showSuccess } from '../../Common'
-import ItemVisita from '../../components/ItemVisita';
 import SelectDropdown from 'react-native-select-dropdown'
-import ItemRelatorio from '../../components/ItemRelatorio';
-import {LineChart,BarChart,PieChart,ProgressChart,ContributionGraph,StackedBarChart} from "react-native-chart-kit";
 
 const date = new Date();
 
