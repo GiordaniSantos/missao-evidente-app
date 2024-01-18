@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ImageBackground, Text, StyleSheet, View, TouchableOpacity, StatusBar } from 'react-native'
+import { ImageBackground, Text, StyleSheet, View, TouchableOpacity, StatusBar, Linking } from 'react-native'
 import api from '../../services/api'
 
 import backgroundImage from '../../../assets/imgs/map.png'
@@ -8,6 +8,7 @@ import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
 
 import { showError, showSuccess } from '../../Common'
+import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     name: '',
@@ -45,10 +46,10 @@ export default class SignIn extends Component {
                 password: this.state.password,
             })
 
-            showSuccess('Usuário cadastrado com sucesso!')
+            Alert('Usuário cadastrado com sucesso! Agora você pode acessar sua conta.');
             this.setState({ ...initialState })
         } catch(e) {
-            showError(e)
+            showError(e.response.data.message)
         }
     }
 
@@ -102,6 +103,13 @@ export default class SignIn extends Component {
                         {this.state.telaCriacao ? 'Já possui conta?' : 'Ainda não possui conta?'}
                     </Text>
                 </TouchableOpacity>
+                <Text 
+                    style={styles.buttonText} 
+                    onPress={() => { 
+                        Linking.openURL('https://missaoevidente.com.br/password/reset'); 
+                    }}> 
+                    Esqueceu sua senha? 
+                </Text> 
             </ImageBackground>
         )
     }
@@ -132,6 +140,7 @@ const styles = StyleSheet.create({
     formContainer: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         padding: 20,
+        borderRadius: 5,
         width: '90%'
     },
     input: {

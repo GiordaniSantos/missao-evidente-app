@@ -31,13 +31,14 @@ export function AuthProvider({children}) {
 
     async function signIn(email, password) {
         const response = await auth.signIn(email, password);
-        
-        setUser(response.user)
-
-        api.defaults.headers.Authorization = `Bearer ${response.token}`
-        //console.log(response.token)
-        await AsyncStorage.setItem('@MEAuth:user', JSON.stringify(response.user))
-        await AsyncStorage.setItem('@MEAuth:token', response.token)
+        if(response){
+            setUser(response.user)
+    
+            api.defaults.headers.Authorization = `Bearer ${response.token}`
+            //console.log(response.token)
+            await AsyncStorage.setItem('@MEAuth:user', JSON.stringify(response.user))
+            await AsyncStorage.setItem('@MEAuth:token', response.token)
+        }
     }
 
     function logout() {

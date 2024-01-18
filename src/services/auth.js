@@ -18,7 +18,6 @@ export async function signIn(email, password){
         );    
         return res.data;
     }catch(e){
-        console.log(e)
-        showError(e)
+        showError(e.response.data.message)
     }
 }

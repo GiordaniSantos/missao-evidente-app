@@ -35,7 +35,7 @@ const initialState = {
     loading: true,
     refresh: false,
     ano: date.getFullYear(),
-    membresias: {},
+    membresias: 0,
 }
 
 
@@ -45,17 +45,17 @@ export default class RelatorioAnual extends Component {
     static contextType = AuthContext;
 
     componentDidMount = async () => {
-        this.loadRelatorios()
+        this.loadRelatorios(this.state.ano)
     }
 
     onRefresh = () => {
         this.setState({ refresh: true })
-        this.loadRelatorios()
+        this.loadRelatorios(this.state.ano)
     }
    
-    loadRelatorios = async ( mes=date.getMonth()+1 ) => {
+    loadRelatorios = async ( ano=this.state.ano ) => {
         try{
-            const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}`)
+            const res = await api.get(`/relatorio-anual?id_usuario=${this.context.user.id}&ano=${ano}`)
             
             this.setState({ membresias: res.data[0].membresias })
             this.setState({ visitaCrente: res.data[1].crentes })
@@ -86,26 +86,6 @@ export default class RelatorioAnual extends Component {
         }
     }
 
-    addVisitaCrente = async id_usuario => {
-        try {
-            await api.post(`/crente`, {
-                id_usuario: id_usuario
-            })
-
-            this.loadRelatorios()
-
-        } catch (error) {
-            console.log(error)
-            showError(error)
-        }
-
-    }
-
-    alterarMes = (mes) => {
-        this.setState({mes})
-        this.loadRelatorios()
-    }
-
     deleteVisitaCrente = async crenteId => {
         try {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
@@ -127,7 +107,7 @@ export default class RelatorioAnual extends Component {
                         </View>
                         <View style={styles.iconBar}>
                             <View style={{alignItems: 'flex-end', marginBottom: 12}}>
-                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.mes)} activeOpacity={0.1}>
+                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.ano)} activeOpacity={0.1}>
                                     <IconRefresh name={'refresh'} color={'#585b58'} size={18} />
                                 </TouchableOpacity>
                             </View>
@@ -359,96 +339,16 @@ export default class RelatorioAnual extends Component {
                                 <View style={styles.itens}>
                                     <View>
                                         <Text style={[styles.titleVisita, {color: '#211f11'}]}>Média de Membros aos Domingos</Text>
-                                        <Text style={styles.numeroVisita}>15 </Text>
+                                        <Text style={styles.numeroVisita}>{this.state.membresias}</Text>
                                     </View>
                                     <View>
-                                        <Icon size={32} style={styles.iconVisita} name={'hand-holding-heart'}></Icon>
+                                        <Icon size={32} style={styles.iconVisita} name={'users'}></Icon>
                                     </View>
                                 </View>
                             </View>
                         </View>
                     </View>
-                    <View style={styles.acoes}>
-                        <View style={styles.cardMembros}>
-                            <View style={styles.cardHeader}>
-                                <Text style={{color: '#015b41'}}>
-                                    Membresia aos Domingos
-                                </Text>
-                            </View>
-                            <View style={styles.cardBody}>
-                                <View style={{width: '100%', height: 'auto'}}>
-                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
-                                    {this.state.membresias && this.state.membresias.length != 0 ? Array.from(this.state.membresias).map((item, index)=> 
-                                        (
-                                        <View key={index}>
-                                            <ItemRelatorio {...item} cor="#015b41"/>
-                                        </View>
-                                        )
-                                    ) : (
-                                        <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
-                                        )
-                                    }
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.acoes}>
-                        <View style={[styles.cardHeader, {backgroundColor: '#fff',borderTopColor: '#e3e6f0',borderBottomColor: '#e3e6f0', borderRightColor: '#e3e6f0',borderWidth: 1,borderLeftColor: '#e3e6f0', backgroundColor: '#f8f9fc', marginLeft: 10, marginRight: 10}]}>
-                            <Text style={{color: '#015b41'}}>
-                                Média de membros aos Domingos/mês
-                            </Text>
-                        </View>
-                        <BarChart
-                            data={{
-                            labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-                            datasets: [
-                                {
-                                data: [
-                                    10,
-                                    15,
-                                    24,
-                                    14,
-                                    12,
-                                    10,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0
-                                ]
-                                }
-                            ]
-                            }}
-                            width={Dimensions.get("window").width} // from react-native
-                            height={300}
-                            yAxisInterval={1} // optional, defaults to 1
-                            chartConfig={{
-                                backgroundColor: "#015b41",
-                                backgroundGradientFrom: "#0a251b",
-                                backgroundGradientTo: "#071405",
-                                decimalPlaces: 0, // optional, defaults to 2dp
-                                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                style: {
-                                    borderRadius: 16,
-                                    marginLeft:10,
-                                    marginRight:10,
-                                },
-                                propsForDots: {
-                                    r: "6",
-                                    strokeWidth: "2",
-                                    stroke: "#ffa726"
-                                }
-                            }}
-                            style={{
-                                marginVertical: 0,
-                                marginBottom: 10,
-                                marginLeft:10,
-                                marginRight:20,
-                            }}
-                        />
-                    </View>
+                
                 </ScrollView>
             </View>
         )
