@@ -17,11 +17,10 @@ import EstudoBiblico from '../pages/EstudoBiblico';
 import RelatorioAnual from '../pages/RelatorioAnual';
 import Discipulado from '../pages/Discipulado';
 import { AuthContext } from '../contexts/auth';
-import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity, Image } from 'react-native';
+import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
 import Web from '../pages/Web';
-
 import { createDrawerNavigator,  DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
 //estilizando o menu
@@ -509,7 +508,9 @@ export default class AppRoutes extends Component{
           },
           headerRight: () => (
             <View style={{marginRight: 10}}>
-              <Icon size={24} style={{color: '#000'}} name={'question-circle'} onPress={this.toggleModal}></Icon>
+              <TouchableOpacity onPress={this.toggleModal} activeOpacity={0.1}>
+                <Icon size={24} style={{color: '#000'}} name={'question-circle'}></Icon>
+              </TouchableOpacity>
               <Modal
                 animationType="fade"
                 transparent={true}
@@ -517,16 +518,23 @@ export default class AppRoutes extends Component{
                 onRequestClose={() => {
                   this.toggleModal(false);
                 }}>
-                <View style={styles.centeredView}>
-                  <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Missão Evidente!</Text>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={() => this.toggleModal(false)}>
-                      <Text style={styles.textStyle}>Fechar</Text>
-                    </Pressable>
-                  </View>
-                </View>
+                  <TouchableOpacity style={{flex:1}} activeOpacity={1}  onPress={() => this.toggleModal(false)} >
+                    <View style={styles.centeredView}>
+                      <TouchableWithoutFeedback>
+                        <View style={styles.modalView}>
+                          <Text style={styles.modalText}>Orientações de Uso</Text>
+                          <View style={{textAlign:'justify'}}>
+                            <Text>
+                              Navegue pelo menu à esquerda para começar a utilizar os recursos. {'\n'}{'\n'}
+                              Para adicionar um registro basta tocar no círculo com ícone de +. {'\n'}{'\n'}
+                              Para remover um registro deslize a caixa para à direita até o final. {'\n'}{'\n'}
+                              Para editar um registro deslize a caixa para à esquerda e clique no ícone de editar.
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </View>
+                  </TouchableOpacity>
               </Modal>
             </View>
           )
@@ -658,15 +666,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.2)'
   },
   modalView: {
     margin: 20,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 5,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
+    
     shadowOffset: {
       width: 0,
       height: 2,
@@ -692,7 +700,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalText: {
-    marginBottom: 15,
+    marginBottom: 25,
     textAlign: 'center',
   },
 })

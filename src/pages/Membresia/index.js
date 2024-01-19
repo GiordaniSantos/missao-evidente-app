@@ -35,7 +35,7 @@ export default class Membresia extends Component {
             const res = await api.get(`/membresia?id_usuario=${this.context.user.id}`)
             this.setState({ membros: res.data.data })
         }catch(e) {
-            showError(e)
+            showError(e.response.data.message)
         }
     }
 
