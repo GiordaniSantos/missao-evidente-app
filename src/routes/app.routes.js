@@ -523,7 +523,7 @@ export default class AppRoutes extends Component{
                       <TouchableWithoutFeedback>
                         <View style={styles.modalView}>
                           <Text style={styles.modalText}>Orientações de Uso</Text>
-                          <View style={{textAlign:'justify'}}>
+                          <View>
                             <Text>
                               Navegue pelo menu à esquerda para começar a utilizar os recursos. {'\n'}{'\n'}
                               Para adicionar um registro basta tocar no círculo com ícone de +. {'\n'}{'\n'}
@@ -700,7 +700,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalText: {
+    marginTop: -10,
     marginBottom: 25,
     textAlign: 'center',
+    fontWeight: 'bold'
   },
 })
