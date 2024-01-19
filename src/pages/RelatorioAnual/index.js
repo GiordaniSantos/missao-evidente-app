@@ -1,13 +1,11 @@
-import React, {Component, useContext} from 'react';
-import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView, Dimensions} from 'react-native'
+import React, {Component} from 'react';
+import {View, RefreshControl, Text, StyleSheet, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
-import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import IconRefresh from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import api from '../../services/api';
-import { showError, showSuccess } from '../../Common'
+import { showError } from '../../Common'
 import SelectDropdown from 'react-native-select-dropdown'
 
 const date = new Date();
@@ -70,42 +68,17 @@ export default class RelatorioAnual extends Component {
             this.setState({ loading: false })
             this.setState({ refresh: false })
         }catch(e) {
-            console.log(e)
-            showError(e)
-        }
-    }
-
-    loadingRequest = async () => {
-        if(this.state.loading){
-            return ( <ActivityIndicator size="large" color="#00ff00" /> )
-        }
-    }
-
-    deleteVisitaCrente = async crenteId => {
-        try {
-            await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
-            this.loadRelatorios()
-        } catch (error) {
-            showError(error)
+            showError(e.response.data.message)
         }
     }
 
     render(){
-        const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>
                     <View style={styles.header}>
-                        <View style={styles.titleBar}>
-                            <Text style={styles.title}>Relatório Anual</Text>
-                            <Text style={styles.subtitle}>de {this.state.ano}</Text>
-                        </View>
+                
                         <View style={styles.iconBar}>
-                            <View style={{alignItems: 'flex-end', marginBottom: 12}}>
-                                <TouchableOpacity onPress={() => this.loadRelatorios(this.state.ano)} activeOpacity={0.1}>
-                                    <IconRefresh name={'refresh'} color={'#585b58'} size={18} />
-                                </TouchableOpacity>
-                            </View>
                             <SelectDropdown
                                 data={['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032']}
                                 buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
@@ -379,9 +352,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     header:{
-        height: 115,
-        justifyContent: "space-between",
-        flexDirection: "row",
+        flex: 1,
+        justifyContent: "center",
+        marginTop: 15,
+        marginRight: 10,
+        marginLeft: 10,
+        marginBottom: 5
     },
     elevation: {
         elevation: 18,
@@ -455,34 +431,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
-    titleBar: {
-        flex: 1,
-        height: 100,
-        width: 150,
-        marginTop: 25,
-    },
-    title: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 25,
-        marginLeft: 15,
-        marginBottom: 7,
-        color: '#585b58'
-    },
-    subtitle: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 17,
-        marginLeft: 20,
-        marginBottom: 30,
-        color: 'black',
-        fontWeight: '400',
-        color: '#585b58'
-    },
     iconBar: {
-        height: 100,
-        width: 150,
-        marginTop: Platform.OS === 'ios' ? 40 : 15,
-        marginRight: 15,
+        width: '100%',
     },
 })
