@@ -21,6 +21,7 @@ import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableO
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
 import Web from '../pages/Web';
+import image from '../../assets/imgs/logo-menu-2.png'
 import { createDrawerNavigator,  DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
 //estilizando o menu
@@ -35,16 +36,17 @@ function CustomDrawerContent(props) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <StatusBar backgroundColor="rgb(255, 255, 255)" barStyle="dark-content"/>
+      <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.24)" animated />
       <View style={styles.container}>
         <View style={styles.userArea}>
-          {/*<Image  styles={styles.user} />*/}
-          <Text style={styles.nome}>{context.user.name}</Text>
-          <Text style={styles.email}>{context.user.email}</Text>
+          <Image source={image} style={styles.user} />
+          <Text style={styles.title}>Missão Evidente</Text>
+          {/*<Text style={styles.nome}>{context.user.name}</Text>*/}
+          {/*<Text style={styles.email}>{context.user.email}</Text>*/}
         </View>
         <DrawerItem
           label="Início"
-          activeBackgroundColor='#015b41'
+          activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           labelStyle={{marginLeft:-9}}
           focused={getActiveRouteState(
@@ -64,7 +66,7 @@ function CustomDrawerContent(props) {
         />
         <DrawerItem
           label="Relatório Anual"
-          activeBackgroundColor='#015b41'
+          activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           labelStyle={{marginLeft:-9}}
           focused={getActiveRouteState(
@@ -84,7 +86,7 @@ function CustomDrawerContent(props) {
         />
         <DrawerItem
           label="Membresia"
-          activeBackgroundColor='#015b41'
+          activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           labelStyle={{marginLeft:-9}}
           focused={getActiveRouteState(
@@ -107,7 +109,7 @@ function CustomDrawerContent(props) {
           label="Ato Pastoral"
           labelStyle={{marginLeft: -2}}
           drawerLabelStyle={{marginLeft: -2}}
-          activeBackgroundColor='#015b41'
+          activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           focused={getActiveRouteState(
             props.state.routes,
@@ -128,7 +130,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -149,7 +151,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -170,7 +172,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -3}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -188,7 +190,7 @@ function CustomDrawerContent(props) {
             />
             <DrawerItem
               label="Discipulado"
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               labelStyle={{marginLeft: -10}}
               drawerLabelStyle={{marginLeft: -3}}
               style={{marginLeft:20, marginRight:20}}
@@ -214,7 +216,7 @@ function CustomDrawerContent(props) {
           label="Pregação"
           labelStyle={{marginLeft: -2}}
           drawerLabelStyle={{marginLeft: -2}}
-          activeBackgroundColor='#015b41'
+          activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           focused={getActiveRouteState(
             props.state.routes,
@@ -235,7 +237,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -256,7 +258,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -15}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -277,7 +279,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -13}}
               drawerLabelStyle={{marginLeft: -3}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -293,7 +295,7 @@ function CustomDrawerContent(props) {
             />
             <DrawerItem
               label="Santa Ceia"
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               style={{marginLeft:20, marginRight:20}}
               activeTintColor='#fff'
               focused={getActiveRouteState(
@@ -317,7 +319,7 @@ function CustomDrawerContent(props) {
           label="Visitação"
           labelStyle={{marginLeft: -2}}
           drawerLabelStyle={{marginLeft: -2}}
-          activeBackgroundColor='#015b41'
+          activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           focused={getActiveRouteState(
             props.state.routes,
@@ -338,7 +340,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -359,7 +361,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -380,7 +382,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -401,7 +403,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -420,7 +422,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -441,7 +443,7 @@ function CustomDrawerContent(props) {
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#015b41'
+              activeBackgroundColor='#0f5d39'
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
@@ -501,15 +503,21 @@ export default class AppRoutes extends Component{
     return(
       <Drawer.Navigator 
         screenOptions={{
-          drawerActiveBackgroundColor: '#015b41',
+          drawerActiveBackgroundColor: '#0f5d39',
           drawerActiveTintColor: '#fff',
+          headerStyle: {
+            backgroundColor: '#0f5d39',
+            
+          },
+          headerTintColor: '#FFF',
           headerTitleStyle:{
-            fontSize:16
+            fontSize:16,
+            color: '#fff'
           },
           headerRight: () => (
             <View style={{marginRight: 10}}>
               <TouchableOpacity onPress={this.toggleModal} activeOpacity={0.1}>
-                <Icon size={24} style={{color: '#000'}} name={'question-circle'}></Icon>
+                <Icon size={24} style={{color: '#FFF'}} name={'question-circle'}></Icon>
               </TouchableOpacity>
               <Modal
                 animationType="fade"
@@ -643,13 +651,27 @@ const styles = StyleSheet.create({
     flex: 1
   },
   userArea:{
-    marginTop: 13,
-    marginLeft: 15,
-    marginBottom: 15
+    marginTop: -500,
+    paddingTop: 500,
+    paddingBottom: 5,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    backgroundColor: '#0f5d39'
   },
   user:{
-    width: 55,
-    height: 55,
+    width: 120,
+    height: 120,
+  },
+  title:{
+    marginTop: -18,
+    marginBottom: 15,
+    fontFamily: CommonStyles.fontFamily,
+    fontSize: 18,
+    letterSpacing: 1,
+    fontWeight: 'bold',
+    color: '#FFF'
   },
   nome:{
     fontFamily: CommonStyles.fontFamily,

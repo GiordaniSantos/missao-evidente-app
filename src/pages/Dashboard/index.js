@@ -402,9 +402,10 @@ const styles = StyleSheet.create({
     },
     dropdown2BtnStyle: {
         width: '100%',
-        height: 50,
+       
         backgroundColor: '#134b36',
         borderRadius: 8,
+     
     },
     dropdown2BtnTxtStyle: {
         color: '#FFF',
@@ -412,6 +413,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     dropdown2DropdownStyle: {
+        //marginTop: -34,
+        top: 0,
         backgroundColor: '#134b36',
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
