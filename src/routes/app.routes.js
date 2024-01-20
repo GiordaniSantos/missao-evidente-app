@@ -21,7 +21,7 @@ import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableO
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
 import Web from '../pages/Web';
-import image from '../../assets/imgs/logo-menu-2.png'
+import image from '../../assets/imgs/logo-menu.png'
 import { createDrawerNavigator,  DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 
 //estilizando o menu
@@ -36,7 +36,7 @@ function CustomDrawerContent(props) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.24)" animated />
+      <StatusBar translucent={true} backgroundColor="rgba(0, 0, 0, 0.24)" animated />
       <View style={styles.container}>
         <View style={styles.userArea}>
           <Image source={image} style={styles.user} />

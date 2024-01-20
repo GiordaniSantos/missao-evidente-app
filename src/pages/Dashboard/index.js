@@ -120,6 +120,7 @@ export default class Dashboard extends Component {
                                 data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
                                 buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
                                 buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                                statusBarTranslucent={true}
                                 renderDropdownIcon={isOpened => {
                                     return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
                                 }}
@@ -146,6 +147,7 @@ export default class Dashboard extends Component {
                                 data={['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032']}
                                 buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
                                 buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                                statusBarTranslucent={true}
                                 renderDropdownIcon={isOpened => {
                                     return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
                                 }}
@@ -182,11 +184,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#4e73df'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#f6c23e'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Não Crentes</Text>
+                                        <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Não Crentes</Text>
                                         <Text style={styles.numeroVisita}>{this.state.visitaNaoCrente} visitas</Text>
                                     </View>
                                     <View>
@@ -197,11 +199,11 @@ export default class Dashboard extends Component {
                         </View>
                     </View>
                     <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#d55b2a'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#f6c23e'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#d55b2a'}]}>Presídios</Text>
+                                        <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Presídios</Text>
                                         <Text style={styles.numeroVisita}>{this.state.visitaPresidio} visitas</Text>
                                     </View>
                                     <View>
@@ -210,11 +212,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#99443b'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#99443b'}]}>Enfermos</Text>
+                                        <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Enfermos</Text>
                                         <Text style={styles.numeroVisita}>{this.state.visitaEnfermo} visitas</Text>
                                     </View>
                                     <View>
@@ -238,11 +240,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color:'#85102f'}]}>Escolas</Text>
+                                        <Text style={[styles.titleVisita, {color:'#f6c23e'}]}>Escolas</Text>
                                         <Text style={styles.numeroVisita}>{this.state.visitaEscola} visitas</Text>
                                     </View>
                                     <View>
@@ -253,11 +255,11 @@ export default class Dashboard extends Component {
                         </View>
                     </View>
                     <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#d15268'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#d15268'}]}>Estudo</Text>
+                                        <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Estudo</Text>
                                         <Text style={styles.numeroVisita}>{this.state.estudos} </Text>
                                     </View>
                                     <View>
@@ -266,11 +268,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#1f1956'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color:'#1f1956'}]}>Sermão</Text>
+                                        <Text style={[styles.titleVisita, {color:'#4e73df'}]}>Sermão</Text>
                                         <Text style={styles.numeroVisita}>{this.state.sermoes} </Text>
                                     </View>
                                     <View>
@@ -281,11 +283,11 @@ export default class Dashboard extends Component {
                         </View>
                     </View>
                     <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#d27322'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#d27322'}]}>Estudo Biblico</Text>
+                                        <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Estudo Biblico</Text>
                                         <Text style={styles.numeroVisita}>{this.state.estudosBiblicos} </Text>
                                     </View>
                                     <View>
@@ -294,11 +296,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#2ddfae'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color:'#2ddfae'}]}>Discipulado</Text>
+                                        <Text style={[styles.titleVisita, {color:'#4e73df'}]}>Discipulado</Text>
                                         <Text style={styles.numeroVisita}>{this.state.discipulados} </Text>
                                     </View>
                                     <View>
@@ -309,11 +311,11 @@ export default class Dashboard extends Component {
                         </View>
                     </View>
                     <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#359d93'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#359d93'}]}>Batismo Infantil</Text>
+                                        <Text style={[styles.titleVisita, {color: '#85102f'}]}>Batismo Infantil</Text>
                                         <Text style={styles.numeroVisita}>{this.state.batismosInfantis} </Text>
                                     </View>
                                     <View>
@@ -322,11 +324,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#909274'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color:'#909274'}]}>Batismo/Prof. Fé</Text>
+                                        <Text style={[styles.titleVisita, {color:'#85102f'}]}>Batismo/Prof. Fé</Text>
                                         <Text style={styles.numeroVisita}>{this.state.batismosProfissoes} </Text>
                                     </View>
                                     <View>
@@ -337,11 +339,11 @@ export default class Dashboard extends Component {
                         </View>
                     </View>
                     <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#211f11'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color: '#211f11'}]}>Benção Nupcial</Text>
+                                        <Text style={[styles.titleVisita, {color: '#85102f'}]}>Benção Nupcial</Text>
                                         <Text style={styles.numeroVisita}>{this.state.bencoesNupciais} </Text>
                                     </View>
                                     <View>
@@ -350,11 +352,11 @@ export default class Dashboard extends Component {
                                 </View>
                             </View>
                         </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#338767'}]}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
                             <View style={styles.cardBody}>
                                 <View style={styles.itens}>
                                     <View>
-                                        <Text style={[styles.titleVisita, {color:'#338767'}]}>Santa Ceia</Text>
+                                        <Text style={[styles.titleVisita, {color:'#85102f'}]}>Santa Ceia</Text>
                                         <Text style={styles.numeroVisita}>{this.state.santasCeias} </Text>
                                     </View>
                                     <View>
@@ -403,7 +405,7 @@ const styles = StyleSheet.create({
     dropdown2BtnStyle: {
         width: '100%',
        
-        backgroundColor: '#134b36',
+        backgroundColor: '#0f5d39',
         borderRadius: 8,
      
     },
@@ -413,9 +415,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     dropdown2DropdownStyle: {
-        //marginTop: -34,
-        top: 0,
-        backgroundColor: '#134b36',
+        backgroundColor: '#0f5d39',
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
     },
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
         display: 'flex', 
         flexDirection: 'row'
     },
-    dropdown2RowStyle: {backgroundColor: '#134b36', borderBottomColor: '#C5C5C5'},
+    dropdown2RowStyle: {backgroundColor: '#0f5d39', borderBottomColor: '#C5C5C5'},
     dropdown2RowTxtStyle: {
         color: '#FFF',
         textAlign: 'center',
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
         borderRightColor: '#e3e6f0',
         borderWidth: 1,
         margin: 10,
-        borderLeftColor: '#1cc88a',
+        borderLeftColor: '#f6c23e',
         borderLeftWidth: 4,
         flex: 1,
         borderRadius: 5,
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
     },
     titleVisita:{
         fontSize: 11,
-        color: '#1cc88a',
+        color: '#f6c23e',
         fontWeight: '700',
     },
     numeroVisita:{
