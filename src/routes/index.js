@@ -15,7 +15,7 @@ export default class Routes extends Component {
         if(this.context.loading){
             return(
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <StatusBar backgroundColor="rgb(255, 255, 255)" barStyle="dark-content"/>
+                    <StatusBar translucent={true} backgroundColor="rgba(0, 0, 0, 0.24)" animated />
                     <ActivityIndicator size="large" style={{ transform: [{ scaleX: 3 }, { scaleY: 3 }] }} color="#0f5d39" />
                 </View>
             )
