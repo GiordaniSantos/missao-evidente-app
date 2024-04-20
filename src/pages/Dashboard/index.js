@@ -1,5 +1,5 @@
 import React, {Component, useContext, useEffect} from 'react';
-import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
+import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, Button, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -9,6 +9,10 @@ import api from '../../services/api';
 import { showError, showSuccess } from '../../Common'
 import SelectDropdown from 'react-native-select-dropdown'
 import ItemRelatorio from '../../components/ItemRelatorio';
+import * as XLSX from 'xlsx';
+import RNFS from 'react-native-fs';
+
+import FileViewer from "react-native-file-viewer";
 
 const date = new Date();
 
@@ -29,6 +33,12 @@ const initialState = {
     discipulados: 0,
     loading: true,
     refresh: false,
+    array: [
+        ['Name', 'Age', 'City'],
+        ['John', 34, 'New York'],
+        ['Jane', 28, 'Chicago'],
+        ['Mike', 45, 'Los Angeles'],
+    ],
     mes: date.getMonth()+1,
     ano: date.getFullYear(),
     membresias: {},
@@ -108,12 +118,51 @@ export default class Dashboard extends Component {
             showError(error)
         }
     }
+    
+    exportData = () => {
+        let filePath = RNFS.DownloadDirectoryPath + '/relatorio.xlsx';
+        let sample_data_to_export = [
+            { Campo: 'Visitas aos Crentes', Valor: 150 },
+            { Campo: 'Visitas aos Não Crentes', Valor: 5 },
+            { Campo: 'Visitas aos Hospitais', Valor: 10 },
+            // more data
+          ];
+          
+        let wb = XLSX.utils.book_new();
+        let ws = XLSX.utils.json_to_sheet(sample_data_to_export);
+        XLSX.utils.book_append_sheet(wb, ws, "Users");
+        const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
+        RNFS.writeFile(filePath, wbout, 'ascii')
+            .then((r) => {
+                //arquivo salvo
+                FileViewer.open(filePath)
+                    .then((res) => {
+                        // Success arquivo aberto
+                    })
+                    .catch((error) => {
+                        // Error ao abrir
+                        showError(error == "Error: No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel. (O arquivo foi salvo no diretório de Downloads)" : error)
+                    });
+            })
+            .catch((e) => {
+                //erro ao salvar
+                showError(e)
+            });
+    }
 
     render(){
         const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>
+                    <View style={styles.headerExcel}>
+                        <TouchableOpacity style={styles.buttonOpacityExcel} onPress={this.exportData}>
+                            <View style={styles.containerViewButtonExcel}>
+                                <Icon name="file-excel" color="white" size={20} />
+                                <Text style={styles.textButtonExcel}>Exportar para Excel</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.header}>
                         <View style={styles.firstSelectButton}>
                             <SelectDropdown
@@ -423,11 +472,36 @@ const styles = StyleSheet.create({
         display: 'flex', 
         flexDirection: 'row'
     },
-    dropdown2RowStyle: {backgroundColor: '#0f5d39', borderBottomColor: '#C5C5C5'},
+    dropdown2RowStyle: {
+        backgroundColor: '#0f5d39', 
+        borderBottomColor: '#C5C5C5'
+    },
     dropdown2RowTxtStyle: {
         color: '#FFF',
         textAlign: 'center',
         fontWeight: 'bold',
+    },
+    headerExcel:{        
+       marginTop:11,
+       marginBottom: -4,
+       marginLeft: 10,
+       marginRight: 10
+    },
+    buttonOpacityExcel:{
+        backgroundColor: '#0f5d39', 
+        padding: 10, 
+        borderRadius: 8
+    },
+    containerViewButtonExcel:{
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        textAlign: 'center', 
+        justifyContent: 'center'
+    },
+    textButtonExcel:{
+        color: 'white', 
+        marginLeft: 6, 
+        textAlign: 'center'
     },
     header:{
         justifyContent: "space-between",
