@@ -33,12 +33,6 @@ const initialState = {
     discipulados: 0,
     loading: true,
     refresh: false,
-    array: [
-        ['Name', 'Age', 'City'],
-        ['John', 34, 'New York'],
-        ['Jane', 28, 'Chicago'],
-        ['Mike', 45, 'Los Angeles'],
-    ],
     mes: date.getMonth()+1,
     ano: date.getFullYear(),
     membresias: {},
@@ -118,18 +112,33 @@ export default class Dashboard extends Component {
             showError(error)
         }
     }
+
+    getDataToExport = () => {
+        this.loadRelatorios()
+        let data = [
+            { Campo: 'Visitas aos Crentes', Valor: this.state.visitaCrente },
+            { Campo: 'Visitas aos Não Crentes', Valor: this.state.visitaNaoCrente },
+            { Campo: 'Visitas aos Presídios', Valor: this.state.visitaPresidio },
+            { Campo: 'Visitas aos Enfermos', Valor: this.state.visitaEnfermo },
+            { Campo: 'Visitas aos Hospitais', Valor: this.state.visitaHospital },
+            { Campo: 'Visitas às Escolas', Valor: this.state.visitaEscola },
+            { Campo: 'Estudos', Valor: this.state.estudos },
+            { Campo: 'Sermões', Valor: this.state.sermoes },
+            { Campo: 'Estudos Biblicos', Valor: this.state.estudosBiblicos },
+            { Campo: 'Discipulados', Valor: this.state.discipulados },
+            { Campo: 'Batismos Infantis', Valor: this.state.batismosInfantis },
+            { Campo: 'Batismos/Prof. Fé', Valor: this.state.batismosProfissoes },
+            { Campo: 'Benções Nupciais', Valor: this.state.bencoesNupciais },
+            { Campo: 'Santas Ceias', Valor: this.state.santasCeias },
+        ]
+        return data;
+    }
     
     exportData = () => {
         let filePath = RNFS.DownloadDirectoryPath + '/relatorio.xlsx';
-        let sample_data_to_export = [
-            { Campo: 'Visitas aos Crentes', Valor: 150 },
-            { Campo: 'Visitas aos Não Crentes', Valor: 5 },
-            { Campo: 'Visitas aos Hospitais', Valor: 10 },
-            // more data
-          ];
           
         let wb = XLSX.utils.book_new();
-        let ws = XLSX.utils.json_to_sheet(sample_data_to_export);
+        let ws = XLSX.utils.json_to_sheet(this.getDataToExport());
         XLSX.utils.book_append_sheet(wb, ws, "Users");
         const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
         RNFS.writeFile(filePath, wbout, 'ascii')

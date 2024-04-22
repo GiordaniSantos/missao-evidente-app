@@ -85,7 +85,7 @@ function CustomDrawerContent(props) {
           }}
         />
         <DrawerItem
-          label="Membresia"
+          label="Frequência"
           activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
           labelStyle={{marginLeft:-9}}
@@ -106,7 +106,7 @@ function CustomDrawerContent(props) {
         />
         {isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
-          label="Ato Pastoral"
+          label="Ministração"
           labelStyle={{marginLeft: -2}}
           drawerLabelStyle={{marginLeft: -2}}
           activeBackgroundColor='#0f5d39'
@@ -213,7 +213,7 @@ function CustomDrawerContent(props) {
         ):null}
         {isShowAtoPastoral || isShowPregacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
-          label="Pregação"
+          label="Ato Pastoral"
           labelStyle={{marginLeft: -2}}
           drawerLabelStyle={{marginLeft: -2}}
           activeBackgroundColor='#0f5d39'
@@ -704,17 +704,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
   },
   textStyle: {
     color: 'white',
