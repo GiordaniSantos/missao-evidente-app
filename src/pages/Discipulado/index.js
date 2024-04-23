@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     discipuladoBuscado: [],
     discipulado: []
 }
@@ -78,13 +79,14 @@ export default class Discipulado extends Component {
     buscarDiscipulado = async id => {
         try {
             const res = await api.get(`/discipulado/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ discipuladoBuscado: res.data })
+            this.setState({ discipuladoBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarDiscipulado(id)
         this.setState({ showModal: true })
     }
@@ -92,7 +94,7 @@ export default class Discipulado extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.discipuladoBuscado} tituloHeader={"Editar Data de Discipulado"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateDiscipulado}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.discipuladoBuscado} tituloHeader={"Editar Data de Discipulado"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateDiscipulado}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.discipulado} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteDiscipulado}/>} />
                 </View>

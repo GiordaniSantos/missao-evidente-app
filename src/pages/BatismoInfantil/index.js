@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     batismoInfantilBuscado: [],
     batismoInfantil: []
 }
@@ -78,13 +79,14 @@ export default class BatismoInfantil extends Component {
     buscarBatismoInfantil = async id => {
         try {
             const res = await api.get(`/batismo-infantil/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ batismoInfantilBuscado: res.data })
+            this.setState({ batismoInfantilBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarBatismoInfantil(id)
         this.setState({ showModal: true })
     }
@@ -92,7 +94,7 @@ export default class BatismoInfantil extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.batismoInfantilBuscado} tituloHeader={"Editar Data de Batismo Infantil"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBatismoInfantil}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.batismoInfantilBuscado} tituloHeader={"Editar Data de Batismo Infantil"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBatismoInfantil}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.batismoInfantil} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoInfantil}/>} />
                 </View>

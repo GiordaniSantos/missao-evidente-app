@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     crenteBuscado: [],
     crentes: []
 }
@@ -79,13 +80,14 @@ export default class VisitaCrente extends Component {
     buscarCrente = async id => {
         try {
             const res = await api.get(`/crente/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ crenteBuscado: res.data })
+            this.setState({ crenteBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarCrente(id)
         this.setState({ showModal: true })
     }
@@ -93,7 +95,7 @@ export default class VisitaCrente extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.crenteBuscado} tituloHeader={"Editar Data de Visita ao Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateCrente}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} withNome={true} itemBuscado={this.state.crenteBuscado} tituloHeader={"Editar Data de Visita ao Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateCrente}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.crentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} textoPosQtd={"crentes"} onDelete={this.deleteVisitaCrente}/>} />
                 </View>

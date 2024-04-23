@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     escolaBuscado: [],
     escola: []
 }
@@ -79,13 +80,14 @@ export default class VisitaEscola extends Component {
     buscarEscola = async id => {
         try {
             const res = await api.get(`/escola/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ escolaBuscado: res.data })
+            this.setState({ escolaBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarEscola(id)
         this.setState({ showModal: true })
     }
@@ -93,7 +95,7 @@ export default class VisitaEscola extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.escolaBuscado} tituloHeader={"Editar Data de Visita à Escola"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEscola}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} withNome={true} itemBuscado={this.state.escolaBuscado} tituloHeader={"Editar Data de Visita à Escola"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEscola}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.escola} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEscola}/>} />
                 </View>

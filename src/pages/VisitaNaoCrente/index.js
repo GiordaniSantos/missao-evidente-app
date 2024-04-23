@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     naoCrenteBuscado: [],
     naoCrentes: []
 }
@@ -79,13 +80,14 @@ export default class VisitaNaoCrente extends Component {
     buscarNaoCrente = async id => {
         try {
             const res = await api.get(`/incredulo/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ naoCrenteBuscado: res.data })
+            this.setState({ naoCrenteBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarNaoCrente(id)
         this.setState({ showModal: true })
     }
@@ -93,7 +95,7 @@ export default class VisitaNaoCrente extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.naoCrenteBuscado} tituloHeader={"Editar Data de Visita ao Não Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateNaoCrente}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} withNome={true} itemBuscado={this.state.naoCrenteBuscado} tituloHeader={"Editar Data de Visita ao Não Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateNaoCrente}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.naoCrentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaNaoCrente}/>} />
                 </View>

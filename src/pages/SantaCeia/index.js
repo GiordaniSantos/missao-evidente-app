@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     santaCeiaBuscado: [],
     santaCeia: []
 }
@@ -77,13 +78,14 @@ export default class SantaCeia extends Component {
     buscarSantaCeia = async id => {
         try {
             const res = await api.get(`/santa-ceia/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ santaCeiaBuscado: res.data })
+            this.setState({ santaCeiaBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarSantaCeia(id)
         this.setState({ showModal: true })
     }
@@ -91,7 +93,7 @@ export default class SantaCeia extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.santaCeiaBuscado} tituloHeader={"Editar Data de Santa Ceia"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSantaCeia}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.santaCeiaBuscado} tituloHeader={"Editar Data de Santa Ceia"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSantaCeia}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.santaCeia} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSantaCeia}/>} />
                 </View>

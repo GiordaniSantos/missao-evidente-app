@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     sermaoBuscado: [],
     sermao: []
 }
@@ -77,13 +78,14 @@ export default class Sermao extends Component {
     buscarSermao = async id => {
         try {
             const res = await api.get(`/sermao/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ sermaoBuscado: res.data })
+            this.setState({ sermaoBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarSermao(id)
         this.setState({ showModal: true })
     }
@@ -91,7 +93,7 @@ export default class Sermao extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.sermaoBuscado} tituloHeader={"Editar Data de Sermão"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSermao}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.sermaoBuscado} tituloHeader={"Editar Data de Sermão"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSermao}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
                 </View>

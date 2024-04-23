@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     hospitalBuscado: [],
     hospital: []
 }
@@ -81,13 +82,14 @@ export default class VisitaHospital extends Component {
     buscarHospital = async id => {
         try {
             const res = await api.get(`/hospital/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ hospitalBuscado: res.data })
+            this.setState({ hospitalBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarHospital(id)
         this.setState({ showModal: true })
     }
@@ -96,7 +98,7 @@ export default class VisitaHospital extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.hospitalBuscado} tituloHeader={"Editar Data de Visita ao Hospital"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateHospital}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} withNome={true} itemBuscado={this.state.hospitalBuscado} tituloHeader={"Editar Data de Visita ao Hospital"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateHospital}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.hospital} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaHospital}/>} />
                 </View>

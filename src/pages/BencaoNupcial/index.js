@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     bencaoNupcialBuscado: [],
     bencaoNupcial: []
 }
@@ -78,13 +79,14 @@ export default class BencaoNupcial extends Component {
     buscarBencaoNupcial = async id => {
         try {
             const res = await api.get(`/bencao-nupcial/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ bencaoNupcialBuscado: res.data })
+            this.setState({ bencaoNupcialBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarBencaoNupcial(id)
         this.setState({ showModal: true })
     }
@@ -92,7 +94,7 @@ export default class BencaoNupcial extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.bencaoNupcialBuscado} tituloHeader={"Editar Data de Bencão Nupcial"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBencaoNupcial}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.bencaoNupcialBuscado} tituloHeader={"Editar Data de Bencão Nupcial"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBencaoNupcial}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
                 </View>

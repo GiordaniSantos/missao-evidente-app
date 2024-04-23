@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput } from 'react-native'
+import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import CommonStyles from '../CommonStyles'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { AuthContext } from '../contexts/auth'
@@ -113,21 +113,28 @@ export default class EditModal extends Component {
     render(){
         return (
             <Modal transparent={true} visible={this.props.isVisible} onRequestClose={this.props.onCancel} animationType='fade'>
-                {this.props.loading && <Text>Loading</Text>}
                 <TouchableWithoutFeedback onPress={this.props.onCancel}>
                     <View style={styles.background}></View>
                 </TouchableWithoutFeedback>
                 <View style={styles.container}>
                     <Text style={styles.header}>{this.props.tituloHeader}</Text>
-                    {this.getDatePicker()}
-                    {this.getTimePicker()}
-                    {this.props.withNome && 
-                        <TextInput 
-                            placeholder='Nome do Visitado' 
-                            value={this.state.nome} 
-                            style={[styles.date, styles.input]} 
-                            onChangeText={textNome => this.setState({ nome: textNome })} 
-                            /> 
+                    {this.props.loading ? 
+                        <View>
+                            <ActivityIndicator size="large" color="#0f5d39" style={[styles.activityIndicator, this.state.withNome ? {marginTop: 90,marginBottom: 90} : {marginTop: 70,marginBottom: 70}]} />
+                        </View>
+                    : 
+                        <View>
+                            {this.getDatePicker()}
+                            {this.getTimePicker()}
+                            {this.props.withNome && 
+                                <TextInput 
+                                    placeholder='Nome do Visitado' 
+                                    value={this.state.nome} 
+                                    style={[styles.date, styles.input]} 
+                                    onChangeText={textNome => this.setState({ nome: textNome })} 
+                                    /> 
+                            }
+                        </View>
                     }
                     <View style={styles.buttons}>
                         <TouchableOpacity onPress={this.props.onCancel}>
@@ -147,6 +154,9 @@ export default class EditModal extends Component {
 }
 
 const styles = StyleSheet.create({
+    activityIndicator: {
+        transform: [{ scaleX: 2 }, { scaleY: 2 }]
+    },
     background: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.7)'

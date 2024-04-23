@@ -12,6 +12,7 @@ import Alert from '../../components/SweetAlert';
 const initialState = { 
     showDoneTasks: true,
     showModal: false,
+    loadingItemBuscado: false,
     presidioBuscado: [],
     presidios: []
 }
@@ -79,13 +80,14 @@ export default class VisitaPresidio extends Component {
     buscarPresidio = async id => {
         try {
             const res = await api.get(`/presidio/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ presidioBuscado: res.data })
+            this.setState({ presidioBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarPresidio(id)
         this.setState({ showModal: true })
     }
@@ -93,7 +95,7 @@ export default class VisitaPresidio extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.presidioBuscado} tituloHeader={"Editar Data de Visita ao Presidio"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updatePresidio}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} withNome={true} itemBuscado={this.state.presidioBuscado} tituloHeader={"Editar Data de Visita ao Presidio"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updatePresidio}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.presidios} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaPresidio}/>} />
                 </View>
