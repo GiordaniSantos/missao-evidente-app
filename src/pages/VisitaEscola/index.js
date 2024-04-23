@@ -39,6 +39,7 @@ export default class VisitaEscola extends Component {
         try {
             await api.put(`/escola/${escola.id}?id_usuario=${escola.id_usuario}`, {
                 created_at: escola.date,
+                nome: escola.nome,
                 id_usuario: escola.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -92,7 +93,7 @@ export default class VisitaEscola extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.escolaBuscado} tituloHeader={"Editar Data de Visita à Escola"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEscola}/>
+                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.escolaBuscado} tituloHeader={"Editar Data de Visita à Escola"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEscola}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.escola} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEscola}/>} />
                 </View>

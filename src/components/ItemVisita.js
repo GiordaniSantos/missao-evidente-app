@@ -45,6 +45,9 @@ export default props => {
                     <View>
                         <Text style={styles.desc}>{props.textoAntesHora} {resultadoData[0]}</Text>
                         <Text style={styles.date}>às {resultadoData[1]}h</Text>
+                        <View style={{ flexDirection: 'row', flexGrow: 1 }}>
+                            {props.nome && <Text numberOfLines={3} style={styles.date}>Visitado: {props.nome}</Text> }
+                        </View>
                     </View>
                 </View>
             </Swipeable>
@@ -66,7 +69,6 @@ const styles = StyleSheet.create({
         borderRightColor: '#e3e6f0',
         borderLeftColor: '#e3e6f0',
         borderWidth: 1,
-        borderRadius: 5,
     },
     cheackContainer: {
         width: '20%',
@@ -97,7 +99,8 @@ const styles = StyleSheet.create({
     date: {
         fontFamily: CommonStyles.fontFamily,
         color: CommonStyles.colors.subText,
-        fontSize: 12
+        fontSize: 12,
+        flex: 1
     },
     right: {
         backgroundColor: '#4D7031',

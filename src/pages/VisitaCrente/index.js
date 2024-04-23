@@ -54,6 +54,7 @@ export default class VisitaCrente extends Component {
         try {
             await api.put(`/crente/${crente.id}?id_usuario=${crente.id_usuario}`, {
                 created_at: crente.date,
+                nome: crente.nome,
                 id_usuario: crente.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -92,7 +93,7 @@ export default class VisitaCrente extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.crenteBuscado} tituloHeader={"Editar Data de Visita ao Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateCrente}/>
+                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.crenteBuscado} tituloHeader={"Editar Data de Visita ao Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateCrente}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.crentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} textoPosQtd={"crentes"} onDelete={this.deleteVisitaCrente}/>} />
                 </View>

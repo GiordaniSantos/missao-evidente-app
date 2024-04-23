@@ -55,6 +55,7 @@ export default class VisitaHospital extends Component {
         try {
             await api.put(`/hospital/${hospital.id}?id_usuario=${hospital.id_usuario}`, {
                 created_at: hospital.date,
+                nome: hospital.nome,
                 id_usuario: hospital.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -95,7 +96,7 @@ export default class VisitaHospital extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.hospitalBuscado} tituloHeader={"Editar Data de Visita ao Hospital"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateHospital}/>
+                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.hospitalBuscado} tituloHeader={"Editar Data de Visita ao Hospital"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateHospital}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.hospital} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaHospital}/>} />
                 </View>

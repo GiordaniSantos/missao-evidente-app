@@ -19,17 +19,20 @@ export default class EditModal extends Component {
         if(props.itemBuscado.id != state.id && props.itemBuscado.created_at !== state.date){
             return {
                 date: props.itemBuscado.created_at,
+                nome: props.itemBuscado.nome,
                 id: props.itemBuscado.id
             };
         }
         if (!state.date && props.itemBuscado.created_at !== state.date) {
           return {
             date: props.itemBuscado.created_at,
+            nome: props.itemBuscado.nome,
             id: props.itemBuscado.id
           };
         }if(state.date && props.itemBuscado.id === state.id){
             return {
                 date: state.date,
+                nome: state.nome,
             };
         }
         return null;
@@ -39,13 +42,14 @@ export default class EditModal extends Component {
         const editItem = {
             id: this.state.id,
             date: this.state.date,
+            nome: this.state.nome,
             id_usuario: this.context.user.id
         }
         
         if(this.props.onUpdate){
             this.props.onUpdate(editItem)
         }
-        this.setState({...initialState, date: this.state.date})
+        this.setState({...initialState, date: this.state.date, nome: this.state.nome})
     }
 
     getDatePicker = () => {
@@ -109,6 +113,7 @@ export default class EditModal extends Component {
     render(){
         return (
             <Modal transparent={true} visible={this.props.isVisible} onRequestClose={this.props.onCancel} animationType='fade'>
+                {this.props.loading && <Text>Loading</Text>}
                 <TouchableWithoutFeedback onPress={this.props.onCancel}>
                     <View style={styles.background}></View>
                 </TouchableWithoutFeedback>
@@ -116,6 +121,14 @@ export default class EditModal extends Component {
                     <Text style={styles.header}>{this.props.tituloHeader}</Text>
                     {this.getDatePicker()}
                     {this.getTimePicker()}
+                    {this.props.withNome && 
+                        <TextInput 
+                            placeholder='Nome do Visitado' 
+                            value={this.state.nome} 
+                            style={[styles.date, styles.input]} 
+                            onChangeText={textNome => this.setState({ nome: textNome })} 
+                            /> 
+                    }
                     <View style={styles.buttons}>
                         <TouchableOpacity onPress={this.props.onCancel}>
                             <Text style={styles.button}>Cancelar</Text>

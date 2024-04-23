@@ -54,13 +54,14 @@ export default class VisitaPresidio extends Component {
         try {
             await api.put(`/presidio/${presidio.id}?id_usuario=${presidio.id_usuario}`, {
                 created_at: presidio.date,
+                nome: presidio.nome,
                 id_usuario: presidio.id_usuario
             })
             Alert('Atualizado com Sucesso');
             this.setState({ showModal: false }, this.loadVisitasPresidios)
 
         } catch (error) {
-            showError(error)
+            showError(error.response.data.message)
         }
 
     }
@@ -71,7 +72,7 @@ export default class VisitaPresidio extends Component {
             Alert('Deletado com Sucesso');
             this.loadVisitasPresidios()
         } catch (error) {
-            showError(error)
+            showError(error.response.data.message)
         }
     }
 
@@ -92,7 +93,7 @@ export default class VisitaPresidio extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.presidioBuscado} tituloHeader={"Editar Data de Visita ao Presidio"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updatePresidio}/>
+                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.presidioBuscado} tituloHeader={"Editar Data de Visita ao Presidio"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updatePresidio}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.presidios} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaPresidio}/>} />
                 </View>

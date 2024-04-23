@@ -39,6 +39,7 @@ export default class VisitaNaoCrente extends Component {
         try {
             await api.put(`/incredulo/${naoCrente.id}?id_usuario=${naoCrente.id_usuario}`, {
                 created_at: naoCrente.date,
+                nome: naoCrente.nome,
                 id_usuario: naoCrente.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -92,7 +93,7 @@ export default class VisitaNaoCrente extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} itemBuscado={this.state.naoCrenteBuscado} tituloHeader={"Editar Data de Visita ao Não Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateNaoCrente}/>
+                <EditModal isVisible={this.state.showModal} withNome={true} itemBuscado={this.state.naoCrenteBuscado} tituloHeader={"Editar Data de Visita ao Não Crente"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateNaoCrente}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.naoCrentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaNaoCrente}/>} />
                 </View>
