@@ -59,8 +59,6 @@ const styles = StyleSheet.create({
         borderRightColor: '#e3e6f0',
         borderLeftColor: '#e3e6f0',
         borderWidth: 1,
-        borderRadius: 5,
-        
     },
     cheackContainer: {
         width: '20%',

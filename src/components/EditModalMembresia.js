@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput } from 'react-native'
+import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import CommonStyles from '../CommonStyles'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { AuthContext } from '../contexts/auth'
@@ -123,24 +123,32 @@ export default class EditModalMembresia extends Component {
                 </TouchableWithoutFeedback>
                 <View style={styles.container}>
                     <Text style={styles.header}>{this.props.tituloHeader}</Text>
-                    <SelectDropdown
-                        data={this.props.dataSelect}
-                        buttonStyle={styles.input}
-                        defaultValue={this.state.nome}
-                        rowStyle={{with:'100%'}}
-                        defaultButtonText='Selecione uma Opção'
-                        onSelect={(selectedItem, index) => {
-                            this.setState({ nome: selectedItem })
-                        }}
-                        buttonTextAfterSelection={(selectedItem, index) => {
-                            return selectedItem
-                        }}
-                        rowTextForSelection={(item, index) => {
-                            return item
-                        }}
-                    />
-                    <TextInput style={styles.input} keyboardType="numeric" placeholder='Informe a quantidade...' onChangeText={newQuantidade => this.setState({quantidade: newQuantidade})} value={this.state.quantidade && this.state.quantidade.toString()}/>
-                    {this.getDatePicker()}
+                    {this.props.loading ? 
+                        <View>
+                            <ActivityIndicator size="large" color="#0f5d39" style={styles.activityIndicator} />
+                        </View>
+                    : 
+                        <View>
+                            <SelectDropdown
+                                data={this.props.dataSelect}
+                                buttonStyle={styles.input}
+                                defaultValue={this.state.nome}
+                                rowStyle={{with:'100%'}}
+                                defaultButtonText='Selecione uma Opção'
+                                onSelect={(selectedItem, index) => {
+                                    this.setState({ nome: selectedItem })
+                                }}
+                                buttonTextAfterSelection={(selectedItem, index) => {
+                                    return selectedItem
+                                }}
+                                rowTextForSelection={(item, index) => {
+                                    return item
+                                }}
+                            />
+                            <TextInput style={styles.input} keyboardType="numeric" placeholder='Informe a quantidade...' onChangeText={newQuantidade => this.setState({quantidade: newQuantidade})} value={this.state.quantidade && this.state.quantidade.toString()}/>
+                            {this.getDatePicker()}
+                        </View>
+                    }
                     <View style={styles.buttons}>
                         <TouchableOpacity onPress={this.props.onCancel}>
                             <Text style={styles.button}>Cancelar</Text>
@@ -159,6 +167,11 @@ export default class EditModalMembresia extends Component {
 }
 
 const styles = StyleSheet.create({
+    activityIndicator: {
+        marginTop: 100,
+        marginBottom: 100,
+        transform: [{ scaleX: 2 }, { scaleY: 2 }]
+    },
     background: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.7)'

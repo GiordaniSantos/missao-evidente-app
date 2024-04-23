@@ -13,6 +13,7 @@ import EditModalMembresia from '../../components/EditModalMembresia';
 const initialState = { 
     showModal: false,
     showModalEdit: false,
+    loadingItemBuscado: false,
     membresiaBuscado: [],
     membros: []
 }
@@ -59,13 +60,14 @@ export default class Membresia extends Component {
     buscarMembresia = async id => {
         try {
             const res = await api.get(`/membresia/${id}?id_usuario=${this.context.user.id}`)
-            this.setState({ membresiaBuscado: res.data })
+            this.setState({ membresiaBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             showError(error)
         }
     }
 
     abrirModal = async id => {
+        this.setState({ loadingItemBuscado: true })
         this.buscarMembresia(id)
         this.setState({ showModalEdit: true })
     }
@@ -109,7 +111,7 @@ export default class Membresia extends Component {
         return (
             <View style={styles.container}>
                 <AddModal isVisible={this.state.showModal} tituloHeader={"Nova membresia"} dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
-                <EditModalMembresia isVisible={this.state.showModalEdit} itemBuscado={this.state.membresiaBuscado}  dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} tituloHeader={"Editar Membresia"} onCancel={() => { this.setState({showModalEdit:false}) }} onUpdate={this.updateMembresia}/>
+                <EditModalMembresia isVisible={this.state.showModalEdit} loading={this.state.loadingItemBuscado} itemBuscado={this.state.membresiaBuscado}  dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} tituloHeader={"Editar Membresia"} onCancel={() => { this.setState({showModalEdit:false}) }} onUpdate={this.updateMembresia}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} openModal={this.abrirModal} textoPosQtd={"membros"} onDelete={this.deleteMembresia}/>} />
                 </View>
