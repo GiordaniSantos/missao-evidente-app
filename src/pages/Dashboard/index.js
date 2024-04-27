@@ -119,29 +119,52 @@ export default class Dashboard extends Component {
     getDataToExport = () => {
         this.loadRelatorios()
         let data = [
-            { Campo: 'Visitas aos Crentes', Valor: this.state.visitaCrente },
-            { Campo: 'Visitas aos Não Crentes', Valor: this.state.visitaNaoCrente },
-            { Campo: 'Visitas aos Presídios', Valor: this.state.visitaPresidio },
-            { Campo: 'Visitas aos Enfermos', Valor: this.state.visitaEnfermo },
-            { Campo: 'Visitas aos Hospitais', Valor: this.state.visitaHospital },
-            { Campo: 'Visitas às Escolas', Valor: this.state.visitaEscola },
-            { Campo: 'Estudos', Valor: this.state.estudos },
-            { Campo: 'Sermões', Valor: this.state.sermoes },
-            { Campo: 'Estudos Biblicos', Valor: this.state.estudosBiblicos },
-            { Campo: 'Discipulados', Valor: this.state.discipulados },
-            { Campo: 'Batismos Infantis', Valor: this.state.batismosInfantis },
-            { Campo: 'Batismos/Prof. Fé', Valor: this.state.batismosProfissoes },
-            { Campo: 'Benções Nupciais', Valor: this.state.bencoesNupciais },
-            { Campo: 'Santas Ceias', Valor: this.state.santasCeias },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Crentes', Valor: this.state.visitaCrente },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Não Crentes', Valor: this.state.visitaNaoCrente },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Presídios', Valor: this.state.visitaPresidio },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Enfermos', Valor: this.state.visitaEnfermo },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Hospitais', Valor: this.state.visitaHospital },
+            { Menu: 'Visitação', Submenu: 'Visitas às Escolas', Valor: this.state.visitaEscola },
+            { Menu: 'Ministração', Submenu: 'Estudos', Valor: this.state.estudos },
+            { Menu: 'Ministração', Submenu: 'Sermões', Valor: this.state.sermoes },
+            { Menu: 'Ministração', Submenu: 'Estudos Biblicos', Valor: this.state.estudosBiblicos },
+            { Menu: 'Ministração', Submenu: 'Discipulados', Valor: this.state.discipulados },
+            { Menu: 'Ato Pastoral', Submenu: 'Batismos Infantis', Valor: this.state.batismosInfantis},
+            { Menu: 'Ato Pastoral', Submenu: 'Batismos/Prof. Fé', Valor: this.state.batismosProfissoes},
+            { Menu: 'Ato Pastoral', Submenu: 'Benções Nupciais', Valor: this.state.bencoesNupciais},
+            { Menu: 'Ato Pastoral', Submenu: 'Santas Ceias', Valor: this.state.santasCeias},
+            { Menu: 'Frequência', Submenu: 'Comungantes', Valor: this.state.comungante},
+            { Menu: 'Frequência', Submenu: 'Não Comungantes', Valor: this.state.naoComungante},
         ]
-        return data;
+
+        this.state.membresias.map((item, index) => {
+            let itemFormatado = {
+                Menu: 'Frequência',
+                Submenu: item.nome,
+                Valor: item.quantidade,
+            }
+            data.push(itemFormatado);
+        });
+        
+        let headers = [
+            { header: 'Menu', key: 'Menu' },
+            { header: 'Submenu', key: 'Submenu' },
+            { header: 'Valor', key: 'Valor' },
+        ]
+        
+        return { headers, data }
     }
     
     exportData = () => {
         let filePath = RNFS.DownloadDirectoryPath + '/relatorio.xlsx';
+
+        let { headers, data } = this.getDataToExport()
           
         let wb = XLSX.utils.book_new();
-        let ws = XLSX.utils.json_to_sheet(this.getDataToExport());
+        let ws = XLSX.utils.json_to_sheet(data, { header: headers.map(h => h.key) });
+
+        ws['!cols'] = [{wch:10},{wch:20},{wch:5}]; //Define o tamanho das colunas
+
         XLSX.utils.book_append_sheet(wb, ws, "Users");
         const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
         RNFS.writeFile(filePath, wbout, 'ascii')
