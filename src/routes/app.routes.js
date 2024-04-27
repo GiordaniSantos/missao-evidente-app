@@ -176,7 +176,7 @@ function CustomDrawerContent(props) {
               />
           </View>
         ):null}
-        {isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
+        {isShowFrequencia || isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Ministração"
           labelStyle={{marginLeft: -2}}
