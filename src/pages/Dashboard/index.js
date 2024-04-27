@@ -31,6 +31,8 @@ const initialState = {
     sermoes: 0,
     estudosBiblicos: 0,
     discipulados: 0,
+    comungante: 0,
+    naoComungante: 0,
     loading: true,
     refresh: false,
     mes: date.getMonth()+1,
@@ -72,6 +74,8 @@ export default class Dashboard extends Component {
             this.setState({ sermoes: res.data[12].sermao })
             this.setState({ estudosBiblicos: res.data[13].estudoBiblico })
             this.setState({ discipulados: res.data[14].discipulado })
+            this.setState({ comungante: res.data[15].comungante })
+            this.setState({ naoComungante: res.data[16].naoComungante })
             this.setState({ loading: false })
             this.setState({ refresh: false })
         }catch(e) {
@@ -98,8 +102,7 @@ export default class Dashboard extends Component {
             this.loadRelatorios()
 
         } catch (error) {
-            console.log(error)
-            showError(error)
+            showError(error.response.data.message)
         }
 
     }
@@ -109,7 +112,7 @@ export default class Dashboard extends Component {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
             this.loadRelatorios()
         } catch (error) {
-            showError(error)
+            showError(error.response.data.message)
         }
     }
 
@@ -419,6 +422,34 @@ export default class Dashboard extends Component {
                                     </View>
                                     <View>
                                         <Icon size={32} style={styles.iconVisita} name={'wine-glass-alt'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.rowCards}>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#015b41'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color: '#015b41'}]}>Comungantes</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.comungante} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'users'}></Icon>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#015b41'}]}>
+                            <View style={styles.cardBody}>
+                                <View style={styles.itens}>
+                                    <View>
+                                        <Text style={[styles.titleVisita, {color:'#015b41'}]}>Não Comungantes</Text>
+                                        <Text style={styles.numeroVisita}>{this.state.naoComungante} </Text>
+                                    </View>
+                                    <View>
+                                        <Icon size={32} style={styles.iconVisita} name={'user-times'}></Icon>
                                     </View>
                                 </View>
                             </View>

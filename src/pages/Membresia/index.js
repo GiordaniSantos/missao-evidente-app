@@ -110,8 +110,8 @@ export default class Membresia extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <AddModal isVisible={this.state.showModal} tituloHeader={"Nova membresia"} dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
-                <EditModalMembresia isVisible={this.state.showModalEdit} loading={this.state.loadingItemBuscado} itemBuscado={this.state.membresiaBuscado}  dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo", "Comungantes", "Não Comungantes"]} tituloHeader={"Editar Membresia"} onCancel={() => { this.setState({showModalEdit:false}) }} onUpdate={this.updateMembresia}/>
+                <AddModal isVisible={this.state.showModal} tituloHeader={"Nova membresia"} dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo"]} onCancel={() => { this.setState({showModal:false}) }} onSave={this.addMembresia}/>
+                <EditModalMembresia isVisible={this.state.showModalEdit} loading={this.state.loadingItemBuscado} itemBuscado={this.state.membresiaBuscado}  dataSelect={["Primeiro Domingo", "Segundo Domingo", "Terceiro Domingo", "Quarto Domingo"]} tituloHeader={"Editar Membresia"} onCancel={() => { this.setState({showModalEdit:false}) }} onUpdate={this.updateMembresia}/>
                 <View style={styles.taskList}>
                     <FlatList data={this.state.membros} keyExtractor={item => `${item.id}`} renderItem={({item}) => <Item {...item} openModal={this.abrirModal} textoPosQtd={"membros"} onDelete={this.deleteMembresia}/>} />
                 </View>

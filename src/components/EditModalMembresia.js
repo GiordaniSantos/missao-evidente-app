@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     input: {
         fontFamily: CommonStyles.fontFamily,
         height: 60,
-        margin: 15,
+        margin: 8,
         padding: 15,
         backgroundColor: '#FFF',
         borderWidth: 1,

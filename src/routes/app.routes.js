@@ -23,6 +23,8 @@ import CommonStyles from '../CommonStyles';
 import Web from '../pages/Web';
 import image from '../../assets/imgs/logo-menu.png'
 import { createDrawerNavigator,  DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import Comungante from '../pages/Comugante';
+import NaoComungante from '../pages/NaoComungante';
 
 //estilizando o menu
 //items, itemList do Drawer.screens e items
@@ -30,6 +32,7 @@ function CustomDrawerContent(props) {
   const [isShowAtoPastoral,showAtoPastoral] = React.useState(false)
   const [isShowPregacao,showPregacao] = React.useState(false)
   const [isShowVisitacao,showVisitacao] = React.useState(false)
+  const [isShowFrequencia,showFrequencia] = React.useState(false)
 
   //contexto
   context = useContext(AuthContext);
@@ -84,26 +87,95 @@ function CustomDrawerContent(props) {
             props.navigation.navigate("Relatorio Anual");
           }}
         />
+        {isShowFrequencia ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
-          label="Frequência"
+          label="Frequencia"
+          labelStyle={{marginLeft: -2}}
+          drawerLabelStyle={{marginLeft: -2}}
           activeBackgroundColor='#0f5d39'
           activeTintColor='#fff'
-          labelStyle={{marginLeft:-9}}
           focused={getActiveRouteState(
             props.state.routes,
             props.state.index,
-            'Membresia aos Domingos'
+            'Ato Pastoral'
           )}
           icon={({color}) => 
-            <Icon size={21} name={'users'} style={{color:color}}></Icon>
+            <Icon size={23} name={isShowFrequencia ? 'angle-up' : 'angle-down'} style={{color:color, marginLeft: 4}}></Icon>
           }
-          onPress={() => {
-            {showAtoPastoral(false)}
-            {showPregacao(false)}
-            {showVisitacao(false)}
-            props.navigation.navigate("Membresia aos Domingos");
-          }}
+          onPress={()=>
+            {showFrequencia(!isShowFrequencia)}
+          }
         />
+        {isShowFrequencia ? (
+          <View>
+              <DrawerItem
+                label="Frequência aos Domingos"
+                activeBackgroundColor='#0f5d39'
+                activeTintColor='#fff'
+                labelStyle={{marginLeft: -5}}
+                drawerLabelStyle={{marginLeft: -5}}
+                style={{marginLeft:20, marginRight:20}}
+                focused={getActiveRouteState(
+                  props.state.routes,
+                  props.state.index,
+                  'Frequência aos Domingos'
+                )}
+                icon={({color}) => 
+                  <Icon size={21} name={'calendar-check'} style={{color:color}}></Icon>
+                }
+                onPress={() => {
+                  {showAtoPastoral(false)}
+                  {showPregacao(false)}
+                  {showVisitacao(false)}
+                  props.navigation.navigate("Frequência aos Domingos");
+                }}
+              />
+              <DrawerItem
+                label="Comungantes"
+                activeBackgroundColor='#0f5d39'
+                activeTintColor='#fff'
+                labelStyle={{marginLeft: -5}}
+                drawerLabelStyle={{marginLeft: -5}}
+                style={{marginLeft:20, marginRight:20}}
+                focused={getActiveRouteState(
+                  props.state.routes,
+                  props.state.index,
+                  'Comungantes'
+                )}
+                icon={({color}) => 
+                  <Icon size={21} name={'users'} style={{color:color}}></Icon>
+                }
+                onPress={() => {
+                  {showAtoPastoral(false)}
+                  {showPregacao(false)}
+                  {showVisitacao(false)}
+                  props.navigation.navigate("Comungantes");
+                }}
+              />
+              <DrawerItem
+                label="Não Comungantes"
+                activeBackgroundColor='#0f5d39'
+                activeTintColor='#fff'
+                labelStyle={{marginLeft: -5}}
+                drawerLabelStyle={{marginLeft: -5}}
+                style={{marginLeft:20, marginRight:20}}
+                focused={getActiveRouteState(
+                  props.state.routes,
+                  props.state.index,
+                  'Não Comungantes'
+                )}
+                icon={({color}) => 
+                  <Icon size={21} name={'user-times'} style={{color:color}}></Icon>
+                }
+                onPress={() => {
+                  {showAtoPastoral(false)}
+                  {showPregacao(false)}
+                  {showVisitacao(false)}
+                  props.navigation.navigate("Não Comungantes");
+                }}
+              />
+          </View>
+        ):null}
         {isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Ministração"
@@ -141,6 +213,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'book'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Estudo");
@@ -162,6 +235,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Sermão");
@@ -183,6 +257,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'bible'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Aprendizados Biblicos");
@@ -204,6 +279,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'people-arrows'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Discipulado");
@@ -248,6 +324,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'child'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Batismo Infantil");
@@ -269,6 +346,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'praying-hands'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Batismo e Profissão de Fé");
@@ -288,6 +366,7 @@ function CustomDrawerContent(props) {
               )}
               icon={({color}) => <Icon size={21} name={'hand-holding-heart'} style={{color:color}}></Icon>}
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Benção Nupcial");
@@ -307,6 +386,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'wine-glass-alt'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
                 props.navigation.navigate("Santa Ceia");
@@ -351,6 +431,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'cross'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Crentes");
@@ -372,6 +453,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'heart-broken'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Não Crentes");
@@ -393,6 +475,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'user-lock'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Presídios");
@@ -412,6 +495,7 @@ function CustomDrawerContent(props) {
               )}
               icon={({color}) => <Icon size={21} name={'syringe'} style={{color:color}}></Icon>}
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Enfermos");
@@ -433,6 +517,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'hospital'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Hospitais");
@@ -454,6 +539,7 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'school'} style={{color:color}}></Icon>
               }
               onPress={() => {
+                {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showPregacao(false)}
                 props.navigation.navigate("Visitas às Escolas");
@@ -468,6 +554,7 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'chrome'} style={{color:color}}></Icon>
           }
           onPress={() => {
+            {showFrequencia(false)}
             {showAtoPastoral(false)}
             {showPregacao(false)}
             {showVisitacao(false)}
@@ -486,7 +573,7 @@ function CustomDrawerContent(props) {
 
 //vejo qual rota está selecionado para estilizar o drawer item
 const getActiveRouteState = function (routes, index, name) {
-  return routes[index].name.toLowerCase().indexOf(name.toLowerCase()) >= 0;
+  return routes[index].name.trim().toLowerCase() === name.trim().toLowerCase();
 };
   
 
@@ -554,12 +641,22 @@ export default class AppRoutes extends Component{
             height:0
           },
         }} />
-         <Drawer.Screen name="Relatorio Anual" component={RelatorioAnual} options={{
+        <Drawer.Screen name="Relatorio Anual" component={RelatorioAnual} options={{
           drawerItemStyle:{
             height:0
           },
         }} />
-        <Drawer.Screen name="Membresia aos Domingos" component={Membresia} options={{
+        <Drawer.Screen name="Frequência aos Domingos" component={Membresia} options={{
+          drawerItemStyle:{
+            height:0
+          },
+        }} />
+        <Drawer.Screen name="Comungantes" component={Comungante} options={{
+          drawerItemStyle:{
+            height:0
+          },
+        }} />
+        <Drawer.Screen name="Não Comungantes" component={NaoComungante} options={{
           drawerItemStyle:{
             height:0
           },
