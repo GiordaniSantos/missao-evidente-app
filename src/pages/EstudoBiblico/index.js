@@ -55,6 +55,7 @@ export default class EstudoBiblico extends Component {
         try {
             await api.put(`/estudo-biblico/${estudoBiblico.id}?id_usuario=${estudoBiblico.id_usuario}`, {
                 created_at: estudoBiblico.date,
+                nome: estudoBiblico.nome,
                 id_usuario: estudoBiblico.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -94,9 +95,9 @@ export default class EstudoBiblico extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.estudoBiblicoBuscado} tituloHeader={"Editar Data de Estudo Biblico"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudoBiblico}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.estudoBiblicoBuscado} withNome={true} placeHolderCampoNome={"Assunto do Estudo Bíblico"} tituloHeader={"Editar Data de Estudo Biblico"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudoBiblico}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
+                    <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Assunto: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudoBiblico(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
