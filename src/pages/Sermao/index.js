@@ -54,6 +54,7 @@ export default class Sermao extends Component {
         try {
             await api.put(`/sermao/${sermao.id}?id_usuario=${sermao.id_usuario}`, {
                 created_at: sermao.date,
+                nome: sermao.nome,
                 id_usuario: sermao.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -93,9 +94,9 @@ export default class Sermao extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.sermaoBuscado} tituloHeader={"Editar Data de Sermão"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSermao}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.sermaoBuscado} withNome={true} placeHolderCampoNome={"Assunto do Sermão"} tituloHeader={"Editar Data de Sermão"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateSermao}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
+                    <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Assunto: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addSermao(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
