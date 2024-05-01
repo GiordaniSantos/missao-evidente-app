@@ -54,6 +54,15 @@ export default class Dashboard extends Component {
         this.setState({ refresh: true })
         this.loadRelatorios()
     }
+
+    obterNomeMes = (numeroMes) => {
+        const meses = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        return meses[numeroMes - 1];
+    }
    
     loadRelatorios = async ( mes=this.state.mes, ano=this.state.ano ) => {
         try{
@@ -156,7 +165,7 @@ export default class Dashboard extends Component {
     }
     
     exportData = () => {
-        let filePath = RNFS.DownloadDirectoryPath + '/relatorio.xlsx';
+        let filePath = RNFS.DownloadDirectoryPath + `/Relatório ${this.obterNomeMes(this.state.mes)} de ${this.state.ano}.xlsx`;
 
         let { headers, data } = this.getDataToExport()
           
