@@ -55,6 +55,7 @@ export default class BencaoNupcial extends Component {
         try {
             await api.put(`/bencao-nupcial/${bencaoNupcial.id}?id_usuario=${bencaoNupcial.id_usuario}`, {
                 created_at: bencaoNupcial.date,
+                nome: bencaoNupcial.nome,
                 id_usuario: bencaoNupcial.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -94,9 +95,9 @@ export default class BencaoNupcial extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.bencaoNupcialBuscado} tituloHeader={"Editar Data de Bencão Nupcial"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBencaoNupcial}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.bencaoNupcialBuscado} withNome={true} placeHolderCampoNome={"Nome"} tituloHeader={"Editar Data de Bencão Nupcial"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateBencaoNupcial}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
+                    <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Nome: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addBencaoNupcial(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
