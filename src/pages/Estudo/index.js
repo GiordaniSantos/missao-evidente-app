@@ -40,6 +40,7 @@ export default class Estudo extends Component {
         try {
             await api.put(`/estudo/${estudo.id}?id_usuario=${estudo.id_usuario}`, {
                 created_at: estudo.date,
+                nome: estudo.nome,
                 id_usuario: estudo.id_usuario
             })
             Alert('Atualizado com Sucesso');
@@ -94,9 +95,9 @@ export default class Estudo extends Component {
     render(){
         return (
             <View style={styles.container}>
-                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado} itemBuscado={this.state.estudoBuscado} tituloHeader={"Editar Data de Estudo"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudo}/>
+                <EditModal isVisible={this.state.showModal} loading={this.state.loadingItemBuscado}  withNome={true} placeHolderCampoNome={"Assunto do Estudo"} itemBuscado={this.state.estudoBuscado} tituloHeader={"Editar Data de Estudo"} onCancel={() => { this.setState({showModal:false}) }} onUpdate={this.updateEstudo}/>
                 <View style={styles.taskList}>
-                    <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
+                    <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Assunto: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
                 </View>
                 <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudo(this.context.user.id)} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />

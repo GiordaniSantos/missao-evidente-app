@@ -128,7 +128,7 @@ export default class EditModal extends Component {
                             {this.getTimePicker()}
                             {this.props.withNome && 
                                 <TextInput 
-                                    placeholder='Nome do Visitado' 
+                                    placeholder={this.props.placeHolderCampoNome ? this.props.placeHolderCampoNome : 'Nome do Visitado'} 
                                     value={this.state.nome} 
                                     style={[styles.date, styles.input]} 
                                     onChangeText={textNome => this.setState({ nome: textNome })} 

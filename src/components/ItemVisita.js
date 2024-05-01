@@ -46,7 +46,7 @@ export default props => {
                         <Text style={styles.desc}>{props.textoAntesHora} {resultadoData[0]}</Text>
                         <Text style={styles.date}>às {resultadoData[1]}h</Text>
                         <View style={{ flexDirection: 'row', flexGrow: 1 }}>
-                            {props.nome && <Text numberOfLines={3} style={styles.date}>Visitado: {props.nome}</Text> }
+                            {props.nome && <Text numberOfLines={7} style={styles.date}>{props.textoNome ? props.textoNome : 'Visitado: '} {props.nome}</Text> }
                         </View>
                     </View>
                 </View>
