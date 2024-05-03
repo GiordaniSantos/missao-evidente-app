@@ -3,8 +3,6 @@ import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, Button, FlatL
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError, showSuccess } from '../../Common'
 import SelectDropdown from 'react-native-select-dropdown'
@@ -195,7 +193,6 @@ export default class Dashboard extends Component {
     }
 
     render(){
-        const today = moment().locale('pt-BR').format('ddd, D [de] MMMM')
         return (
             <View style={styles.container}>
                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>

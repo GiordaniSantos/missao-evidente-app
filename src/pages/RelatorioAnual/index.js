@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {View, RefreshControl, Text, StyleSheet, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import api from '../../services/api';
 import { showError } from '../../Common'
 import SelectDropdown from 'react-native-select-dropdown'
