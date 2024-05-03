@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
@@ -31,8 +30,7 @@ export default class VisitaHospital extends Component {
             const res = await api.get(`/hospital?id_usuario=${this.context.user.id}`)
             this.setState({ hospital: res.data.data })
         }catch(e) {
-            console.log(e)
-            showError(e)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -42,12 +40,11 @@ export default class VisitaHospital extends Component {
                 id_usuario: id_usuario
             })
           
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasHospital()
 
-        } catch (error) {
-            console.log(error)
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -59,11 +56,11 @@ export default class VisitaHospital extends Component {
                 nome: hospital.nome,
                 id_usuario: hospital.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
 
             this.setState({ showModal: false }, this.loadVisitasHospital)
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -71,10 +68,10 @@ export default class VisitaHospital extends Component {
     deleteVisitaHospital = async hospitalId => {
         try {
             await api.delete(`/hospital/${hospitalId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadVisitasHospital()
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -83,8 +80,8 @@ export default class VisitaHospital extends Component {
         try {
             const res = await api.get(`/hospital/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ hospitalBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 

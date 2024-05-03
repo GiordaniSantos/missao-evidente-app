@@ -1,10 +1,10 @@
-import React, {Component, useContext, useEffect} from 'react';
-import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, Button, FlatList, TouchableOpacity, Platform, Alert, ScrollView} from 'react-native'
+import React, {Component} from 'react';
+import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import api from '../../services/api';
-import { showError, showSuccess } from '../../Common'
+import Alert from '../../components/SweetAlert';
 import SelectDropdown from 'react-native-select-dropdown'
 import ItemRelatorio from '../../components/ItemRelatorio';
 import * as XLSX from 'xlsx';
@@ -89,7 +89,7 @@ export default class Dashboard extends Component {
             if(e.response.data.message == "Unauthenticated."){
                 this.loadRelatorios()
             }else{
-                showError(e.response.data.message)
+                Alert(e.response.data.message, 'error');
             }
         }
     }
@@ -97,29 +97,6 @@ export default class Dashboard extends Component {
     loadingRequest = async () => {
         if(this.state.loading){
             return ( <ActivityIndicator size="large" color="#00ff00" /> )
-        }
-    }
-
-    addVisitaCrente = async id_usuario => {
-        try {
-            await api.post(`/crente`, {
-                id_usuario: id_usuario
-            })
-
-            this.loadRelatorios()
-
-        } catch (error) {
-            showError(error.response.data.message)
-        }
-
-    }
-
-    deleteVisitaCrente = async crenteId => {
-        try {
-            await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
-            this.loadRelatorios()
-        } catch (error) {
-            showError(error.response.data.message)
         }
     }
 
@@ -183,12 +160,12 @@ export default class Dashboard extends Component {
                     })
                     .catch((error) => {
                         // Error ao abrir
-                        showError(error == "Error: No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel. (O arquivo foi salvo no diretório de Downloads)" : error)
+                        Alert(error == "Error: No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel. (O arquivo foi salvo no diretório de Downloads)" : error, 'error');
                     });
             })
             .catch((e) => {
                 //erro ao salvar
-                showError(e)
+                Alert(e, 'error');
             });
     }
 

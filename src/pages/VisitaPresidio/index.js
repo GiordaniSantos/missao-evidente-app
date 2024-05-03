@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
@@ -31,8 +30,7 @@ export default class VisitaPresidio extends Component {
             const res = await api.get(`/presidio?id_usuario=${this.context.user.id}`)
             this.setState({ presidios: res.data.data })
         }catch(e) {
-            console.log(e)
-            showError(e)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -41,12 +39,11 @@ export default class VisitaPresidio extends Component {
             await api.post(`/presidio`, {
                 id_usuario: id_usuario
             })
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasPresidios()
 
-        } catch (error) {
-            console.log(error)
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -58,11 +55,11 @@ export default class VisitaPresidio extends Component {
                 nome: presidio.nome,
                 id_usuario: presidio.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadVisitasPresidios)
 
-        } catch (error) {
-            showError(error.response.data.message)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -70,10 +67,10 @@ export default class VisitaPresidio extends Component {
     deleteVisitaPresidio = async presidioId => {
         try {
             await api.delete(`/presidio/${presidioId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadVisitasPresidios()
-        } catch (error) {
-            showError(error.response.data.message)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -81,8 +78,8 @@ export default class VisitaPresidio extends Component {
         try {
             const res = await api.get(`/presidio/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ presidioBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 

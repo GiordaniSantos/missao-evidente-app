@@ -3,7 +3,7 @@ import {View, RefreshControl, Text, StyleSheet, ScrollView} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import api from '../../services/api';
-import { showError } from '../../Common'
+import Alert from '../../components/SweetAlert';
 import SelectDropdown from 'react-native-select-dropdown'
 
 const date = new Date();
@@ -66,7 +66,7 @@ export default class RelatorioAnual extends Component {
             this.setState({ loading: false })
             this.setState({ refresh: false })
         }catch(e) {
-            showError(e.response.data.message)
+            Alert(e.response.data.message, 'error');
         }
     }
 

@@ -1,14 +1,9 @@
 import React from 'react'
-import {View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
-import {GestureHandlerRootView} from 'react-native-gesture-handler'
-import  Icon  from 'react-native-vector-icons/FontAwesome'
+import {View, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
 import CommonStyles from '../CommonStyles'
 
 export default props => {
-    moment.locale('pt-br')
-    
     return (
         <View>
             <View style={styles.container}>

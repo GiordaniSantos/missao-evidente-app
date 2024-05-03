@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
@@ -31,8 +30,7 @@ export default class Estudo extends Component {
             const res = await api.get(`/estudo?id_usuario=${this.context.user.id}`)
             this.setState({ estudo: res.data.data })
         }catch(e) {
-            console.log(e)
-            showError(e)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -43,11 +41,11 @@ export default class Estudo extends Component {
                 nome: estudo.nome,
                 id_usuario: estudo.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadEstudo)
 
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -57,12 +55,11 @@ export default class Estudo extends Component {
             await api.post(`/estudo`, {
                 id_usuario: id_usuario
             })
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadEstudo()
 
-        } catch (error) {
-            console.log(error)
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -70,10 +67,10 @@ export default class Estudo extends Component {
     deleteEstudo = async crenteId => {
         try {
             await api.delete(`/estudo/${crenteId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadEstudo()
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -81,8 +78,8 @@ export default class Estudo extends Component {
         try {
             const res = await api.get(`/estudo/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ estudoBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 

@@ -1,5 +1,5 @@
 import api from "./api";
-import { showError } from '../Common'
+import Alert from "../components/SweetAlert";
 
 export async function signIn(email, password){
     try{
@@ -18,6 +18,6 @@ export async function signIn(email, password){
         );    
         return res.data;
     }catch(e){
-        showError(e.response.data.message)
+        Alert(e.response.data.message, 'error');
     }
 }

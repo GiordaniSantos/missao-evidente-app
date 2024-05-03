@@ -1,12 +1,12 @@
 import SweetAlert from 'react-native-sweet-alert';
 
-const Alert = (text) => {
+const Alert = (text, estilo) => {
     SweetAlert.showAlertWithOptions({
         //title: 'Sucesso!',
         subTitle: text,
         confirmButtonTitle: 'OK',
         otherButtonTitle: 'Cancel',
-        style: 'success',
+        style: estilo,
         cancellable: true
     }/*, callback => this.loadVisitasHospital()*/);
 }

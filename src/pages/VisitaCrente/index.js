@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
@@ -31,8 +30,7 @@ export default class VisitaCrente extends Component {
             const res = await api.get(`/crente?id_usuario=${this.context.user.id}`)
             this.setState({ crentes: res.data.data })
         }catch(e) {
-            console.log(e)
-            showError(e)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -41,12 +39,11 @@ export default class VisitaCrente extends Component {
             await api.post(`/crente`, {
                 id_usuario: id_usuario
             })
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasCrentes()
 
-        } catch (error) {
-            console.log(error)
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -58,11 +55,11 @@ export default class VisitaCrente extends Component {
                 nome: crente.nome,
                 id_usuario: crente.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadVisitasCrentes)
 
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -70,10 +67,10 @@ export default class VisitaCrente extends Component {
     deleteVisitaCrente = async crenteId => {
         try {
             await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadVisitasCrentes()
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -81,8 +78,8 @@ export default class VisitaCrente extends Component {
         try {
             const res = await api.get(`/crente/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ crenteBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 

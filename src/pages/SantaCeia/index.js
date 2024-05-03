@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
@@ -31,8 +30,7 @@ export default class SantaCeia extends Component {
             const res = await api.get(`/santa-ceia?id_usuario=${this.context.user.id}`)
             this.setState({ santaCeia: res.data.data })
         }catch(e) {
-            console.log(e)
-            showError(e)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -41,11 +39,11 @@ export default class SantaCeia extends Component {
             await api.post(`/santa-ceia`, {
                 id_usuario: id_usuario
             })
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadSantaCeia()
 
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -56,11 +54,11 @@ export default class SantaCeia extends Component {
                 created_at: santaCeia.date,
                 id_usuario: santaCeia.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadSantaCeia)
 
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -68,10 +66,10 @@ export default class SantaCeia extends Component {
     deleteSantaCeia = async crenteId => {
         try {
             await api.delete(`/santa-ceia/${crenteId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadSantaCeia()
         } catch (error) {
-            showError(error)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -79,8 +77,8 @@ export default class SantaCeia extends Component {
         try {
             const res = await api.get(`/santa-ceia/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ santaCeiaBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 

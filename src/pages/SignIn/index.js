@@ -7,7 +7,6 @@ import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
 
-import { showError, showSuccess } from '../../Common'
 import Alert from '../../components/SweetAlert';
 
 const initialState = { 
@@ -46,10 +45,10 @@ export default class SignIn extends Component {
                 password: this.state.password,
             })
 
-            Alert('Usuário cadastrado com sucesso! Agora você pode acessar sua conta.');
+            Alert('Usuário cadastrado com sucesso! Agora você pode acessar sua conta.', 'success');
             this.setState({ ...initialState })
         } catch(e) {
-            showError(e.response.data.message)
+            Alert(e.response.data.message, 'error');
         }
     }
 

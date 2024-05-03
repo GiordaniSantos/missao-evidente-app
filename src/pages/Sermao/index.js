@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
@@ -31,8 +30,7 @@ export default class Sermao extends Component {
             const res = await api.get(`/sermao?id_usuario=${this.context.user.id}`)
             this.setState({ sermao: res.data.data })
         }catch(e) {
-            console.log(e)
-            showError(e)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -41,11 +39,11 @@ export default class Sermao extends Component {
             await api.post(`/sermao`, {
                 id_usuario: id_usuario
             })
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadSermao()
 
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -57,11 +55,11 @@ export default class Sermao extends Component {
                 nome: sermao.nome,
                 id_usuario: sermao.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadSermao)
 
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -69,10 +67,10 @@ export default class Sermao extends Component {
     deleteSermao = async crenteId => {
         try {
             await api.delete(`/sermao/${crenteId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadSermao()
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -80,8 +78,8 @@ export default class Sermao extends Component {
         try {
             const res = await api.get(`/sermao/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ sermaoBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 

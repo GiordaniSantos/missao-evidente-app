@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
-import { showError } from '../../Common'
 import Alert from '../../components/SweetAlert';
 import ItemFrequencia from '../../components/ItemFrequencia';
 import EditModalFrequencia from '../../components/EditModalFrequencia';
@@ -31,7 +30,7 @@ export default class NaoComungante extends Component {
             const res = await api.get(`/nao-comungante?id_usuario=${this.context.user.id}`)
             this.setState({ naoComungantes: res.data.data })
         }catch(e) {
-            showError(e.response.data.message)
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -40,11 +39,11 @@ export default class NaoComungante extends Component {
             await api.post(`/nao-comungante`, {
                 id_usuario: id_usuario
             })
-            Alert('Adicionado com Sucesso');
+            Alert('Adicionado com Sucesso', 'success');
             this.loadNaoComungantes()
 
-        } catch (error) {
-            showError(error.response.data.message)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -56,11 +55,11 @@ export default class NaoComungante extends Component {
                 quantidade: naocomungante.quantidade,
                 id_usuario: naocomungante.id_usuario
             })
-            Alert('Atualizado com Sucesso');
+            Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadNaoComungantes)
 
-        } catch (error) {
-            showError(error.response.data.message)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
 
     }
@@ -68,10 +67,10 @@ export default class NaoComungante extends Component {
     deleteVisitaNaoComungante = async naocomunganteId => {
         try {
             await api.delete(`/nao-comungante/${naocomunganteId}?id_usuario=${this.context.user.id}`)
-            Alert('Deletado com Sucesso');
+            Alert('Deletado com Sucesso', 'success');
             this.loadNaoComungantes()
-        } catch (error) {
-            showError(error.response.data.message)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
@@ -79,8 +78,8 @@ export default class NaoComungante extends Component {
         try {
             const res = await api.get(`/nao-comungante/${id}?id_usuario=${this.context.user.id}`)
             this.setState({ naoComunganteBuscado: res.data, loadingItemBuscado: false })
-        } catch (error) {
-            showError(error.response.data.message)
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
         }
     }
 
