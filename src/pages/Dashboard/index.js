@@ -101,7 +101,6 @@ export default class Dashboard extends Component {
     }
 
     getDataToExport = () => {
-        this.loadRelatorios()
         let data = [
             { Menu: 'Visitação', Submenu: 'Visitas aos Crentes', Valor: this.state.visitaCrente },
             { Menu: 'Visitação', Submenu: 'Visitas aos Não Crentes', Valor: this.state.visitaNaoCrente },
@@ -139,8 +138,10 @@ export default class Dashboard extends Component {
         return { headers, data }
     }
     
-    exportData = () => {
-        let filePath = RNFS.DownloadDirectoryPath + `/relatorio-${this.obterNomeMes(this.state.mes)}-${this.state.ano}.xlsx`;
+    exportData = async () => {
+        await this.loadRelatorios()
+
+        let filePath = RNFS.DocumentDirectoryPath + `/relatorio-${this.obterNomeMes(this.state.mes)}-${this.state.ano}.xlsx`;
 
         let { headers, data } = this.getDataToExport()
           
@@ -160,12 +161,12 @@ export default class Dashboard extends Component {
                     })
                     .catch((error) => {
                         // Error ao abrir
-                        Alert(error == "Error: No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel. (O arquivo foi salvo no diretório de Downloads)" : error, 'error');
+                        Alert(error == "Error: No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel." : error, 'error');
                     });
             })
             .catch((e) => {
                 //erro ao salvar
-                Alert(e, 'error');
+                Alert(e.message, 'error');
             });
     }
 
