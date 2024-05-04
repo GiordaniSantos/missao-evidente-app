@@ -5,6 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { AuthContext } from '../contexts/auth'
 import SelectDropdown from 'react-native-select-dropdown'
 import moment from 'moment'
+import 'moment/locale/pt-br'
 
 const initialState = { showDatePicker: false, showTimePicker: false  }
 

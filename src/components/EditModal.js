@@ -4,6 +4,7 @@ import CommonStyles from '../CommonStyles'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { AuthContext } from '../contexts/auth'
 import moment from 'moment'
+import 'moment/locale/pt-br'
 
 const initialState = { showDatePicker: false, showTimePicker: false  }
 
