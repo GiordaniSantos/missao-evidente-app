@@ -140,7 +140,7 @@ export default class Dashboard extends Component {
     }
     
     exportData = () => {
-        let filePath = RNFS.DownloadDirectoryPath + `/Relatório ${this.obterNomeMes(this.state.mes)} de ${this.state.ano}.xlsx`;
+        let filePath = RNFS.DownloadDirectoryPath + `/Relatório-${this.obterNomeMes(this.state.mes)}-${this.state.ano}.xlsx`;
 
         let { headers, data } = this.getDataToExport()
           
