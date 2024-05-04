@@ -621,6 +621,7 @@ export default class AppRoutes extends Component{
                           <View>
                             <Text>
                               Navegue pelo menu à esquerda para começar a utilizar os recursos. {'\n'}{'\n'}
+                              Na tela inicial, arraste o dedo para baixo para manter os dados atualizados. {'\n'}{'\n'}
                               Para adicionar um registro basta tocar no círculo com ícone de +. {'\n'}{'\n'}
                               Para remover um registro deslize a caixa para à direita até o final. {'\n'}{'\n'}
                               Para editar um registro deslize a caixa para à esquerda e clique no ícone de editar.
