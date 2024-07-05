@@ -1,27 +1,42 @@
 import React, { Component } from 'react'
 import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar, Linking } from 'react-native'
+import api from '../../services/api'
 
 import image from '../../../assets/imgs/logo-menu.png'
+import backgroundImage from '../../../assets/imgs/map.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
 
 import Alert from '../../components/SweetAlert';
 
-const initialState = {
+const initialState = { 
+    name: '',
     email: '',
     password: '',
 }
 
-export default class SignIn extends Component {
+export default class SignUp extends Component {
     static contextType = AuthContext;
 
     state = {
         ...initialState
     }
 
-    handleSignIn = () => {
-        this.context.signIn(this.state.email, this.state.password);   
+    cadastrarUsuario = async () => {
+        try{
+            await api.post(`/signup`, {
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password,
+            })
+
+            Alert('Usuário cadastrado com sucesso! Lembre-se de utilizar um email válido para caso precise utilizar a recuperação de senha.', 'success');
+            this.context.signIn(this.state.email, this.state.password); 
+            this.setState({ ...initialState })
+        } catch(e) {
+            Alert(e.response.data.message, 'error');
+        }
     }
 
     render() {
@@ -30,6 +45,7 @@ export default class SignIn extends Component {
         const validations = []
         validations.push(this.state.email && this.state.email.includes('@'))
         validations.push(this.state.password && this.state.password.length >= 6)
+        validations.push(this.state.name && this.state.name.trim().length >= 3)
 
         const validForm = validations.reduce((total, atual) => total && atual)
 
@@ -38,6 +54,12 @@ export default class SignIn extends Component {
                 <StatusBar backgroundColor="#0f5d39" barStyle="light-content" />
                 <Image source={image} style={styles.logo} />
                 <View style={styles.formContainer}>
+                    <AuthInput 
+                        icon='user' 
+                        placeholder='Nome' 
+                        value={this.state.name} 
+                        style={styles.input} 
+                        onChangeText={textName => this.setState({ name: textName })} />
                     <AuthInput 
                         icon='at'
                         placeholder='E-mail' 
@@ -51,26 +73,19 @@ export default class SignIn extends Component {
                         secureTextEntry={true} style={styles.input} 
                         onChangeText={textSenha => this.setState({ password: textSenha })} />
 
-                    <TouchableOpacity onPress={this.handleSignIn} disabled={!validForm}>
+                    <TouchableOpacity onPress={this.cadastrarUsuario} disabled={!validForm}>
                         <View style={[styles.button, validForm ? {} : {backgroundColor: '#AAA'}]}>
                             <Text style={styles.buttonText}>
-                                Entrar
+                                Registrar
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={{ padding: 10 }} onPress={() => navigation.navigate('Registre-se')}>
+                <TouchableOpacity style={{ padding: 10 }} onPress={() => navigation.navigate('Entrar')}>
                     <Text style={styles.buttonText}>
-                        Ainda não possui conta?
+                        Já possui conta?
                     </Text>
                 </TouchableOpacity>
-                <Text 
-                    style={styles.buttonText} 
-                    onPress={() => { 
-                        Linking.openURL('https://missaoevidente.com.br/password/reset'); 
-                    }}> 
-                    Esqueceu sua senha? 
-                </Text> 
             </View>
         )
     }
