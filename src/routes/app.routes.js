@@ -16,6 +16,7 @@ import Sermao from '../pages/Sermao';
 import EstudoBiblico from '../pages/EstudoBiblico';
 import RelatorioAnual from '../pages/RelatorioAnual';
 import Discipulado from '../pages/Discipulado';
+import Conta from '../pages/Conta';
 import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -549,6 +550,19 @@ function CustomDrawerContent(props) {
         ):null}
         {isShowVisitacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
+          label="Conta"
+          icon={({color}) => 
+            <Icon size={21} name={'user-circle'} style={{color:color}}></Icon>
+          }
+          onPress={() => {
+            {showFrequencia(false)}
+            {showAtoPastoral(false)}
+            {showPregacao(false)}
+            {showVisitacao(false)}
+            props.navigation.navigate("Conta");
+          }}
+        />
+        <DrawerItem
           label="Ir para o Site"
           icon={({color}) => 
             <Icon size={21} name={'chrome'} style={{color:color}}></Icon>
@@ -733,6 +747,11 @@ export default class AppRoutes extends Component{
           },
         }}  />
         <Drawer.Screen name="Visitas às Escolas" component={VisitaEscola} options={{
+          drawerItemStyle:{
+            height:0
+          },
+        }}  />
+        <Drawer.Screen name="Conta" component={Conta} options={{
           drawerItemStyle:{
             height:0
           },
