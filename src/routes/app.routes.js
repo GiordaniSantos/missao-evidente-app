@@ -199,7 +199,7 @@ function CustomDrawerContent(props) {
         {isShowAtoPastoral ? (
           <View>
             <DrawerItem
-              label="Estudo"
+              label="Estudos"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
@@ -208,7 +208,7 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Estudo'
+                'Estudos'
               )}
               icon={({color}) => 
                 <Icon size={21} name={'book'} style={{color:color}}></Icon>
@@ -217,11 +217,11 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Estudo");
+                props.navigation.navigate("Estudos");
               }}
             />
             <DrawerItem
-              label="Sermão"
+              label="Sermões"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
@@ -230,7 +230,7 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Sermão'
+                'Sermões'
               )}
               icon={({color}) => 
                 <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>
@@ -239,11 +239,11 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Sermão");
+                props.navigation.navigate("Sermões");
               }}
             />
             <DrawerItem
-              label="Estudo Biblico"
+              label="Estudos Biblicos"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -3}}
               style={{marginLeft:20, marginRight:20}}
@@ -252,7 +252,7 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Aprendizados Biblicos'
+                'Estudos Biblicos'
               )}
               icon={({color}) => 
                 <Icon size={21} name={'bible'} style={{color:color}}></Icon>
@@ -261,11 +261,11 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Aprendizados Biblicos");
+                props.navigation.navigate("Estudos Biblicos");
               }}
             />
             <DrawerItem
-              label="Discipulado"
+              label="Discipulados"
               activeBackgroundColor='#0f5d39'
               labelStyle={{marginLeft: -10}}
               drawerLabelStyle={{marginLeft: -3}}
@@ -274,7 +274,7 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Discipulado'
+                'Discipulados'
               )}
               icon={({color}) =>
                 <Icon size={21} name={'people-arrows'} style={{color:color}}></Icon>
@@ -283,7 +283,7 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showPregacao(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Discipulado");
+                props.navigation.navigate("Discipulados");
               }}
             />
           </View>
@@ -310,7 +310,7 @@ function CustomDrawerContent(props) {
         {isShowPregacao ? (
           <View>
             <DrawerItem
-              label="Batismo Infantil"
+              label="Batismos Infantis"
               labelStyle={{marginLeft: -5}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
@@ -319,7 +319,7 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Batismo Infantil'
+                'Batismos Infantis'
               )}
               icon={({color}) => 
                 <Icon size={21} name={'child'} style={{color:color}}></Icon>
@@ -328,11 +328,11 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Batismo Infantil");
+                props.navigation.navigate("Batismos Infantis");
               }}
             />
             <DrawerItem
-              label="Batismo e Profissão de Fé"
+              label="Batismos e Profissões de Fé"
               labelStyle={{marginLeft: -15}}
               drawerLabelStyle={{marginLeft: -5}}
               style={{marginLeft:20, marginRight:20}}
@@ -341,7 +341,7 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Batismo e Profissão de Fé'
+                'Batismos e Profissões de Fé'
               )}
               icon={({color}) => 
                 <Icon size={21} name={'praying-hands'} style={{color:color}}></Icon>
@@ -350,11 +350,11 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Batismo e Profissão de Fé");
+                props.navigation.navigate("Batismos e Profissões de Fé");
               }}
             />
             <DrawerItem
-              label="Benção Nupcial"
+              label="Benções Nupciais"
               labelStyle={{marginLeft: -13}}
               drawerLabelStyle={{marginLeft: -3}}
               style={{marginLeft:20, marginRight:20}}
@@ -363,25 +363,25 @@ function CustomDrawerContent(props) {
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Benção Nupcial'
+                'Benções Nupciais'
               )}
               icon={({color}) => <Icon size={21} name={'hand-holding-heart'} style={{color:color}}></Icon>}
               onPress={() => {
                 {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Benção Nupcial");
+                props.navigation.navigate("Benções Nupciais");
               }}
             />
             <DrawerItem
-              label="Santa Ceia"
+              label="Santas Ceias"
               activeBackgroundColor='#0f5d39'
               style={{marginLeft:20, marginRight:20}}
               activeTintColor='#fff'
               focused={getActiveRouteState(
                 props.state.routes,
                 props.state.index,
-                'Santa Ceia'
+                'Santas Ceias'
               )}
               icon={({color}) => 
                 <Icon size={21} name={'wine-glass-alt'} style={{color:color}}></Icon>
@@ -390,7 +390,7 @@ function CustomDrawerContent(props) {
                 {showFrequencia(false)}
                 {showAtoPastoral(false)}
                 {showVisitacao(false)}
-                props.navigation.navigate("Santa Ceia");
+                props.navigation.navigate("Santas Ceias");
               }}
             />
           </View>
@@ -676,42 +676,42 @@ export default class AppRoutes extends Component{
             height:0
           },
         }} />
-        <Drawer.Screen name="Batismo Infantil" component={BatismoInfantil} options={{
+        <Drawer.Screen name="Batismos Infantis" component={BatismoInfantil} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Batismo e Profissão de Fé" component={BatismoProfissaoFe} options={{
+        <Drawer.Screen name="Batismos e Profissões de Fé" component={BatismoProfissaoFe} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Estudo" component={Estudo} options={{
+        <Drawer.Screen name="Estudos" component={Estudo} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Sermão" component={Sermao} options={{
+        <Drawer.Screen name="Sermões" component={Sermao} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Aprendizados Biblicos" component={EstudoBiblico} options={{
+        <Drawer.Screen name="Estudos Biblicos" component={EstudoBiblico} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Discipulado" component={Discipulado} options={{
+        <Drawer.Screen name="Discipulados" component={Discipulado} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Benção Nupcial" component={BencaoNupcial} options={{
+        <Drawer.Screen name="Benções Nupciais" component={BencaoNupcial} options={{
           drawerItemStyle:{
             height:0
           },
         }}  />
-        <Drawer.Screen name="Santa Ceia" component={SantaCeia} options={{
+        <Drawer.Screen name="Santas Ceias" component={SantaCeia} options={{
           drawerItemStyle:{
             height:0
           },
