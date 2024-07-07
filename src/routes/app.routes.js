@@ -18,15 +18,63 @@ import RelatorioAnual from '../pages/RelatorioAnual';
 import Discipulado from '../pages/Discipulado';
 import Conta from '../pages/Conta';
 import { AuthContext } from '../contexts/auth';
-import { Text, View, StyleSheet, Button, StatusBar, Pressable, Modal, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, Modal, TouchableOpacity, Image, TouchableWithoutFeedback, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
-import Web from '../pages/Web';
 import image from '../../assets/imgs/logo-menu.png'
-import { createDrawerNavigator,  DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
-import Comungante from '../pages/Comugante';
-import NaoComungante from '../pages/NaoComungante';
+import { createDrawerNavigator,  DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
+
+const routes = [
+  { name: 'Início', component: Dashboard },
+  { name: 'Relatório Anual', component: RelatorioAnual },
+  { name: 'Frequência aos Domingos', component: Membresia },
+  { name: 'Estudos', component: Estudo },
+  { name: 'Sermões', component: Sermao },
+  { name: 'Estudos Biblicos', component: EstudoBiblico },
+  { name: 'Discipulados', component: Discipulado },
+  { name: 'Batismos Infantis', component: BatismoInfantil },
+  { name: 'Batismos e Profissões de Fé', component: BatismoProfissaoFe },
+  { name: 'Benções Nupciais', component: BencaoNupcial },
+  { name: 'Santas Ceias', component: SantaCeia },
+  { name: 'Visitas aos Crentes', component: VisitaCrente },
+  { name: 'Visitas aos Não Crentes', component: VisitaNaoCrente },
+  { name: 'Visitas aos Presídios', component: VisitaPresidio },
+  { name: 'Visitas aos Enfermos', component: VisitaEnfermo },
+  { name: 'Visitas aos Hospitais', component: VisitaHospital },
+  { name: 'Visitas às Escolas', component: VisitaEscola },
+  { name: 'Conta', component: Conta },
+];
+
+const routesDrawerItem = [
+  { name: 'Início', labelStyle: {marginLeft: -9}, icon: 'home' },
+  { name: 'Relatório Anual', labelStyle: {marginLeft: -9}, icon: 'chart-bar' },
+  { name: 'Frequência aos Domingos', labelStyle: {marginLeft: -9}, icon: 'calendar-check' },
+]
+
+const routesMinistracaoDrawerItem = [
+  { name: 'Estudos', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'book' },
+  { name: 'Sermões', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'user-tie' },
+  { name: 'Estudos Biblicos', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -3}, style: {marginLeft: 20, marginRight: 20}, icon: 'bible' },
+  { name: 'Discipulados', labelStyle: {marginLeft: -10}, drawerLabelStyle: {marginLeft: -3}, style: {marginLeft: 20, marginRight: 20}, icon: 'people-arrows' },
+]
+
+const routesAtoPastoralDrawerItem = [
+  { name: 'Batismos Infantis', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'child' },
+  { name: 'Batismos e Profissões de Fé', labelStyle: {marginLeft: -15}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'praying-hands' },
+  { name: 'Benções Nupciais', labelStyle: {marginLeft: -13}, drawerLabelStyle: {marginLeft: -3}, style: {marginLeft: 20, marginRight: 20}, icon: 'hand-holding-heart' },
+  { name: 'Santas Ceias', labelStyle: {}, drawerLabelStyle: {}, style: {marginLeft: 20, marginRight: 20}, icon: 'wine-glass-alt' },
+]
+
+const routesVisitacaoDrawerItem = [
+  { name: 'Visitas aos Crentes', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'cross' },
+  { name: 'Visitas aos Não Crentes', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'heart-broken' },
+  { name: 'Visitas aos Presídios', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'user-lock' },
+  { name: 'Visitas aos Enfermos', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'syringe' },
+  { name: 'Visitas aos Hospitais', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'hospital' },
+  { name: 'Visitas às Escolas', labelStyle: {marginLeft: -5}, drawerLabelStyle: {marginLeft: -5}, style: {marginLeft: 20, marginRight: 20}, icon: 'school' },
+]
+
 
 //estilizando o menu
 //items, itemList do Drawer.screens e items
@@ -37,7 +85,6 @@ function CustomDrawerContent(props) {
   const [isShowAtoPastoral,showAtoPastoral] = React.useState(false)
   const [isShowPregacao,showPregacao] = React.useState(false)
   const [isShowVisitacao,showVisitacao] = React.useState(false)
-  const [isShowFrequencia,showFrequencia] = React.useState(false)
 
   const routeMap = {
     'Visitas aos Crentes': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
@@ -56,6 +103,7 @@ function CustomDrawerContent(props) {
     'Santas Ceias': { showPregacao: true, showAtoPastoral: false, showVisitacao: false },
     'Início': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
     'Relatório Anual': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
+    'Frequência aos Domingos': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
     'Conta': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
     'Ir para o Site': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
   };
@@ -81,124 +129,24 @@ function CustomDrawerContent(props) {
         <View style={styles.userArea}>
           <Image source={image} style={styles.user} />
           <Text style={styles.title}>Missão Evidente</Text>
-          {/*<Text style={styles.nome}>{context.user.name}</Text>*/}
-          {/*<Text style={styles.email}>{context.user.email}</Text>*/}
         </View>
-        <DrawerItem
-          label="Início"
-          activeBackgroundColor='#0f5d39'
-          activeTintColor='#fff'
-          labelStyle={{marginLeft:-9}}
-          focused={getActiveRouteState(
-            props.state.routes,
-            props.state.index,
-            'Início'
-          )}
-          icon={({color}) => 
-            <Icon size={21} name={'home'} style={{color:color}}></Icon>
-          }
-          onPress={() => {
-            props.navigation.navigate("Início");
-          }}
-        />
-        <DrawerItem
-          label="Relatório Anual"
-          activeBackgroundColor='#0f5d39'
-          activeTintColor='#fff'
-          labelStyle={{marginLeft:-9}}
-          focused={getActiveRouteState(
-            props.state.routes,
-            props.state.index,
-            'Relatório Anual'
-          )}
-          icon={({color}) => 
-            <Icon size={21} name={'chart-bar'} style={{color:color}}></Icon>
-          }
-          onPress={() => {
-            props.navigation.navigate("Relatório Anual");
-          }}
-        />
-        {isShowFrequencia ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
-        <DrawerItem
-          label="Frequencia"
-          labelStyle={{marginLeft: -2}}
-          drawerLabelStyle={{marginLeft: -2}}
-          activeBackgroundColor='#0f5d39'
-          activeTintColor='#fff'
-          focused={getActiveRouteState(
-            props.state.routes,
-            props.state.index,
-            'Ato Pastoral'
-          )}
-          icon={({color}) => 
-            <Icon size={23} name={isShowFrequencia ? 'angle-up' : 'angle-down'} style={{color:color, marginLeft: 4}}></Icon>
-          }
-          onPress={()=>
-            {showFrequencia(!isShowFrequencia)}
-          }
-        />
-        {isShowFrequencia ? (
-          <View>
-              <DrawerItem
-                label="Frequência aos Domingos"
-                activeBackgroundColor='#0f5d39'
-                activeTintColor='#fff'
-                labelStyle={{marginLeft: -5}}
-                drawerLabelStyle={{marginLeft: -5}}
-                style={{marginLeft:20, marginRight:20}}
-                focused={getActiveRouteState(
-                  props.state.routes,
-                  props.state.index,
-                  'Frequência aos Domingos'
-                )}
-                icon={({color}) => 
-                  <Icon size={21} name={'calendar-check'} style={{color:color}}></Icon>
-                }
-                onPress={() => {
-                  props.navigation.navigate("Frequência aos Domingos");
-                }}
-              />
-              <DrawerItem
-                label="Comungantes"
-                activeBackgroundColor='#0f5d39'
-                activeTintColor='#fff'
-                labelStyle={{marginLeft: -5}}
-                drawerLabelStyle={{marginLeft: -5}}
-                style={{marginLeft:20, marginRight:20}}
-                focused={getActiveRouteState(
-                  props.state.routes,
-                  props.state.index,
-                  'Comungantes'
-                )}
-                icon={({color}) => 
-                  <Icon size={21} name={'users'} style={{color:color}}></Icon>
-                }
-                onPress={() => {
-                  props.navigation.navigate("Comungantes");
-                }}
-              />
-              <DrawerItem
-                label="Não Comungantes"
-                activeBackgroundColor='#0f5d39'
-                activeTintColor='#fff'
-                labelStyle={{marginLeft: -5}}
-                drawerLabelStyle={{marginLeft: -5}}
-                style={{marginLeft:20, marginRight:20}}
-                focused={getActiveRouteState(
-                  props.state.routes,
-                  props.state.index,
-                  'Não Comungantes'
-                )}
-                icon={({color}) => 
-                  <Icon size={21} name={'user-times'} style={{color:color}}></Icon>
-                }
-                onPress={() => {
-                  props.navigation.navigate("Não Comungantes");
-                }}
-              />
-          </View>
-        ):null}
-        {isShowFrequencia || isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
+        {routesDrawerItem.map((route, index) => (
+          <DrawerItem
+            label={route.name}
+            key={index}
+            activeBackgroundColor='#0f5d39'
+            activeTintColor='#fff'
+            labelStyle={route.labelStyle}
+            focused={
+              getActiveRouteState(props.state.routes, props.state.index, route.name)
+            }
+            icon={({color}) => 
+              <Icon size={21} name={route.icon} style={{color:color}}></Icon>
+            }
+            onPress={() => navigation.navigate(route.name)}
+          />
+        ))}
+        {isShowAtoPastoral ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
         <DrawerItem
           label="Ministração"
           labelStyle={{marginLeft: -2}}
@@ -219,82 +167,24 @@ function CustomDrawerContent(props) {
         />
         {isShowAtoPastoral ? (
           <View>
-            <DrawerItem
-              label="Estudos"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Estudos'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'book'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Estudos");
-              }}
-            />
-            <DrawerItem
-              label="Sermões"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Sermões'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Sermões");
-              }}
-            />
-            <DrawerItem
-              label="Estudos Biblicos"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -3}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Estudos Biblicos'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'bible'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Estudos Biblicos");
-              }}
-            />
-            <DrawerItem
-              label="Discipulados"
-              activeBackgroundColor='#0f5d39'
-              labelStyle={{marginLeft: -10}}
-              drawerLabelStyle={{marginLeft: -3}}
-              style={{marginLeft:20, marginRight:20}}
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Discipulados'
-              )}
-              icon={({color}) =>
-                <Icon size={21} name={'people-arrows'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Discipulados");
-              }}
-            />
+            {routesMinistracaoDrawerItem.map((route, index) => (
+              <DrawerItem
+                label={route.name}
+                key={index}
+                activeBackgroundColor='#0f5d39'
+                activeTintColor='#fff'
+                labelStyle={route.labelStyle}
+                drawerLabelStyle={route.drawerLabelStyle}
+                style={route.style}
+                focused={
+                  getActiveRouteState(props.state.routes, props.state.index, route.name)
+                }
+                icon={({color}) => 
+                  <Icon size={21} name={route.icon} style={{color:color}}></Icon>
+                }
+                onPress={() => navigation.navigate(route.name)}
+              />
+            ))}
           </View>
         ):null}
         {isShowAtoPastoral || isShowPregacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
@@ -318,78 +208,24 @@ function CustomDrawerContent(props) {
         />
         {isShowPregacao ? (
           <View>
-            <DrawerItem
-              label="Batismos Infantis"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Batismos Infantis'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'child'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Batismos Infantis");
-              }}
-            />
-            <DrawerItem
-              label="Batismos e Profissões de Fé"
-              labelStyle={{marginLeft: -15}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Batismos e Profissões de Fé'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'praying-hands'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Batismos e Profissões de Fé");
-              }}
-            />
-            <DrawerItem
-              label="Benções Nupciais"
-              labelStyle={{marginLeft: -13}}
-              drawerLabelStyle={{marginLeft: -3}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Benções Nupciais'
-              )}
-              icon={({color}) => <Icon size={21} name={'hand-holding-heart'} style={{color:color}}></Icon>}
-              onPress={() => {
-                props.navigation.navigate("Benções Nupciais");
-              }}
-            />
-            <DrawerItem
-              label="Santas Ceias"
-              activeBackgroundColor='#0f5d39'
-              style={{marginLeft:20, marginRight:20}}
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Santas Ceias'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'wine-glass-alt'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Santas Ceias");
-              }}
-            />
+            {routesAtoPastoralDrawerItem.map((route, index) => (
+              <DrawerItem
+                label={route.name}
+                key={index}
+                activeBackgroundColor='#0f5d39'
+                activeTintColor='#fff'
+                labelStyle={route.labelStyle}
+                drawerLabelStyle={route.drawerLabelStyle}
+                style={route.style}
+                focused={
+                  getActiveRouteState(props.state.routes, props.state.index, route.name)
+                }
+                icon={({color}) => 
+                  <Icon size={21} name={route.icon} style={{color:color}}></Icon>
+                }
+                onPress={() => navigation.navigate(route.name)}
+              />
+            ))}
           </View>
         ):null}
         {isShowPregacao || isShowVisitacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
@@ -413,118 +249,25 @@ function CustomDrawerContent(props) {
         />
         {isShowVisitacao ? (
           <View>
-            <DrawerItem
-              label="Visitas aos Crentes"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Visitas aos Crentes'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'cross'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Visitas aos Crentes");
-              }}
-            />
-            <DrawerItem
-              label="Visitas aos Não Crentes"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Visitas aos Não Crentes'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'heart-broken'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Visitas aos Não Crentes");
-              }}
-            />
-            <DrawerItem
-              label="Visitas aos Presídios"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Visitas aos Presídios'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'user-lock'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Visitas aos Presídios");
-              }}
-            />
-           <DrawerItem
-              label="Visitas aos Enfermos"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Visitas aos Enfermos'
-              )}
-              icon={({color}) => <Icon size={21} name={'syringe'} style={{color:color}}></Icon>}
-              onPress={() => {
-                props.navigation.navigate("Visitas aos Enfermos");
-              }}
-            />
-            <DrawerItem
-              label="Visitas aos Hospitais"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Visitas aos Hospitais'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'hospital'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Visitas aos Hospitais");
-              }}
-            />
-            <DrawerItem
-              label="Visitas às Escolas"
-              labelStyle={{marginLeft: -5}}
-              drawerLabelStyle={{marginLeft: -5}}
-              style={{marginLeft:20, marginRight:20}}
-              activeBackgroundColor='#0f5d39'
-              activeTintColor='#fff'
-              focused={getActiveRouteState(
-                props.state.routes,
-                props.state.index,
-                'Visitas às Escolas'
-              )}
-              icon={({color}) => 
-                <Icon size={21} name={'school'} style={{color:color}}></Icon>
-              }
-              onPress={() => {
-                props.navigation.navigate("Visitas às Escolas");
-              }}
-            />
+            {routesVisitacaoDrawerItem.map((route, index) => (
+              <DrawerItem
+                label={route.name}
+                key={index}
+                activeBackgroundColor='#0f5d39'
+                activeTintColor='#fff'
+                labelStyle={route.labelStyle}
+                drawerLabelStyle={route.drawerLabelStyle}
+                style={route.style}
+                focused={
+                  getActiveRouteState(props.state.routes, props.state.index, route.name)
+                }
+                icon={({color}) => 
+                  <Icon size={21} name={route.icon} style={{color:color}}></Icon>
+                }
+                onPress={() => navigation.navigate(route.name)}
+              />
+            ))}
+            
           </View>
         ):null}
         {isShowVisitacao ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
@@ -543,7 +286,7 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'chrome'} style={{color:color}}></Icon>
           }
           onPress={() => {
-            props.navigation.navigate("Site");
+            Linking.openURL('https://missaoevidente.com.br'); 
           }}
         />
         <DrawerItem
@@ -579,7 +322,6 @@ export default class AppRoutes extends Component{
           drawerActiveTintColor: '#fff',
           headerStyle: {
             backgroundColor: '#0f5d39',
-            
           },
           headerTintColor: '#FFF',
           headerTitleStyle:{
@@ -622,111 +364,13 @@ export default class AppRoutes extends Component{
         }} 
         initialRouteName="Início" drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
-        <Drawer.Screen name="Início" component={Dashboard} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }} />
-        <Drawer.Screen name="Relatório Anual" component={RelatorioAnual} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }} />
-        <Drawer.Screen name="Frequência aos Domingos" component={Membresia} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }} />
-        <Drawer.Screen name="Comungantes" component={Comungante} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }} />
-        <Drawer.Screen name="Não Comungantes" component={NaoComungante} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }} />
-        <Drawer.Screen name="Batismos Infantis" component={BatismoInfantil} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Batismos e Profissões de Fé" component={BatismoProfissaoFe} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Estudos" component={Estudo} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Sermões" component={Sermao} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Estudos Biblicos" component={EstudoBiblico} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Discipulados" component={Discipulado} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Benções Nupciais" component={BencaoNupcial} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Santas Ceias" component={SantaCeia} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Site" component={Web} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Visitas aos Crentes" component={VisitaCrente} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Visitas aos Não Crentes" component={VisitaNaoCrente} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Visitas aos Presídios" component={VisitaPresidio} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Visitas aos Enfermos" component={VisitaEnfermo} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Visitas aos Hospitais" component={VisitaHospital} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Visitas às Escolas" component={VisitaEscola} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
-        <Drawer.Screen name="Conta" component={Conta} options={{
-          drawerItemStyle:{
-            height:0
-          },
-        }}  />
+        {routes.map((route, index) => (
+          <Drawer.Screen key={index} name={route.name} component={route.component} options={{
+            drawerItemStyle:{
+              height:0
+            },
+          }}/>
+        ))}
       </Drawer.Navigator>
     )
   }
@@ -761,16 +405,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFF'
   },
-  nome:{
-    fontFamily: CommonStyles.fontFamily,
-    marginTop: 5,
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
-  email:{
-    fontFamily: CommonStyles.fontFamily,
-    fontSize: 14
-  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -784,7 +418,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 35,
     alignItems: 'center',
-    
     shadowOffset: {
       width: 0,
       height: 2,
@@ -792,11 +425,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   modalText: {
     marginTop: -10,
