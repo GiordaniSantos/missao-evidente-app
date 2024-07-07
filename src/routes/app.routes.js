@@ -26,15 +26,51 @@ import image from '../../assets/imgs/logo-menu.png'
 import { createDrawerNavigator,  DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import Comungante from '../pages/Comugante';
 import NaoComungante from '../pages/NaoComungante';
+import { useNavigation } from '@react-navigation/native';
 
 //estilizando o menu
 //items, itemList do Drawer.screens e items
 function CustomDrawerContent(props) {
+  const navigation = useNavigation();
+  const currentRoute = navigation.getCurrentRoute();
+  
   const [isShowAtoPastoral,showAtoPastoral] = React.useState(false)
   const [isShowPregacao,showPregacao] = React.useState(false)
   const [isShowVisitacao,showVisitacao] = React.useState(false)
   const [isShowFrequencia,showFrequencia] = React.useState(false)
 
+  const routeMap = {
+    'Visitas aos Crentes': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
+    'Visitas aos Não Crentes': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
+    'Visitas aos Presídios': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
+    'Visitas aos Enfermos': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
+    'Visitas aos Hospitais': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
+    'Visitas às Escolas': { showVisitacao: true, showAtoPastoral: false, showPregacao: false },
+    'Estudos': { showAtoPastoral: true, showPregacao: false, showVisitacao: false },
+    'Sermões': { showAtoPastoral: true, showPregacao: false, showVisitacao: false },
+    'Estudos Biblicos': { showAtoPastoral: true, showPregacao: false, showVisitacao: false },
+    'Discipulados': { showAtoPastoral: true, showPregacao: false, showVisitacao: false },
+    'Batismos Infantis': { showPregacao: true, showAtoPastoral: false, showVisitacao: false },
+    'Batismos e Profissões de Fé': { showPregacao: true, showAtoPastoral: false, showVisitacao: false },
+    'Benções Nupciais': { showPregacao: true, showAtoPastoral: false, showVisitacao: false },
+    'Santas Ceias': { showPregacao: true, showAtoPastoral: false, showVisitacao: false },
+    'Início': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
+    'Relatório Anual': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
+    'Conta': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
+    'Ir para o Site': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
+  };
+
+  React.useEffect(() => {
+    if (currentRoute) {
+      const routeConfig = routeMap[currentRoute.name];
+      if (routeConfig) {
+        showVisitacao(routeConfig.showVisitacao);
+        showAtoPastoral(routeConfig.showAtoPastoral);
+        showPregacao(routeConfig.showPregacao);
+      }
+    }
+  }, [currentRoute]);
+  
   //contexto
   context = useContext(AuthContext);
 
@@ -62,9 +98,6 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'home'} style={{color:color}}></Icon>
           }
           onPress={() => {
-            {showAtoPastoral(false)}
-            {showPregacao(false)}
-            {showVisitacao(false)}
             props.navigation.navigate("Início");
           }}
         />
@@ -76,16 +109,13 @@ function CustomDrawerContent(props) {
           focused={getActiveRouteState(
             props.state.routes,
             props.state.index,
-            'Relatorio Anual'
+            'Relatório Anual'
           )}
           icon={({color}) => 
             <Icon size={21} name={'chart-bar'} style={{color:color}}></Icon>
           }
           onPress={() => {
-            {showAtoPastoral(false)}
-            {showPregacao(false)}
-            {showVisitacao(false)}
-            props.navigation.navigate("Relatorio Anual");
+            props.navigation.navigate("Relatório Anual");
           }}
         />
         {isShowFrequencia ? ( <View style={{borderTopColor: '#cfcfcf',borderTopWidth: 1,}}></View> ) : null}
@@ -125,9 +155,6 @@ function CustomDrawerContent(props) {
                   <Icon size={21} name={'calendar-check'} style={{color:color}}></Icon>
                 }
                 onPress={() => {
-                  {showAtoPastoral(false)}
-                  {showPregacao(false)}
-                  {showVisitacao(false)}
                   props.navigation.navigate("Frequência aos Domingos");
                 }}
               />
@@ -147,9 +174,6 @@ function CustomDrawerContent(props) {
                   <Icon size={21} name={'users'} style={{color:color}}></Icon>
                 }
                 onPress={() => {
-                  {showAtoPastoral(false)}
-                  {showPregacao(false)}
-                  {showVisitacao(false)}
                   props.navigation.navigate("Comungantes");
                 }}
               />
@@ -169,9 +193,6 @@ function CustomDrawerContent(props) {
                   <Icon size={21} name={'user-times'} style={{color:color}}></Icon>
                 }
                 onPress={() => {
-                  {showAtoPastoral(false)}
-                  {showPregacao(false)}
-                  {showVisitacao(false)}
                   props.navigation.navigate("Não Comungantes");
                 }}
               />
@@ -214,9 +235,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'book'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showPregacao(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Estudos");
               }}
             />
@@ -236,9 +254,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'user-tie'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showPregacao(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Sermões");
               }}
             />
@@ -258,9 +273,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'bible'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showPregacao(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Estudos Biblicos");
               }}
             />
@@ -280,9 +292,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'people-arrows'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showPregacao(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Discipulados");
               }}
             />
@@ -325,9 +334,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'child'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Batismos Infantis");
               }}
             />
@@ -347,9 +353,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'praying-hands'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Batismos e Profissões de Fé");
               }}
             />
@@ -367,9 +370,6 @@ function CustomDrawerContent(props) {
               )}
               icon={({color}) => <Icon size={21} name={'hand-holding-heart'} style={{color:color}}></Icon>}
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Benções Nupciais");
               }}
             />
@@ -387,9 +387,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'wine-glass-alt'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showVisitacao(false)}
                 props.navigation.navigate("Santas Ceias");
               }}
             />
@@ -432,9 +429,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'cross'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Crentes");
               }}
             />
@@ -454,9 +448,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'heart-broken'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Não Crentes");
               }}
             />
@@ -476,9 +467,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'user-lock'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Presídios");
               }}
             />
@@ -496,9 +484,6 @@ function CustomDrawerContent(props) {
               )}
               icon={({color}) => <Icon size={21} name={'syringe'} style={{color:color}}></Icon>}
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Enfermos");
               }}
             />
@@ -518,9 +503,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'hospital'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showPregacao(false)}
                 props.navigation.navigate("Visitas aos Hospitais");
               }}
             />
@@ -540,9 +522,6 @@ function CustomDrawerContent(props) {
                 <Icon size={21} name={'school'} style={{color:color}}></Icon>
               }
               onPress={() => {
-                {showFrequencia(false)}
-                {showAtoPastoral(false)}
-                {showPregacao(false)}
                 props.navigation.navigate("Visitas às Escolas");
               }}
             />
@@ -555,10 +534,6 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'user-circle'} style={{color:color}}></Icon>
           }
           onPress={() => {
-            {showFrequencia(false)}
-            {showAtoPastoral(false)}
-            {showPregacao(false)}
-            {showVisitacao(false)}
             props.navigation.navigate("Conta");
           }}
         />
@@ -568,10 +543,6 @@ function CustomDrawerContent(props) {
             <Icon size={21} name={'chrome'} style={{color:color}}></Icon>
           }
           onPress={() => {
-            {showFrequencia(false)}
-            {showAtoPastoral(false)}
-            {showPregacao(false)}
-            {showVisitacao(false)}
             props.navigation.navigate("Site");
           }}
         />
@@ -656,7 +627,7 @@ export default class AppRoutes extends Component{
             height:0
           },
         }} />
-        <Drawer.Screen name="Relatorio Anual" component={RelatorioAnual} options={{
+        <Drawer.Screen name="Relatório Anual" component={RelatorioAnual} options={{
           drawerItemStyle:{
             height:0
           },
