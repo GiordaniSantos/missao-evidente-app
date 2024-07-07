@@ -91,7 +91,6 @@ export default class Membresia extends Component {
         try{
             const res = await api.get(`/nao-comungante?id_usuario=${this.context.user.id}`)
             if(res.data){
-                console.log(res.data)
                 this.setState({ naoComunganteQtd: res.data.quantidade, naoComunganteId: res.data.id })
             }
         }catch(e) {
