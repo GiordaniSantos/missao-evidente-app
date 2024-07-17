@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
-import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar, Linking } from 'react-native'
-
+import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar} from 'react-native'
 import image from '../../../assets/imgs/logo-menu.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { AuthContext } from '../../contexts/auth'
 
-import Alert from '../../components/SweetAlert';
 
 const initialState = {
     email: '',
@@ -64,39 +62,17 @@ export default class SignIn extends Component {
                         Ainda não possui conta?
                     </Text>
                 </TouchableOpacity>
-                <Text 
-                    style={styles.buttonText} 
-                    onPress={() => { 
-                        Linking.openURL('https://missaoevidente.com.br/password/reset'); 
-                    }}> 
-                    Esqueceu sua senha? 
-                </Text> 
+                <TouchableOpacity onPress={() => navigation.navigate('Redefinição de Senha')}>
+                    <Text style={styles.buttonText}>
+                        Esqueceu sua senha?
+                    </Text>
+                </TouchableOpacity>
             </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontFamily: CommonStyles.fontFamily,
-        color: CommonStyles.colors.secondary,
-        fontSize: 26,
-        backgroundColor: '#015b41',
-        borderRadius: 8,
-        paddingTop:20,
-        paddingLeft:45,
-        paddingRight:45,
-        paddingBottom:20,
-        marginBottom: -40,
-        zIndex:1
-    }, 
-    subTitle: {
-        fontFamily: CommonStyles.fontFamily,
-        color: '#FFF',
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 10
-    },
     logo: {
         width: 190,
         height: 190,

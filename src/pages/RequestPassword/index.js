@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar } from 'react-native'
+import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar} from 'react-native'
 import api from '../../services/api'
 import image from '../../../assets/imgs/logo-menu.png'
 import CommonStyles from '../../CommonStyles'
@@ -8,29 +8,24 @@ import { AuthContext } from '../../contexts/auth'
 
 import Alert from '../../components/SweetAlert';
 
-const initialState = { 
-    name: '',
+const initialState = {
     email: '',
-    password: '',
 }
 
-export default class SignUp extends Component {
+export default class RequestPassword extends Component {
     static contextType = AuthContext;
 
     state = {
         ...initialState
     }
 
-    cadastrarUsuario = async () => {
+    solicitarRedefinicao = async () => {
         try{
-            await api.post(`/signup`, {
-                name: this.state.name,
+            await api.post(`/password/reset`, {
                 email: this.state.email,
-                password: this.state.password,
             })
 
-            Alert('Usuário cadastrado com sucesso! Lembre-se de utilizar um email válido para caso precise utilizar a recuperação de senha.', 'success');
-            this.context.signIn(this.state.email, this.state.password); 
+            Alert('Email enviado com sucesso! Siga as instruções do email.', 'success');
             this.setState({ ...initialState })
         } catch(e) {
             Alert(e.response.data.message, 'error');
@@ -38,12 +33,8 @@ export default class SignUp extends Component {
     }
 
     render() {
-        const { navigation } = this.props;
-
         const validations = []
         validations.push(this.state.email && this.state.email.includes('@'))
-        validations.push(this.state.password && this.state.password.length >= 6)
-        validations.push(this.state.name && this.state.name.trim().length >= 3)
 
         const validForm = validations.reduce((total, atual) => total && atual)
 
@@ -53,37 +44,20 @@ export default class SignUp extends Component {
                 <Image source={image} style={styles.logo} />
                 <View style={styles.formContainer}>
                     <AuthInput 
-                        icon='user' 
-                        placeholder='Nome' 
-                        value={this.state.name} 
-                        style={styles.input} 
-                        onChangeText={textName => this.setState({ name: textName })} />
-                    <AuthInput 
                         icon='at'
                         placeholder='E-mail' 
                         value={this.state.email} 
                         style={styles.input} 
                         onChangeText={textEmail => this.setState({ email: textEmail })} />
-                    <AuthInput 
-                        icon='lock' 
-                        placeholder='Senha' 
-                        value={this.state.password} 
-                        secureTextEntry={true} style={styles.input} 
-                        onChangeText={textSenha => this.setState({ password: textSenha })} />
 
-                    <TouchableOpacity onPress={this.cadastrarUsuario} disabled={!validForm}>
+                    <TouchableOpacity onPress={this.solicitarRedefinicao} disabled={!validForm}>
                         <View style={[styles.button, validForm ? {} : {backgroundColor: '#AAA'}]}>
                             <Text style={styles.buttonText}>
-                                Registrar
+                                Enviar link para redefinição
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={{ padding: 10 }} onPress={() => navigation.navigate('Entrar')}>
-                    <Text style={styles.buttonText}>
-                        Já possui conta?
-                    </Text>
-                </TouchableOpacity>
             </View>
         )
     }
