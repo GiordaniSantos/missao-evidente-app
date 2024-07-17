@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, FlatList, TouchableOpacity, TextInput, Text, Button} from 'react-native'
+import {View, StyleSheet, FlatList, TouchableOpacity, TextInput, Text} from 'react-native'
 import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -228,7 +228,9 @@ export default class Membresia extends Component {
                             value={this.state.comunganteQtd.toString()}
                             onChangeText={(text) => this.setState({ comunganteQtd: text })}
                         />
-                        <Button title="Atualizar Comungante" color={'#0f5d39'} onPress={this.updateOrCreateComungante} />
+                        <TouchableOpacity onPress={this.updateOrCreateComungante} style={styles.appButtonContainer}>
+                            <Text style={styles.appButtonText}>Atualizar Comungante</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, margin: 10 }}>
                         <Text style={[styles.label, {width: 140}]}>Não Comungantes</Text>
@@ -239,7 +241,9 @@ export default class Membresia extends Component {
                             value={this.state.naoComunganteQtd.toString()}
                             onChangeText={(text) => this.setState({ naoComunganteQtd: text })}
                         />
-                        <Button title="Atualizar Não Comungante" color={'#0f5d39'} onPress={this.updateOrCreateNaoComungante} />
+                        <TouchableOpacity onPress={this.updateOrCreateNaoComungante} style={styles.appButtonContainer}>
+                            <Text style={styles.appButtonText}>Atualizar Não Comungante</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.taskList}>
@@ -255,6 +259,20 @@ export default class Membresia extends Component {
 
 
 const styles = StyleSheet.create({
+    appButtonContainer: {
+        elevation: 8,
+        backgroundColor: "#0f5d39",
+        borderRadius: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 10
+    },
+    appButtonText: {
+        fontSize: 13,
+        color: "#fff",
+        fontWeight: "bold",
+        textAlign: 'center',
+        textTransform: "uppercase"
+    },
     container: {
         flex: 1,
         backgroundColor: '#f8f9fc',
@@ -282,7 +300,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingHorizontal: 10,
         paddingVertical: 10,
-        marginBottom: 20,
+        marginBottom: 15,
     },
     addButton: {
         position: 'absolute',
