@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     estudoBiblico: []
 }
 
-export default class EstudoBiblico extends Component {
+class EstudoBiblico extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadEstudoBiblico()
@@ -27,21 +26,19 @@ export default class EstudoBiblico extends Component {
 
     loadEstudoBiblico = async () => {
         try{
-            const res = await api.get(`/estudo-biblico?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/estudo-biblico`)
             this.setState({ estudoBiblico: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addEstudoBiblico = async id_usuario => {
+    addEstudoBiblico = async () => {
         try {
-            await api.post(`/estudo-biblico`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/estudo-biblico`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadEstudoBiblico()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class EstudoBiblico extends Component {
 
     updateEstudoBiblico = async estudoBiblico => {
         try {
-            await api.put(`/estudo-biblico/${estudoBiblico.id}?id_usuario=${estudoBiblico.id_usuario}`, {
+            await api.put(`/estudo-biblico/${estudoBiblico.id}`, {
                 created_at: estudoBiblico.date,
                 nome: estudoBiblico.nome,
                 id_usuario: estudoBiblico.id_usuario
@@ -66,9 +63,10 @@ export default class EstudoBiblico extends Component {
 
     deleteEstudoBiblico = async EstudoBiblicoId => {
         try {
-            await api.delete(`/estudo-biblico/${EstudoBiblicoId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/estudo-biblico/${EstudoBiblicoId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadEstudoBiblico()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class EstudoBiblico extends Component {
 
     buscarEstudoBiblico = async id => {
         try {
-            const res = await api.get(`/estudo-biblico/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/estudo-biblico/${id}`)
             this.setState({ estudoBiblicoBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class EstudoBiblico extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.estudoBiblico} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Assunto: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudoBiblico}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudoBiblico(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudoBiblico()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(EstudoBiblico)

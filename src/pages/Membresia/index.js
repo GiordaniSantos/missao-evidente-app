@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity, TextInput, Text} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AddModal from '../../components/AddModal';
@@ -8,6 +7,8 @@ import api from '../../services/api';
 import Item from '../../components/Item';
 import Alert from '../../components/SweetAlert';
 import EditModalMembresia from '../../components/EditModalMembresia';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showModal: false,
@@ -21,10 +22,8 @@ const initialState = {
     membros: []
 }
 
-export default class Membresia extends Component {
+class Membresia extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadMembros()
@@ -32,13 +31,9 @@ export default class Membresia extends Component {
         this.loadNaoComungante()
     }
 
-    handleLogout = () =>{
-        this.context.logout();   
-    }
-
     loadComungante = async () => {
         try{
-            const res = await api.get(`/comungante?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/comungante`)
             if(res.data){
                 this.setState({ comunganteQtd: res.data.quantidade, comunganteId: res.data.id })
             }
@@ -51,7 +46,7 @@ export default class Membresia extends Component {
         const comungante = {
             id: this.state.comunganteId,
             quantidade: this.state.comunganteQtd,
-            id_usuario: this.context.user.id
+            id_usuario: this.props.userId
         }
         if(this.state.comunganteId ){
             this.updateComungante(comungante)
@@ -63,11 +58,12 @@ export default class Membresia extends Component {
     updateComungante = async comungante => {
         try {
             await api.put(`/comungante/${comungante.id}?id_usuario=${comungante.id_usuario}`, {
-                id_usuario: this.context.user.id,
+                id_usuario: this.props.userId,
                 quantidade: comungante.quantidade
             })
             this.loadComungante()
             Alert('Atualizado', 'success');
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,11 +72,12 @@ export default class Membresia extends Component {
     addComungante = async comungante => {
         try {
             await api.post(`/comungante`, {
-                id_usuario: this.context.user.id,
+                id_usuario: this.props.userId,
                 quantidade: comungante.quantidade
             })
             this.loadComungante()
             Alert('Atualizado', 'success');
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -89,7 +86,7 @@ export default class Membresia extends Component {
 
     loadNaoComungante = async () => {
         try{
-            const res = await api.get(`/nao-comungante?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/nao-comungante`)
             if(res.data){
                 this.setState({ naoComunganteQtd: res.data.quantidade, naoComunganteId: res.data.id })
             }
@@ -102,7 +99,7 @@ export default class Membresia extends Component {
         const naoComungante = {
             id: this.state.naoComunganteId,
             quantidade: this.state.naoComunganteQtd,
-            id_usuario: this.context.user.id
+            id_usuario: this.props.userId
         }
         if(this.state.naoComunganteId ){
             this.updateNaoComungante(naoComungante)
@@ -114,11 +111,12 @@ export default class Membresia extends Component {
     updateNaoComungante = async naoComungante => {
         try {
             await api.put(`/nao-comungante/${naoComungante.id}?id_usuario=${naoComungante.id_usuario}`, {
-                id_usuario: this.context.user.id,
+                id_usuario: this.props.userId,
                 quantidade: naoComungante.quantidade
             })
             this.loadNaoComungante()
             Alert('Atualizado', 'success');
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -127,7 +125,7 @@ export default class Membresia extends Component {
     addNaoComungante = async naoComungante => {
         try {
             await api.post(`/nao-comungante`, {
-                id_usuario: this.context.user.id,
+                id_usuario: this.props.userId,
                 quantidade: naoComungante.quantidade
             })
             this.loadNaoComungante()
@@ -139,7 +137,7 @@ export default class Membresia extends Component {
 
     loadMembros = async () => {
         try{
-            const res = await api.get(`/membresia?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/membresia`)
             this.setState({ membros: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
@@ -156,7 +154,7 @@ export default class Membresia extends Component {
             })
             Alert('Atualizado com Sucesso', 'success');
             this.setState({ showModalEdit: false }, this.loadMembros)
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -165,7 +163,7 @@ export default class Membresia extends Component {
 
     buscarMembresia = async id => {
         try {
-            const res = await api.get(`/membresia/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/membresia/${id}`)
             this.setState({ membresiaBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -196,7 +194,7 @@ export default class Membresia extends Component {
             })
             Alert('Adicionado com Sucesso', 'success');
             this.setState({ showModal: false }, this.loadMembros)
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -205,9 +203,10 @@ export default class Membresia extends Component {
 
     deleteMembresia = async membroId => {
         try {
-            await api.delete(`/membresia/${membroId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/membresia/${membroId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadMembros()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -314,3 +313,20 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     },
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        userId: user.id
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Membresia)

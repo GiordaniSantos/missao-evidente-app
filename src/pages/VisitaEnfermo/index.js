@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     enfermos: []
 }
 
-export default class VisitaEnfermo extends Component {
+class VisitaEnfermo extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadVisitasEnfermos()
@@ -27,21 +26,19 @@ export default class VisitaEnfermo extends Component {
 
     loadVisitasEnfermos = async () => {
         try{
-            const res = await api.get(`/enfermo?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/enfermo`)
             this.setState({ enfermos: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addVisitaEnfermo = async id_usuario => {
+    addVisitaEnfermo = async () => {
         try {
-            await api.post(`/enfermo`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/enfermo`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasEnfermos()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class VisitaEnfermo extends Component {
 
     updateEnfermo = async enfermo => {
         try {
-            await api.put(`/enfermo/${enfermo.id}?id_usuario=${enfermo.id_usuario}`, {
+            await api.put(`/enfermo/${enfermo.id}`, {
                 created_at: enfermo.date,
                 nome: enfermo.nome,
                 id_usuario: enfermo.id_usuario
@@ -66,9 +63,10 @@ export default class VisitaEnfermo extends Component {
 
     deleteVisitaEnfermo = async enfermoId => {
         try {
-            await api.delete(`/enfermo/${enfermoId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/enfermo/${enfermoId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadVisitasEnfermos()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class VisitaEnfermo extends Component {
 
     buscarEnfermo = async id => {
         try {
-            const res = await api.get(`/enfermo/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/enfermo/${id}`)
             this.setState({ enfermoBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -97,7 +95,7 @@ export default class VisitaEnfermo extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.enfermos} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEnfermo}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaEnfermo(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaEnfermo()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -123,3 +121,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(VisitaEnfermo)

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar} from 'react-native'
+import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar, ActivityIndicator} from 'react-native'
 import image from '../../../assets/imgs/logo-menu.png'
 import CommonStyles from '../../CommonStyles'
+import { connect } from 'react-redux'
+import { login } from '../../store/actions/user'
 import AuthInput from '../../components/AuthInput'
-import { AuthContext } from '../../contexts/auth'
 
 
 const initialState = {
@@ -11,15 +12,14 @@ const initialState = {
     password: '',
 }
 
-export default class SignIn extends Component {
-    static contextType = AuthContext;
+class SignIn extends Component {
 
     state = {
         ...initialState
     }
 
     handleSignIn = () => {
-        this.context.signIn(this.state.email, this.state.password);   
+        this.props.onLogin({ ...this.state })
     }
 
     render() {
@@ -48,11 +48,11 @@ export default class SignIn extends Component {
                         value={this.state.password} 
                         secureTextEntry={true} style={styles.input} 
                         onChangeText={textSenha => this.setState({ password: textSenha })} />
-
                     <TouchableOpacity onPress={this.handleSignIn} disabled={!validForm}>
                         <View style={[styles.button, validForm ? {} : {backgroundColor: '#AAA'}]}>
+                            {this.props.isLoading ? <ActivityIndicator size="small" color="#fff" style={{marginLeft: -20, marginRight: 15}} /> : null }
                             <Text style={styles.buttonText}>
-                                Entrar
+                                {this.props.isLoading ? 'Entrando' : 'Entrar'}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
         marginTop: 25,
         padding: 10,
         alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
         borderRadius: 7
     },
     buttonText: {
@@ -113,3 +115,18 @@ const styles = StyleSheet.create({
         shadowColor: '#3a3b45',
     },
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        isLoading: user.isLoading
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onLogin: user => dispatch(login(user))
+    }
+}
+
+//export default Login
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

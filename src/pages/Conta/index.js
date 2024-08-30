@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, Modal, Button, TouchableOpacity, TouchableWithoutFeedback, Pressable, ScrollView } from 'react-native';
-import { AuthContext } from '../../contexts/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Alert from '../../components/SweetAlert';
 import api from '../../services/api';
+import { connect } from 'react-redux';
+import { logout } from '../../store/actions/user';
 
 class Conta extends Component {
-  static contextType = AuthContext;
 
   constructor(props) {
     super(props);
@@ -27,7 +27,7 @@ class Conta extends Component {
 
   getUser = async ()  => {
     try{
-      const res = await api.get(`/user/${context.user.id}`)
+      const res = await api.get(`/user/${this.props.user.id}`)
       this.setState({ name: res.data.name, email: res.data.email })
     }catch(e) {
       Alert(e.response.data.message, 'error');
@@ -36,7 +36,7 @@ class Conta extends Component {
 
   updateUser = async () => {
     try{
-      await api.put(`/user/${context.user.id}`, {
+      await api.put(`/user/${this.props.user.id}`, {
         name: this.state.name,
         email: this.state.email,
         password: this.state.senha,
@@ -52,9 +52,9 @@ class Conta extends Component {
 
   deleteUser = async () => {
     try{
-        await api.delete(`/user/${context.user.id}`)
+        await api.delete(`/user/${this.props.user.id}`)
         Alert('Conta deletada com sucesso!.', 'success');
-        context.logout()
+        this.props.logout()
     } catch(e) {
       Alert(e.response.data.message, 'error');
     }
@@ -264,4 +264,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Conta;
+
+const mapStateToProps = ({ user }) => {
+  return {
+      user: user
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+      logout: () => dispatch(logout())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Conta)

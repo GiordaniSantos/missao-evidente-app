@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar} from 'react-native'
+import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar, ActivityIndicator} from 'react-native'
 import api from '../../services/api'
 import image from '../../../assets/imgs/logo-menu.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
-import { AuthContext } from '../../contexts/auth'
+import { connect } from 'react-redux'
+import { loadingUser, userLoaded } from '../../store/actions/user'
 
 import Alert from '../../components/SweetAlert';
 
@@ -12,14 +13,14 @@ const initialState = {
     email: '',
 }
 
-export default class RequestPassword extends Component {
-    static contextType = AuthContext;
+class RequestPassword extends Component {
 
     state = {
         ...initialState
     }
 
     solicitarRedefinicao = async () => {
+        this.props.verificandoEmail()
         try{
             await api.post(`/password/reset`, {
                 email: this.state.email,
@@ -30,6 +31,7 @@ export default class RequestPassword extends Component {
         } catch(e) {
             Alert(e.response.data.message, 'error');
         }
+        this.props.emailVerificado()
     }
 
     render() {
@@ -52,8 +54,9 @@ export default class RequestPassword extends Component {
 
                     <TouchableOpacity onPress={this.solicitarRedefinicao} disabled={!validForm}>
                         <View style={[styles.button, validForm ? {} : {backgroundColor: '#AAA'}]}>
+                            {this.props.isLoading ? <ActivityIndicator size="small" color="#fff" style={{marginLeft: -10, marginRight: 5}} /> : null }
                             <Text style={styles.buttonText}>
-                                Enviar link para redefinição
+                                {this.props.isLoading ? 'Enviando link para redefinição' : 'Enviar link para redefinição'}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -92,6 +95,8 @@ const styles = StyleSheet.create({
         marginTop: 25,
         padding: 10,
         alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
         borderRadius: 7
     },
     buttonText: {
@@ -104,3 +109,19 @@ const styles = StyleSheet.create({
         shadowColor: '#3a3b45',
     },
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        isLoading: user.isLoading
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        verificandoEmail: () => dispatch(loadingUser()),
+        emailVerificado: () => dispatch(userLoaded())
+    }
+}
+
+//export default Login
+export default connect(mapStateToProps, mapDispatchToProps)(RequestPassword)

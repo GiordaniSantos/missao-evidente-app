@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     santaCeia: []
 }
 
-export default class SantaCeia extends Component {
+class SantaCeia extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadSantaCeia()
@@ -27,21 +26,19 @@ export default class SantaCeia extends Component {
 
     loadSantaCeia = async () => {
         try{
-            const res = await api.get(`/santa-ceia?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/santa-ceia`)
             this.setState({ santaCeia: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addSantaCeia = async id_usuario => {
+    addSantaCeia = async () => {
         try {
-            await api.post(`/santa-ceia`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/santa-ceia`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadSantaCeia()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class SantaCeia extends Component {
 
     updateSantaCeia = async santaCeia => {
         try {
-            await api.put(`/santa-ceia/${santaCeia.id}?id_usuario=${santaCeia.id_usuario}`, {
+            await api.put(`/santa-ceia/${santaCeia.id}`, {
                 created_at: santaCeia.date,
                 id_usuario: santaCeia.id_usuario
             })
@@ -65,9 +62,10 @@ export default class SantaCeia extends Component {
 
     deleteSantaCeia = async crenteId => {
         try {
-            await api.delete(`/santa-ceia/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/santa-ceia/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadSantaCeia()
+            this.props.loadRelatorios()
         } catch (error) {
             Alert(e.response.data.message, 'error');
         }
@@ -75,7 +73,7 @@ export default class SantaCeia extends Component {
 
     buscarSantaCeia = async id => {
         try {
-            const res = await api.get(`/santa-ceia/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/santa-ceia/${id}`)
             this.setState({ santaCeiaBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -95,7 +93,7 @@ export default class SantaCeia extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.santaCeia} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSantaCeia}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addSantaCeia(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addSantaCeia()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -121,3 +119,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(SantaCeia)

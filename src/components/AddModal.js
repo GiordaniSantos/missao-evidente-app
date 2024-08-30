@@ -2,13 +2,11 @@ import React, { Component } from 'react'
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput } from 'react-native'
 import CommonStyles from '../CommonStyles';
 import SelectDropdown from 'react-native-select-dropdown'
-import { AuthContext } from '../contexts/auth';
+import { connect } from 'react-redux';
 
 const initialState = { nome: '', quantidade: '', id_usuario: null }
 
-export default class AddModal extends Component {
-
-    static contextType = AuthContext;
+class AddModal extends Component {
 
     state = {
         ...initialState
@@ -18,7 +16,7 @@ export default class AddModal extends Component {
         const novaMembresia = {
             nome: this.state.nome,
             quantidade: this.state.quantidade,
-            id_usuario: this.context.user.id
+            id_usuario: this.props.userId
         }
         
         if(this.props.onSave){
@@ -113,3 +111,11 @@ const styles = StyleSheet.create({
         marginLeft: 15
     }
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        userId: user.id
+    }
+}
+
+export default connect(mapStateToProps, null)(AddModal)

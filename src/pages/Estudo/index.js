@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     estudo: []
 }
 
-export default class Estudo extends Component {
+class Estudo extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadEstudo()
@@ -27,7 +26,7 @@ export default class Estudo extends Component {
 
     loadEstudo = async () => {
         try{
-            const res = await api.get(`/estudo?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/estudo`)
             this.setState({ estudo: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
@@ -36,7 +35,7 @@ export default class Estudo extends Component {
 
     updateEstudo = async estudo => {
         try {
-            await api.put(`/estudo/${estudo.id}?id_usuario=${estudo.id_usuario}`, {
+            await api.put(`/estudo/${estudo.id}`, {
                 created_at: estudo.date,
                 nome: estudo.nome,
                 id_usuario: estudo.id_usuario
@@ -50,14 +49,12 @@ export default class Estudo extends Component {
 
     }
 
-    addEstudo = async id_usuario => {
+    addEstudo = async () => {
         try {
-            await api.post(`/estudo`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/estudo`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadEstudo()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -66,9 +63,10 @@ export default class Estudo extends Component {
 
     deleteEstudo = async crenteId => {
         try {
-            await api.delete(`/estudo/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/estudo/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadEstudo()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class Estudo extends Component {
 
     buscarEstudo = async id => {
         try {
-            const res = await api.get(`/estudo/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/estudo/${id}`)
             this.setState({ estudoBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class Estudo extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.estudo} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Assunto: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteEstudo}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudo(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addEstudo()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Estudo)

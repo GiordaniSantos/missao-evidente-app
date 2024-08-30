@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
 import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import api from '../../services/api';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { closeSplashScreen } from '../../store/actions/user';
+import { fetchRelatorios } from '../../store/actions/dashboard';
+import { setRefreshingRelatorio } from '../../store/actions/dashboard';
+import { setParamsMesRelatorio, setParamsAnoRelatorio } from '../../store/actions/dashboard';
 import SelectDropdown from 'react-native-select-dropdown'
 import ItemRelatorio from '../../components/ItemRelatorio';
 import * as XLSX from 'xlsx';
@@ -40,17 +44,26 @@ const initialState = {
 
 
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
     state = {...initialState}
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
-        this.loadRelatorios()
+        this.props.loadRelatorios()
     }
 
+    /*componentDidUpdate = prevProps => {
+        if(prevProps.data != this.props.data){
+            this.setState({
+                mes: date.getMonth()+1,
+                ano: date.getFullYear()
+            })
+        }
+    }*/
+
     onRefresh = () => {
-        this.setState({ refresh: true })
-        this.loadRelatorios()
+        //this.setState({ refresh: true })
+        this.props.setRefresh()
+        this.props.loadRelatorios()
     }
 
     obterNomeMes = (numeroMes) => {
@@ -64,7 +77,7 @@ export default class Dashboard extends Component {
    
     loadRelatorios = async ( mes=this.state.mes, ano=this.state.ano ) => {
         try{
-            const res = await api.get(`/dashboard?id_usuario=${this.context.user.id}&mes=${mes}&ano=${ano}`)
+            const res = await api.get(`/dashboard?mes=${mes}&ano=${ano}`)
             
             this.setState({ membresias: res.data.membresias })
             this.setState({ visitaCrente: res.data.crentes })
@@ -85,6 +98,8 @@ export default class Dashboard extends Component {
             this.setState({ naoComungante: res.data.naoComungante })
             this.setState({ loading: false })
             this.setState({ refresh: false })
+            
+            this.props.appLoaded()
         }catch(e) {
             if(e.response.data.message == "Unauthenticated."){
                 this.loadRelatorios()
@@ -95,32 +110,32 @@ export default class Dashboard extends Component {
     }
 
     loadingRequest = async () => {
-        if(this.state.loading){
+        if(this.props.data.loading){
             return ( <ActivityIndicator size="large" color="#00ff00" /> )
         }
     }
 
     getDataToExport = () => {
         let data = [
-            { Menu: 'Visitação', Submenu: 'Visitas aos Crentes', Valor: this.state.visitaCrente },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Não Crentes', Valor: this.state.visitaNaoCrente },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Presídios', Valor: this.state.visitaPresidio },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Enfermos', Valor: this.state.visitaEnfermo },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Hospitais', Valor: this.state.visitaHospital },
-            { Menu: 'Visitação', Submenu: 'Visitas às Escolas', Valor: this.state.visitaEscola },
-            { Menu: 'Ministração', Submenu: 'Estudos', Valor: this.state.estudos },
-            { Menu: 'Ministração', Submenu: 'Sermões', Valor: this.state.sermoes },
-            { Menu: 'Ministração', Submenu: 'Estudos Biblicos', Valor: this.state.estudosBiblicos },
-            { Menu: 'Ministração', Submenu: 'Discipulados', Valor: this.state.discipulados },
-            { Menu: 'Ato Pastoral', Submenu: 'Batismos Infantis', Valor: this.state.batismosInfantis},
-            { Menu: 'Ato Pastoral', Submenu: 'Batismos/Prof. Fé', Valor: this.state.batismosProfissoes},
-            { Menu: 'Ato Pastoral', Submenu: 'Benções Nupciais', Valor: this.state.bencoesNupciais},
-            { Menu: 'Ato Pastoral', Submenu: 'Santas Ceias', Valor: this.state.santasCeias},
-            { Menu: 'Frequência', Submenu: 'Comungantes', Valor: this.state.comungante},
-            { Menu: 'Frequência', Submenu: 'Não Comungantes', Valor: this.state.naoComungante},
+            { Menu: 'Visitação', Submenu: 'Visitas aos Crentes', Valor: this.props.data.visitaCrente },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Não Crentes', Valor: this.props.data.visitaNaoCrente },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Presídios', Valor: this.props.data.visitaPresidio },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Enfermos', Valor: this.props.data.visitaEnfermo },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Hospitais', Valor: this.props.data.visitaHospital },
+            { Menu: 'Visitação', Submenu: 'Visitas às Escolas', Valor: this.props.data.visitaEscola },
+            { Menu: 'Ministração', Submenu: 'Estudos', Valor: this.props.data.estudos },
+            { Menu: 'Ministração', Submenu: 'Sermões', Valor: this.props.data.sermoes },
+            { Menu: 'Ministração', Submenu: 'Estudos Biblicos', Valor: this.props.data.estudosBiblicos },
+            { Menu: 'Ministração', Submenu: 'Discipulados', Valor: this.props.data.discipulados },
+            { Menu: 'Ato Pastoral', Submenu: 'Batismos Infantis', Valor: this.props.data.batismosInfantis},
+            { Menu: 'Ato Pastoral', Submenu: 'Batismos/Prof. Fé', Valor: this.props.data.batismosProfissoes},
+            { Menu: 'Ato Pastoral', Submenu: 'Benções Nupciais', Valor: this.props.data.bencoesNupciais},
+            { Menu: 'Ato Pastoral', Submenu: 'Santas Ceias', Valor: this.props.data.santasCeias},
+            { Menu: 'Frequência', Submenu: 'Comungantes', Valor: this.props.data.comungante},
+            { Menu: 'Frequência', Submenu: 'Não Comungantes', Valor: this.props.data.naoComungante},
         ]
 
-        this.state.membresias.map((item, index) => {
+        this.props.data.membresias.map((item, index) => {
             let itemFormatado = {
                 Menu: 'Frequência',
                 Submenu: item.nome,
@@ -139,9 +154,9 @@ export default class Dashboard extends Component {
     }
     
     exportData = async () => {
-        await this.loadRelatorios()
+        await this.props.loadRelatorios(this.props.data.mes, this.props.data.ano)
 
-        let filePath = RNFS.DocumentDirectoryPath + `/relatorio-${this.obterNomeMes(this.state.mes)}-${this.state.ano}.xlsx`;
+        let filePath = RNFS.DocumentDirectoryPath + `/relatorio-${this.obterNomeMes(this.props.data.mes)}-${this.props.data.ano}.xlsx`;
 
         let { headers, data } = this.getDataToExport()
           
@@ -175,7 +190,7 @@ export default class Dashboard extends Component {
 
         return (
             <View style={styles.container}>
-                <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}>
+                <ScrollView refreshControl={<RefreshControl refreshing={this.props.data.refresh} onRefresh={this.onRefresh} />}>
                     <View style={styles.headerExcel}>
                         <TouchableOpacity style={styles.buttonOpacityExcel} onPress={this.exportData}>
                             <View style={styles.containerViewButtonExcel}>
@@ -195,10 +210,12 @@ export default class Dashboard extends Component {
                                     return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
                                 }}
                                 defaultButtonText='Selecione'
-                                defaultValueByIndex={date.getMonth()}
+                                defaultValueByIndex={this.props.data.mes - 1}
                                 onSelect={(selectedItem, index) => {
-                                    this.setState({mes: index+1})
-                                    this.loadRelatorios(index+1, this.state.ano)
+                                    //this.setState({mes: index+1})
+                                    this.props.setParamsMesRelatorio(index+1)
+                                    //this.loadRelatorios(index+1, this.state.ano)
+                                    this.props.loadRelatorios(index+1, this.props.data.ano)
                                 }}
                                 buttonTextAfterSelection={(selectedItem, index) => {
                                     return selectedItem
@@ -222,10 +239,12 @@ export default class Dashboard extends Component {
                                     return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
                                 }}
                                 defaultButtonText='Selecione'
-                                defaultValue={this.state.ano}
+                                defaultValue={this.props.data.ano}
                                 onSelect={(selectedItem, index) => {
-                                    this.setState({ano: selectedItem})
-                                    this.loadRelatorios(this.state.mes, selectedItem)
+                                    //this.setState({ano: selectedItem})
+                                    this.props.setParamsAnoRelatorio(selectedItem)
+                                    //this.loadRelatorios(this.state.mes, selectedItem)
+                                    this.props.loadRelatorios(this.props.data.mes, selectedItem)
                                 }}
                                 buttonTextAfterSelection={(selectedItem, index) => {
                                     return selectedItem
@@ -247,7 +266,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={styles.titleVisita}>Crentes</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.visitaCrente} visitas</Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.visitaCrente} visitas</Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'cross'}></Icon>
@@ -262,7 +281,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Não Crentes</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.visitaNaoCrente} visitas</Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.visitaNaoCrente} visitas</Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'heart-broken'}></Icon>
@@ -279,7 +298,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Presídios</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.visitaPresidio} visitas</Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.visitaPresidio} visitas</Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'user-lock'}></Icon>
@@ -294,7 +313,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Enfermos</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.visitaEnfermo} visitas</Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.visitaEnfermo} visitas</Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'syringe'}></Icon>
@@ -311,7 +330,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Hospitais</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.visitaHospital} visitas</Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.visitaHospital} visitas</Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'hospital'}></Icon>
@@ -326,7 +345,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color:'#f6c23e'}]}>Escolas</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.visitaEscola} visitas</Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.visitaEscola} visitas</Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'school'}></Icon>
@@ -343,7 +362,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Estudos</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.estudos} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.estudos} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'book'}></Icon>
@@ -358,7 +377,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color:'#4e73df'}]}>Sermões</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.sermoes} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.sermoes} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'user-tie'}></Icon>
@@ -375,7 +394,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Estudos Biblicos</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.estudosBiblicos} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.estudosBiblicos} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'bible'}></Icon>
@@ -390,7 +409,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color:'#4e73df'}]}>Discipulados</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.discipulados} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.discipulados} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'people-arrows'}></Icon>
@@ -407,7 +426,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#85102f'}]}>Batismos Infantis</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.batismosInfantis} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.batismosInfantis} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'child'}></Icon>
@@ -422,7 +441,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color:'#85102f'}]}>Batismos/Prof. Fé</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.batismosProfissoes} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.batismosProfissoes} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'praying-hands'}></Icon>
@@ -439,7 +458,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#85102f'}]}>Benções Nupciais</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.bencoesNupciais} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.bencoesNupciais} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'hand-holding-heart'}></Icon>
@@ -454,7 +473,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color:'#85102f'}]}>Santas Ceias</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.santasCeias} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.santasCeias} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'wine-glass-alt'}></Icon>
@@ -471,7 +490,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color: '#015b41'}]}>Comungantes</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.comungante} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.comungante} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'users'}></Icon>
@@ -486,7 +505,7 @@ export default class Dashboard extends Component {
                                     <View style={styles.itens}>
                                         <View>
                                             <Text style={[styles.titleVisita, {color:'#015b41'}]}>Não Comungantes</Text>
-                                            <Text style={styles.numeroVisita}>{this.state.naoComungante} </Text>
+                                            <Text style={styles.numeroVisita}>{this.props.data.naoComungante} </Text>
                                         </View>
                                         <View>
                                             <Icon size={32} style={styles.iconVisita} name={'user-times'}></Icon>
@@ -505,8 +524,8 @@ export default class Dashboard extends Component {
                             </View>
                             <View style={styles.cardBody}>
                                 <View style={{width: '100%', height: 'auto'}}>
-                                    {this.state.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
-                                    {this.state.membresias && this.state.membresias.length != 0 ? Array.from(this.state.membresias).map((item, index)=> 
+                                    {this.props.data.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
+                                    {this.props.data.membresias && this.props.data.membresias.length != 0 ? Array.from(this.props.data.membresias).map((item, index)=> 
                                         (
                                         <View key={index}>
                                             <ItemRelatorio {...item} cor="#015b41"/>
@@ -689,3 +708,21 @@ const styles = StyleSheet.create({
         flex: 1,
     }
 })
+
+const mapStateToProps = ({ dashboard }) => {
+    return {
+        data: dashboard
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        appLoaded: () => dispatch(closeSplashScreen()),
+        loadRelatorios: (mes, ano) => dispatch(fetchRelatorios(mes, ano)),
+        setRefresh: () => dispatch(setRefreshingRelatorio()),
+        setParamsMesRelatorio: (mes) => dispatch(setParamsMesRelatorio(mes)),
+        setParamsAnoRelatorio: (ano) => dispatch(setParamsAnoRelatorio(ano))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     hospital: []
 }
 
-export default class VisitaHospital extends Component {
+class VisitaHospital extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadVisitasHospital()
@@ -27,22 +26,20 @@ export default class VisitaHospital extends Component {
 
     loadVisitasHospital = async () => {
         try{
-            const res = await api.get(`/hospital?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/hospital`)
             this.setState({ hospital: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addVisitaHospital = async id_usuario => {
+    addVisitaHospital = async () => {
         try {
-            await api.post(`/hospital`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/hospital`)
           
             Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasHospital()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -51,7 +48,7 @@ export default class VisitaHospital extends Component {
 
     updateHospital = async hospital => {
         try {
-            await api.put(`/hospital/${hospital.id}?id_usuario=${hospital.id_usuario}`, {
+            await api.put(`/hospital/${hospital.id}`, {
                 created_at: hospital.date,
                 nome: hospital.nome,
                 id_usuario: hospital.id_usuario
@@ -67,9 +64,10 @@ export default class VisitaHospital extends Component {
 
     deleteVisitaHospital = async hospitalId => {
         try {
-            await api.delete(`/hospital/${hospitalId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/hospital/${hospitalId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadVisitasHospital()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -78,7 +76,7 @@ export default class VisitaHospital extends Component {
     
     buscarHospital = async id => {
         try {
-            const res = await api.get(`/hospital/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/hospital/${id}`)
             this.setState({ hospitalBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -99,7 +97,7 @@ export default class VisitaHospital extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.hospital} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaHospital}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaHospital(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaHospital()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -125,3 +123,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(VisitaHospital)

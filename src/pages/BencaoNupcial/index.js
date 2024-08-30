@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     bencaoNupcial: []
 }
 
-export default class BencaoNupcial extends Component {
+class BencaoNupcial extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadBencaoNupcial()
@@ -27,21 +26,19 @@ export default class BencaoNupcial extends Component {
 
     loadBencaoNupcial = async () => {
         try{
-            const res = await api.get(`/bencao-nupcial?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/bencao-nupcial`)
             this.setState({ bencaoNupcial: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addBencaoNupcial = async id_usuario => {
+    addBencaoNupcial = async () => {
         try {
-            await api.post(`/bencao-nupcial`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/bencao-nupcial`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadBencaoNupcial()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class BencaoNupcial extends Component {
 
     updateBencaoNupcial = async bencaoNupcial => {
         try {
-            await api.put(`/bencao-nupcial/${bencaoNupcial.id}?id_usuario=${bencaoNupcial.id_usuario}`, {
+            await api.put(`/bencao-nupcial/${bencaoNupcial.id}`, {
                 created_at: bencaoNupcial.date,
                 nome: bencaoNupcial.nome,
                 id_usuario: bencaoNupcial.id_usuario
@@ -66,9 +63,10 @@ export default class BencaoNupcial extends Component {
 
     deleteBencaoNupcial = async crenteId => {
         try {
-            await api.delete(`/bencao-nupcial/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/bencao-nupcial/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadBencaoNupcial()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class BencaoNupcial extends Component {
 
     buscarBencaoNupcial = async id => {
         try {
-            const res = await api.get(`/bencao-nupcial/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/bencao-nupcial/${id}`)
             this.setState({ bencaoNupcialBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class BencaoNupcial extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.bencaoNupcial} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Nome: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBencaoNupcial}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addBencaoNupcial(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addBencaoNupcial()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(BencaoNupcial)

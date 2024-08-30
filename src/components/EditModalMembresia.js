@@ -2,16 +2,14 @@ import React, { Component } from 'react'
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import CommonStyles from '../CommonStyles'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { AuthContext } from '../contexts/auth'
 import SelectDropdown from 'react-native-select-dropdown'
+import { connect } from 'react-redux'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 
 const initialState = { showDatePicker: false, showTimePicker: false  }
 
-export default class EditModalMembresia extends Component {
-
-    static contextType = AuthContext;
+class EditModalMembresia extends Component {
     
     state = {
         ...initialState
@@ -49,7 +47,7 @@ export default class EditModalMembresia extends Component {
             nome: this.state.nome,
             quantidade: this.state.quantidade,
             date: this.state.date,
-            id_usuario: this.context.user.id
+            id_usuario: this.props.userId
         }
         
         if(this.props.onUpdate){
@@ -214,9 +212,15 @@ const styles = StyleSheet.create({
     date: {
         fontFamily: CommonStyles.fontFamily,
         fontSize: 18,
-        //marginLeft: 20,
-        //marginRight: 20,
         textAlign: 'center',
         margin: 15
     }
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        userId: user.id
+    }
+}
+
+export default connect(mapStateToProps, null)(EditModalMembresia)

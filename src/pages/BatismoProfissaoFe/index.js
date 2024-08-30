@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     batismoProfissao: []
 }
 
-export default class BatismoProfissaoFe extends Component {
+class BatismoProfissaoFe extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadBatismoProfissao()
@@ -27,21 +26,19 @@ export default class BatismoProfissaoFe extends Component {
 
     loadBatismoProfissao = async () => {
         try{
-            const res = await api.get(`/batismo-profissao?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/batismo-profissao`)
             this.setState({ batismoProfissao: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addBatismoProfissao = async id_usuario => {
+    addBatismoProfissao = async () => {
         try {
-            await api.post(`/batismo-profissao`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/batismo-profissao`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadBatismoProfissao()
-
+            this.props.loadRelatorios()
         } catch (error) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class BatismoProfissaoFe extends Component {
 
     updateBatismoProfissao = async batismoProfissao => {
         try {
-            await api.put(`/batismo-profissao/${batismoProfissao.id}?id_usuario=${batismoProfissao.id_usuario}`, {
+            await api.put(`/batismo-profissao/${batismoProfissao.id}`, {
                 created_at: batismoProfissao.date,
                 nome: batismoProfissao.nome,
                 id_usuario: batismoProfissao.id_usuario
@@ -66,9 +63,10 @@ export default class BatismoProfissaoFe extends Component {
 
     deleteBatismoProfissao = async crenteId => {
         try {
-            await api.delete(`/batismo-profissao/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/batismo-profissao/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadBatismoProfissao()
+            this.props.loadRelatorios()
         } catch (error) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class BatismoProfissaoFe extends Component {
 
     buscarBatismoProfissao = async id => {
         try {
-            const res = await api.get(`/batismo-profissao/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/batismo-profissao/${id}`)
             this.setState({ batismoProfissaoBuscado: res.data, loadingItemBuscado: false })
         } catch (error) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class BatismoProfissaoFe extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.batismoProfissao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Nome: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoProfissao}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoProfissao(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoProfissao()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(BatismoProfissaoFe)

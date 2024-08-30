@@ -1,4 +1,6 @@
-import React, {Component, useContext} from 'react';
+import React, {Component} from 'react';
+import { logout } from '../store/actions/user';
+import { useDispatch } from 'react-redux';
 import Membresia from "../pages/Membresia";
 import VisitaCrente from '../pages/VisitaCrente';
 import VisitaNaoCrente from '../pages/VisitaNaoCrente';
@@ -17,7 +19,6 @@ import EstudoBiblico from '../pages/EstudoBiblico';
 import RelatorioAnual from '../pages/RelatorioAnual';
 import Discipulado from '../pages/Discipulado';
 import Conta from '../pages/Conta';
-import { AuthContext } from '../contexts/auth';
 import { Text, View, StyleSheet, StatusBar, Modal, TouchableOpacity, Image, TouchableWithoutFeedback, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import CommonStyles from '../CommonStyles';
@@ -81,6 +82,7 @@ const routesVisitacaoDrawerItem = [
 function CustomDrawerContent(props) {
   const navigation = useNavigation();
   const currentRoute = navigation.getCurrentRoute();
+  const dispatch = useDispatch();
   
   const [isShowAtoPastoral,showAtoPastoral] = React.useState(false)
   const [isShowPregacao,showPregacao] = React.useState(false)
@@ -118,9 +120,6 @@ function CustomDrawerContent(props) {
       }
     }
   }, [currentRoute]);
-  
-  //contexto
-  context = useContext(AuthContext);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -292,7 +291,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           label="Sair"
           icon={config => <Icon size={21} name={'sign-out-alt'}></Icon>}
-          onPress={context.logout}
+          onPress={() => dispatch(logout())}
         />
       </View>
     </DrawerContentScrollView>

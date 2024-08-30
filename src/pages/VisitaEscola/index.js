@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     escola: []
 }
 
-export default class VisitaEscola extends Component {
+class VisitaEscola extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadVisitasEscolas()
@@ -27,7 +26,7 @@ export default class VisitaEscola extends Component {
 
     loadVisitasEscolas = async () => {
         try{
-            const res = await api.get(`/escola?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/escola`)
             this.setState({ escola: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
@@ -36,7 +35,7 @@ export default class VisitaEscola extends Component {
 
     updateEscola = async escola => {
         try {
-            await api.put(`/escola/${escola.id}?id_usuario=${escola.id_usuario}`, {
+            await api.put(`/escola/${escola.id}`, {
                 created_at: escola.date,
                 nome: escola.nome,
                 id_usuario: escola.id_usuario
@@ -50,14 +49,12 @@ export default class VisitaEscola extends Component {
 
     }
 
-    addVisitaEscola = async id_usuario => {
+    addVisitaEscola = async () => {
         try {
-            await api.post(`/escola`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/escola`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasEscolas()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -66,9 +63,10 @@ export default class VisitaEscola extends Component {
 
     deleteVisitaEscola = async escolaId => {
         try {
-            await api.delete(`/escola/${escolaId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/escola/${escolaId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadVisitasEscolas()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class VisitaEscola extends Component {
 
     buscarEscola = async id => {
         try {
-            const res = await api.get(`/escola/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/escola/${id}`)
             this.setState({ escolaBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class VisitaEscola extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.escola} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} onDelete={this.deleteVisitaEscola}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaEscola(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaEscola()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(VisitaEscola)

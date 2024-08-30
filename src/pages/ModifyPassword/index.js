@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
-import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar } from 'react-native'
+import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native'
 import api from '../../services/api'
-
 import image from '../../../assets/imgs/logo-menu.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
 import { useNavigation } from '@react-navigation/native';
 import Alert from '../../components/SweetAlert';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadingUser, userLoaded } from '../../store/actions/user'
 
 const ModifyPassword = ({ route }) => {
     const { params } = route;
@@ -14,21 +15,25 @@ const ModifyPassword = ({ route }) => {
 
     const navigation = useNavigation();
   
+    const dispatch = useDispatch();
+    const isLoading = useSelector(state => state.user.isLoading);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
   
     const redefinirSenha = async () => {
-      try {
-        await api.post(`/password/reset/${token}`, {
-          password: newPassword,
-          password_confirmation: confirmPassword
-        });
-  
-        Alert('Senha redefinida com sucesso!', 'uccess');
-        navigation.navigate('Entrar');
-      } catch (e) {
-        Alert(e.response.data.message, 'error');
-      }
+        dispatch(loadingUser());
+        try {
+            await api.post(`/password/reset/${token}`, {
+                password: newPassword,
+                password_confirmation: confirmPassword
+            });
+    
+            Alert('Senha redefinida com sucesso!', 'uccess');
+            navigation.navigate('Entrar');
+        } catch (e) {
+            Alert(e.response.data.message, 'error');
+        }
+        dispatch(userLoaded());
     };
   
     const validations = [
@@ -63,7 +68,10 @@ const ModifyPassword = ({ route }) => {
     
             <TouchableOpacity onPress={redefinirSenha} disabled={!validForm}>
                 <View style={[styles.button, validForm? {} : { backgroundColor: '#AAA' }]}>
-                <Text style={styles.buttonText}>Redefinir Senha</Text>
+                    {isLoading ? <ActivityIndicator size="small" color="#fff" style={{marginLeft: -20, marginRight: 15}} /> : null }
+                    <Text style={styles.buttonText}>
+                        {isLoading ? 'Redefinindo Senha' : 'Redefinir Senha'}
+                    </Text>
                 </View>
             </TouchableOpacity>
             </View>
@@ -100,6 +108,8 @@ const styles = StyleSheet.create({
         marginTop: 25,
         padding: 10,
         alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
         borderRadius: 7
     },
     buttonText: {

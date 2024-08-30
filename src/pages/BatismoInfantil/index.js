@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     batismoInfantil: []
 }
 
-export default class BatismoInfantil extends Component {
+class BatismoInfantil extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadBatismoInfantil()
@@ -27,21 +26,19 @@ export default class BatismoInfantil extends Component {
 
     loadBatismoInfantil = async () => {
         try{
-            const res = await api.get(`/batismo-infantil?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/batismo-infantil`)
             this.setState({ batismoInfantil: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addBatismoInfantil = async id_usuario => {
+    addBatismoInfantil = async () => {
         try {
-            await api.post(`/batismo-infantil`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/batismo-infantil`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadBatismoInfantil()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class BatismoInfantil extends Component {
 
     updateBatismoInfantil = async batismoInfantil => {
         try {
-            await api.put(`/batismo-infantil/${batismoInfantil.id}?id_usuario=${batismoInfantil.id_usuario}`, {
+            await api.put(`/batismo-infantil/${batismoInfantil.id}`, {
                 created_at: batismoInfantil.date,
                 nome: batismoInfantil.nome,
                 id_usuario: batismoInfantil.id_usuario
@@ -66,9 +63,10 @@ export default class BatismoInfantil extends Component {
 
     deleteBatismoInfantil = async crenteId => {
         try {
-            await api.delete(`/batismo-infantil/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/batismo-infantil/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadBatismoInfantil()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class BatismoInfantil extends Component {
 
     buscarBatismoInfantil = async id => {
         try {
-            const res = await api.get(`/batismo-infantil/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/batismo-infantil/${id}`)
             this.setState({ batismoInfantilBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class BatismoInfantil extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.batismoInfantil} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Nome: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteBatismoInfantil}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoInfantil(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addBatismoInfantil()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(BatismoInfantil)

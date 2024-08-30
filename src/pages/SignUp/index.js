@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
-import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar } from 'react-native'
-import api from '../../services/api'
+import { Image, Text, StyleSheet, View, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native'
+import { connect } from 'react-redux'
+import { createUser } from '../../store/actions/user'
 import image from '../../../assets/imgs/logo-menu.png'
 import CommonStyles from '../../CommonStyles'
 import AuthInput from '../../components/AuthInput'
-import { AuthContext } from '../../contexts/auth'
-
-import Alert from '../../components/SweetAlert';
 
 const initialState = { 
     name: '',
@@ -14,27 +12,14 @@ const initialState = {
     password: '',
 }
 
-export default class SignUp extends Component {
-    static contextType = AuthContext;
+class SignUp extends Component {
 
     state = {
         ...initialState
     }
 
     cadastrarUsuario = async () => {
-        try{
-            await api.post(`/signup`, {
-                name: this.state.name,
-                email: this.state.email,
-                password: this.state.password,
-            })
-
-            Alert('Usuário cadastrado com sucesso! Lembre-se de utilizar um email válido para caso precise utilizar a recuperação de senha.', 'success');
-            this.context.signIn(this.state.email, this.state.password); 
-            this.setState({ ...initialState })
-        } catch(e) {
-            Alert(e.response.data.message, 'error');
-        }
+        this.props.onCreateUser(this.state)
     }
 
     render() {
@@ -73,8 +58,9 @@ export default class SignUp extends Component {
 
                     <TouchableOpacity onPress={this.cadastrarUsuario} disabled={!validForm}>
                         <View style={[styles.button, validForm ? {} : {backgroundColor: '#AAA'}]}>
+                            {this.props.isLoading ? <ActivityIndicator size="small" color="#fff" style={{marginLeft: -20, marginRight: 15}} /> : null }
                             <Text style={styles.buttonText}>
-                                Registrar
+                                {this.props.isLoading ? 'Registrando' : 'Registrar'}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -118,6 +104,8 @@ const styles = StyleSheet.create({
         marginTop: 25,
         padding: 10,
         alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
         borderRadius: 7
     },
     buttonText: {
@@ -130,3 +118,17 @@ const styles = StyleSheet.create({
         shadowColor: '#3a3b45',
     },
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        isLoading: user.isLoading
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onCreateUser: user => dispatch(createUser(user))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)

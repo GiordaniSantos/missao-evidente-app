@@ -2,15 +2,12 @@ import React, { Component } from 'react'
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import CommonStyles from '../CommonStyles'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { AuthContext } from '../contexts/auth'
 import moment from 'moment'
 import 'moment/locale/pt-br'
-
+import { connect } from 'react-redux';
 const initialState = { showDatePicker: false, showTimePicker: false  }
 
-export default class EditModal extends Component {
-
-    static contextType = AuthContext;
+class EditModal extends Component {
     
     state = {
         ...initialState
@@ -44,7 +41,7 @@ export default class EditModal extends Component {
             id: this.state.id,
             date: this.state.date,
             nome: this.state.nome,
-            id_usuario: this.context.user.id
+            id_usuario: this.props.userId
         }
         
         if(this.props.onUpdate){
@@ -203,3 +200,11 @@ const styles = StyleSheet.create({
         marginTop: 15
     }
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        userId: user.id
+    }
+}
+
+export default connect(mapStateToProps, null)(EditModal)

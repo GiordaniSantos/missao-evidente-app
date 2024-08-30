@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {View, RefreshControl, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import api from '../../services/api';
 import Alert from '../../components/SweetAlert';
@@ -29,11 +28,8 @@ const initialState = {
     membresias: 0,
 }
 
-
-
 export default class RelatorioAnual extends Component {
     state = {...initialState}
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadRelatorios(this.state.ano)
@@ -46,7 +42,7 @@ export default class RelatorioAnual extends Component {
    
     loadRelatorios = async ( ano=this.state.ano ) => {
         try{
-            const res = await api.get(`/relatorio-anual?id_usuario=${this.context.user.id}&ano=${ano}`)
+            const res = await api.get(`/relatorio-anual?ano=${ano}`)
             
             this.setState({ membresias: res.data.membresias })
             this.setState({ visitaCrente: res.data.crentes })

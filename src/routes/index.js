@@ -1,16 +1,21 @@
-import React, {useContext, useEffect, useState} from 'react'
-import { View, ActivityIndicator, StatusBar } from 'react-native'
-import { AuthContext } from '../contexts/auth'
+import React, {useEffect, useState} from 'react'
 import NetInfo from "@react-native-community/netinfo"
+import { useDispatch, useSelector } from 'react-redux';
+import { verifyUserLogged } from '../store/actions/user';
 import AuthRoutes from './auth.routes'
 import AppRoutes from './app.routes'
 import NoInternet from '../pages/NoInternet'
+import Splash from '../pages/Splash';
 
 export function Routes() {
-  const context = useContext(AuthContext)
   const [connState, setConnState] = useState(0);
+  const dispatch = useDispatch();
+  const isLoadingSplashScreen = useSelector(state => state.user.splashScreen);
+  const userId = useSelector(state => state.user.id);
 
   useEffect(() => {
+    dispatch(verifyUserLogged());
+
     NetInfo.fetch().then(state => {
       setConnState(state);
     });
@@ -23,8 +28,6 @@ export function Routes() {
       unsubscribe();
     };
   }, []);
-  
-  //console.warn = () => {};
 
   if(connState && !connState.isConnected){
     return(
@@ -32,15 +35,12 @@ export function Routes() {
     )
   }
     
-  if(context.loading){
+  if(isLoadingSplashScreen){
     return(
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <StatusBar translucent={true} backgroundColor="rgba(0, 0, 0, 0.24)" animated />
-        <ActivityIndicator size="large" style={{ transform: [{ scaleX: 3 }, { scaleY: 3 }] }} color="#0f5d39" />
-      </View>
+      <Splash />
     )
   }
-
-  return context.logado ? <AppRoutes/> : <AuthRoutes/>
+  
+  return userId ? <AppRoutes/> : <AuthRoutes/>
 }
 

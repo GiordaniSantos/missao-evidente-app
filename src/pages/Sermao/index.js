@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     sermao: []
 }
 
-export default class Sermao extends Component {
+class Sermao extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadSermao()
@@ -27,21 +26,19 @@ export default class Sermao extends Component {
 
     loadSermao = async () => {
         try{
-            const res = await api.get(`/sermao?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/sermao`)
             this.setState({ sermao: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addSermao = async id_usuario => {
+    addSermao = async () => {
         try {
-            await api.post(`/sermao`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/sermao`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadSermao()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -50,7 +47,7 @@ export default class Sermao extends Component {
 
     updateSermao = async sermao => {
         try {
-            await api.put(`/sermao/${sermao.id}?id_usuario=${sermao.id_usuario}`, {
+            await api.put(`/sermao/${sermao.id}`, {
                 created_at: sermao.date,
                 nome: sermao.nome,
                 id_usuario: sermao.id_usuario
@@ -66,9 +63,10 @@ export default class Sermao extends Component {
 
     deleteSermao = async crenteId => {
         try {
-            await api.delete(`/sermao/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/sermao/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadSermao()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class Sermao extends Component {
 
     buscarSermao = async id => {
         try {
-            const res = await api.get(`/sermao/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/sermao/${id}`)
             this.setState({ sermaoBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class Sermao extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.sermao} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} icon={"atoPastoral"} textoNome={"Assunto: "} textoAntesHora={"Realizado no dia"} onDelete={this.deleteSermao}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addSermao(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addSermao()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -122,3 +120,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     }
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Sermao)

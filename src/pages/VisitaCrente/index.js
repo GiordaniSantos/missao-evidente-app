@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
-import { AuthContext } from '../../contexts/auth';
 import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import api from '../../services/api';
 import ItemVisita from '../../components/ItemVisita';
 import EditModal from '../../components/EditModal';
 import Alert from '../../components/SweetAlert';
+import { connect } from 'react-redux';
+import { fetchRelatorios, setParamsDefaultRelatorio } from '../../store/actions/dashboard';
 
 const initialState = { 
     showDoneTasks: true,
@@ -16,10 +17,8 @@ const initialState = {
     crentes: []
 }
 
-export default class VisitaCrente extends Component {
+class VisitaCrente extends Component {
     state = {...initialState}
-
-    static contextType = AuthContext;
 
     componentDidMount = async () => {
         this.loadVisitasCrentes()
@@ -27,21 +26,19 @@ export default class VisitaCrente extends Component {
 
     loadVisitasCrentes = async () => {
         try{
-            const res = await api.get(`/crente?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/crente`)
             this.setState({ crentes: res.data.data })
         }catch(e) {
             Alert(e.response.data.message, 'error');
         }
     }
 
-    addVisitaCrente = async id_usuario => {
+    addVisitaCrente = async () => {
         try {
-            await api.post(`/crente`, {
-                id_usuario: id_usuario
-            })
+            await api.post(`/crente`)
             Alert('Adicionado com Sucesso', 'success');
             this.loadVisitasCrentes()
-
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -66,9 +63,10 @@ export default class VisitaCrente extends Component {
 
     deleteVisitaCrente = async crenteId => {
         try {
-            await api.delete(`/crente/${crenteId}?id_usuario=${this.context.user.id}`)
+            await api.delete(`/crente/${crenteId}`)
             Alert('Deletado com Sucesso', 'success');
             this.loadVisitasCrentes()
+            this.props.loadRelatorios()
         } catch (e) {
             Alert(e.response.data.message, 'error');
         }
@@ -76,7 +74,7 @@ export default class VisitaCrente extends Component {
 
     buscarCrente = async id => {
         try {
-            const res = await api.get(`/crente/${id}?id_usuario=${this.context.user.id}`)
+            const res = await api.get(`/crente/${id}`)
             this.setState({ crenteBuscado: res.data, loadingItemBuscado: false })
         } catch (e) {
             Alert(e.response.data.message, 'error');
@@ -96,7 +94,7 @@ export default class VisitaCrente extends Component {
                 <View style={styles.taskList}>
                     <FlatList data={this.state.crentes} keyExtractor={item => `${item.id}`} renderItem={({item}) => <ItemVisita {...item} openModal={this.abrirModal} textoAntesHora={"Visita realizada no dia"} textoPosQtd={"crentes"} onDelete={this.deleteVisitaCrente}/>} />
                 </View>
-                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaCrente(this.context.user.id)} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.addButton} onPress={() => this.addVisitaCrente()} activeOpacity={0.7}>
                     <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -125,3 +123,14 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     },
 })
+
+const mapDispatchToProps = dispatch => {
+    return {
+        loadRelatorios: () => {
+            dispatch(fetchRelatorios())
+            dispatch(setParamsDefaultRelatorio())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(VisitaCrente)
