@@ -74,40 +74,6 @@ class Dashboard extends Component {
 
         return meses[numeroMes - 1];
     }
-   
-    loadRelatorios = async ( mes=this.state.mes, ano=this.state.ano ) => {
-        try{
-            const res = await api.get(`/dashboard?mes=${mes}&ano=${ano}`)
-            
-            this.setState({ membresias: res.data.membresias })
-            this.setState({ visitaCrente: res.data.crentes })
-            this.setState({ visitaNaoCrente: res.data.incredulos })
-            this.setState({ visitaPresidio: res.data.presidios })
-            this.setState({ visitaEnfermo: res.data.enfermos })
-            this.setState({ visitaHospital: res.data.hospitais })
-            this.setState({ visitaEscola: res.data.escolas })
-            this.setState({ batismosInfantis: res.data.batismosInfantis })
-            this.setState({ batismosProfissoes: res.data.batismosProfissoes })
-            this.setState({ bencoesNupciais: res.data.bencoesNupciais })
-            this.setState({ santasCeias: res.data.santasCeias })
-            this.setState({ estudos: res.data.estudos })
-            this.setState({ sermoes: res.data.sermoes })
-            this.setState({ estudosBiblicos: res.data.estudosBiblicos })
-            this.setState({ discipulados: res.data.discipulados })
-            this.setState({ comungante: res.data.comungante })
-            this.setState({ naoComungante: res.data.naoComungante })
-            this.setState({ loading: false })
-            this.setState({ refresh: false })
-            
-            this.props.appLoaded()
-        }catch(e) {
-            if(e.response.data.message == "Unauthenticated."){
-                this.loadRelatorios()
-            }else{
-                Alert(e.response.data.message, 'error');
-            }
-        }
-    }
 
     loadingRequest = async () => {
         if(this.props.data.loading){
@@ -154,7 +120,7 @@ class Dashboard extends Component {
     }
     
     exportData = async () => {
-        await this.props.loadRelatorios(this.props.data.mes, this.props.data.ano)
+        //await this.props.loadRelatorios(this.props.data.mes, this.props.data.ano)
 
         let filePath = RNFS.DocumentDirectoryPath + `/relatorio-${this.obterNomeMes(this.props.data.mes)}-${this.props.data.ano}.xlsx`;
 
