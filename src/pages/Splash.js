@@ -7,7 +7,7 @@ export default class Splash extends Component {
             <View style={styles.container}>
                 <StatusBar backgroundColor="#0f5d39" barStyle="light-content" />
                 <Image source={require('../../assets/imgs/logo-menu.png')} style={styles.image}/>
-                <Text style={styles.header}>Missão Evidente</Text>
+                <Text style={styles.header}>Missão em Ação</Text>
             </View>
         )
     }

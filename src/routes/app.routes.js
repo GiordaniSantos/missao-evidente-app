@@ -126,7 +126,7 @@ function CustomDrawerContent(props) {
       <View style={styles.container}>
         <View style={styles.userArea}>
           <Image source={image} style={styles.user} />
-          <Text style={styles.title}>Missão Evidente</Text>
+          <Text style={styles.title}>Missão em Ação</Text>
         </View>
         {routesDrawerItem.map((route, index) => (
           <DrawerItem

@@ -17,7 +17,7 @@ export default class Welcome extends Component {
             <View style={styles.mainContainer}>
                 <StatusBar backgroundColor="#0f5d39" barStyle="light-content" />
                 <Image source={image} style={styles.logo} />
-                <Text style={[styles.title, styles.elevation]}>Missão Evidente</Text>
+                <Text style={[styles.title, styles.elevation]}>Missão em Ação</Text>
                 <View style={styles.formContainer}>
                     <TouchableOpacity onPress={() => navigation.navigate('Entrar')}>
                         <View style={[styles.button]}>
