@@ -107,7 +107,6 @@ function CustomDrawerContent(props) {
     'Relatório Anual': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
     'Frequência aos Domingos': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
     'Conta': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
-    'Ir para o Site': { showPregacao: false, showAtoPastoral: false, showVisitacao: false },
   };
 
   React.useEffect(() => {
@@ -277,15 +276,6 @@ function CustomDrawerContent(props) {
           }
           onPress={() => {
             props.navigation.navigate("Conta");
-          }}
-        />
-        <DrawerItem
-          label="Ir para o Site"
-          icon={({color}) => 
-            <Icon size={21} name={'chrome'} style={{color:color}}></Icon>
-          }
-          onPress={() => {
-            Linking.openURL('https://missaoevidente.com.br'); 
           }}
         />
         <DrawerItem
