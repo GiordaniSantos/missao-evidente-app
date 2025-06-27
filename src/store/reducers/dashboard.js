@@ -31,7 +31,6 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 visitaCrente: action.payload.crentes,
                 membresias: action.payload.membresias,
-                visitaCrente: action.payload.crentes,
                 visitaNaoCrente: action.payload.incredulos,
                 visitaPresidio: action.payload.presidios,
                 visitaEnfermo: action.payload.enfermos,
@@ -48,7 +47,9 @@ const reducer = (state = initialState, action) => {
                 comungante: action.payload.comungante,
                 naoComungante: action.payload.naoComungante,
                 loading: false,
-                refresh: false
+                refresh: false,
+                mes: action.payload.mes,
+                ano: action.payload.ano
             }
         case SET_REFRESHING:
             return {

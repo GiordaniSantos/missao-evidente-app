@@ -40,7 +40,11 @@ export const fetchRelatorios = (mes = new Date().getMonth()+1, ano = new Date().
     return async dispatch => {
         await api.get(`/dashboard?mes=${mes}&ano=${ano}`)
             .then(response => {
-                dispatch(setDashboard(response.data));
+                dispatch(setDashboard({
+                    ...response.data,
+                    mes: mes,
+                    ano: ano
+                }));
             })
             .catch(e => {
                 dispatch(setMessage({

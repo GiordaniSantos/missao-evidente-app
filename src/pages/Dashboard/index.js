@@ -1,10 +1,8 @@
-import React, {Component} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {View, RefreshControl, Text, ActivityIndicator, StyleSheet, TouchableOpacity, ScrollView} from 'react-native'
-import commonStyles from '../../CommonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import api from '../../services/api';
 import Alert from '../../components/SweetAlert';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux'
 import { closeSplashScreen } from '../../store/actions/user';
 import { fetchRelatorios } from '../../store/actions/dashboard';
 import { setRefreshingRelatorio } from '../../store/actions/dashboard';
@@ -15,41 +13,36 @@ import * as XLSX from 'xlsx';
 import RNFS from 'react-native-fs';
 
 import FileViewer from "react-native-file-viewer";
+import CardRelatorio from '../../components/CardRelatorio';
 
 const date = new Date();
 
-const initialState = { 
-    visitaCrente: 0,
-    visitaNaoCrente: 0,
-    visitaPresidio: 0,
-    visitaEnfermo: 0,
-    visitaHospital: 0,
-    visitaEscola: 0,
-    batismosInfantis: 0,
-    batismosProfissoes: 0,
-    bencoesNupciais: 0,
-    santasCeias: 0,
-    estudos: 0,
-    sermoes: 0,
-    estudosBiblicos: 0,
-    discipulados: 0,
-    comungante: 0,
-    naoComungante: 0,
-    loading: true,
-    refresh: false,
-    mes: date.getMonth()+1,
-    ano: date.getFullYear(),
-    membresias: {},
-}
+const meses = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+];
 
+const Dashboard = ({ navigation }) => {
+    const dashboardData = useSelector(state => state.dashboard);
+    const dispatch = useDispatch();
 
+    const currentYear = date.getFullYear();
 
-class Dashboard extends Component {
-    state = {...initialState}
+    const [localRefreshing, setLocalRefreshing] = useState(false);
 
-    componentDidMount = async () => {
-        this.props.loadRelatorios()
-    }
+    const generateYears = useCallback(() => {
+        const years = [];
+        for (let i = currentYear - 5; i <= currentYear; i++) {
+            years.push(String(i));
+        }
+        return years;
+    }, [currentYear]);
+    const yearsData = generateYears();
+
+    useEffect(() => {
+        dispatch(fetchRelatorios(dashboardData.mes, dashboardData.ano));
+        // dispatch(closeSplashScreen());
+    }, [dispatch, dashboardData.mes, dashboardData.ano]);
 
     /*componentDidUpdate = prevProps => {
         if(prevProps.data != this.props.data){
@@ -60,455 +53,338 @@ class Dashboard extends Component {
         }
     }*/
 
-    onRefresh = () => {
-        //this.setState({ refresh: true })
-        this.props.setRefresh()
-        this.props.loadRelatorios()
-    }
+    const onRefresh = useCallback(() => {
+        setLocalRefreshing(true);
+        dispatch(setRefreshingRelatorio());
+        dispatch(fetchRelatorios(dashboardData.mes, dashboardData.ano)).finally(() => {
+            setLocalRefreshing(false);
+        });
+    }, [dispatch, dashboardData.mes, dashboardData.ano]);
 
-    obterNomeMes = (numeroMes) => {
-        const meses = [
-            "janeiro", "fevereiro", "marco", "abril", "maio", "junho",
-            "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-        ];
-
+    const obterNomeMes = useCallback((numeroMes) => {
         return meses[numeroMes - 1];
-    }
+    }, []);
 
     loadingRequest = async () => {
-        if(this.props.data.loading){
+        if(dashboardData.loading){
             return ( <ActivityIndicator size="large" color="#00ff00" /> )
         }
     }
 
-    getDataToExport = () => {
+    const getDataToExport = useCallback(() => {
         let data = [
-            { Menu: 'Visitação', Submenu: 'Visitas aos Crentes', Valor: this.props.data.visitaCrente },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Não Crentes', Valor: this.props.data.visitaNaoCrente },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Presídios', Valor: this.props.data.visitaPresidio },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Enfermos', Valor: this.props.data.visitaEnfermo },
-            { Menu: 'Visitação', Submenu: 'Visitas aos Hospitais', Valor: this.props.data.visitaHospital },
-            { Menu: 'Visitação', Submenu: 'Visitas às Escolas', Valor: this.props.data.visitaEscola },
-            { Menu: 'Ministração', Submenu: 'Estudos', Valor: this.props.data.estudos },
-            { Menu: 'Ministração', Submenu: 'Sermões', Valor: this.props.data.sermoes },
-            { Menu: 'Ministração', Submenu: 'Estudos Biblicos', Valor: this.props.data.estudosBiblicos },
-            { Menu: 'Ministração', Submenu: 'Discipulados', Valor: this.props.data.discipulados },
-            { Menu: 'Ato Pastoral', Submenu: 'Batismos Infantis', Valor: this.props.data.batismosInfantis},
-            { Menu: 'Ato Pastoral', Submenu: 'Batismos/Prof. Fé', Valor: this.props.data.batismosProfissoes},
-            { Menu: 'Ato Pastoral', Submenu: 'Benções Nupciais', Valor: this.props.data.bencoesNupciais},
-            { Menu: 'Ato Pastoral', Submenu: 'Santas Ceias', Valor: this.props.data.santasCeias},
-            { Menu: 'Frequência', Submenu: 'Comungantes', Valor: this.props.data.comungante},
-            { Menu: 'Frequência', Submenu: 'Não Comungantes', Valor: this.props.data.naoComungante},
-        ]
+            { Menu: 'Visitação', Submenu: 'Visitas aos Crentes', Valor: dashboardData.visitaCrente },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Não Crentes', Valor: dashboardData.visitaNaoCrente },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Presídios', Valor: dashboardData.visitaPresidio },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Enfermos', Valor: dashboardData.visitaEnfermo },
+            { Menu: 'Visitação', Submenu: 'Visitas aos Hospitais', Valor: dashboardData.visitaHospital },
+            { Menu: 'Visitação', Submenu: 'Visitas às Escolas', Valor: dashboardData.visitaEscola },
+            { Menu: 'Ministração', Submenu: 'Estudos', Valor: dashboardData.estudos },
+            { Menu: 'Ministração', Submenu: 'Sermões', Valor: dashboardData.sermoes },
+            { Menu: 'Ministração', Submenu: 'Estudos Biblicos', Valor: dashboardData.estudosBiblicos },
+            { Menu: 'Ministração', Submenu: 'Discipulados', Valor: dashboardData.discipulados },
+            { Menu: 'Ato Pastoral', Submenu: 'Batismos Infantis', Valor: dashboardData.batismosInfantis},
+            { Menu: 'Ato Pastoral', Submenu: 'Batismos/Prof. Fé', Valor: dashboardData.batismosProfissoes},
+            { Menu: 'Ato Pastoral', Submenu: 'Benções Nupciais', Valor: dashboardData.bencoesNupciais},
+            { Menu: 'Ato Pastoral', Submenu: 'Santas Ceias', Valor: dashboardData.santasCeias},
+            { Menu: 'Frequência', Submenu: 'Comungantes', Valor: dashboardData.comungante},
+            { Menu: 'Frequência', Submenu: 'Não Comungantes', Valor: dashboardData.naoComungante},
+        ];
 
-        this.props.data.membresias.map((item, index) => {
-            let itemFormatado = {
-                Menu: 'Frequência',
-                Submenu: item.nome,
-                Valor: item.quantidade,
-            }
-            data.push(itemFormatado);
-        });
+        if (Array.isArray(dashboardData.membresias)) {
+            dashboardData.membresias.forEach((item) => {
+                let itemFormatado = {
+                    Menu: 'Frequência',
+                    Submenu: item.nome,
+                    Valor: item.quantidade,
+                };
+                data.push(itemFormatado);
+            });
+        }
         
         let headers = [
             { header: 'Menu', key: 'Menu' },
             { header: 'Submenu', key: 'Submenu' },
             { header: 'Valor', key: 'Valor' },
-        ]
+        ];
         
-        return { headers, data }
-    }
+        return { headers, data };
+    }, [dashboardData]);
     
-    exportData = async () => {
-        //await this.props.loadRelatorios(this.props.data.mes, this.props.data.ano)
+    const exportData = useCallback(async () => {
+        const filePath = `${RNFS.DocumentDirectoryPath}/relatorio-${obterNomeMes(dashboardData.mes)}-${dashboardData.ano}.xlsx`;
 
-        let filePath = RNFS.DocumentDirectoryPath + `/relatorio-${this.obterNomeMes(this.props.data.mes)}-${this.props.data.ano}.xlsx`;
+        const { headers, data } = getDataToExport();
+            
+        try {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(data, { header: headers.map(h => h.key) });
 
-        let { headers, data } = this.getDataToExport()
-          
-        let wb = XLSX.utils.book_new();
-        let ws = XLSX.utils.json_to_sheet(data, { header: headers.map(h => h.key) });
+            ws['!cols'] = [{wch:10},{wch:20},{wch:5}];
 
-        ws['!cols'] = [{wch:10},{wch:20},{wch:5}]; //Define o tamanho das colunas
+            XLSX.utils.book_append_sheet(wb, ws, "Relatório");
+            const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
 
-        XLSX.utils.book_append_sheet(wb, ws, "Users");
-        const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
-        RNFS.writeFile(filePath, wbout, 'ascii')
-            .then((r) => {
-                //arquivo salvo
-                FileViewer.open(filePath)
-                    .then((res) => {
-                        // Success arquivo aberto
+            await RNFS.writeFile(filePath, wbout, 'ascii');
+            
+            if (Platform.OS === 'ios' || Platform.OS === 'android') {
+                 FileViewer.open(filePath)
+                    .then(() => {
+                        //console.log('Arquivo aberto com sucesso!');
                     })
                     .catch((error) => {
-                        // Error ao abrir
-                        Alert(error == "Error: No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel." : error, 'error');
+                        Alert(error.message === "No app associated with this mime type" ? "Nenhum aplicativo encontrado para abrir o arquivo em formato Excel." : error.message, 'error');
+                        //console.error('Erro ao abrir arquivo:', error);
                     });
-            })
-            .catch((e) => {
-                //erro ao salvar
-                Alert(e.message, 'error');
-            });
-    }
+            } else {
+                Alert("Funcionalidade de abrir arquivo não disponível nesta plataforma.", 'info');
+                //console.log("Arquivo salvo em:", filePath);
+            }
+           
+        } catch (e) {
+            Alert(e.message, 'error');
+            //console.error('Erro ao exportar dados:', e);
+        }
+    }, [dashboardData.mes, dashboardData.ano, obterNomeMes, getDataToExport]);
 
-    render(){
-        const { navigation } = this.props;
-
+    if (dashboardData.loading && !localRefreshing) {
         return (
-            <View style={styles.container}>
-                <ScrollView refreshControl={<RefreshControl refreshing={this.props.data.refresh} onRefresh={this.onRefresh} />}>
-                    <View style={styles.headerExcel}>
-                        <TouchableOpacity style={styles.buttonOpacityExcel} onPress={this.exportData}>
-                            <View style={styles.containerViewButtonExcel}>
-                                <Icon name="file-excel" color="white" size={20} />
-                                <Text style={styles.textButtonExcel}>Exportar para Excel</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.header}>
-                        <View style={styles.firstSelectButton}>
-                            <SelectDropdown
-                                data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
-                                buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
-                                buttonTextStyle={styles.dropdown2BtnTxtStyle}
-                                statusBarTranslucent={true}
-                                renderDropdownIcon={isOpened => {
-                                    return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
-                                }}
-                                defaultButtonText='Selecione'
-                                defaultValueByIndex={this.props.data.mes - 1}
-                                onSelect={(selectedItem, index) => {
-                                    //this.setState({mes: index+1})
-                                    this.props.setParamsMesRelatorio(index+1)
-                                    //this.loadRelatorios(index+1, this.state.ano)
-                                    this.props.loadRelatorios(index+1, this.props.data.ano)
-                                }}
-                                buttonTextAfterSelection={(selectedItem, index) => {
-                                    return selectedItem
-                                }}
-                                rowTextForSelection={(item, index) => {
-                                    return item
-                                }}
-                                dropdownIconPosition={'right'}
-                                dropdownStyle={styles.dropdown2DropdownStyle}
-                                rowStyle={styles.dropdown2RowStyle}
-                                rowTextStyle={styles.dropdown2RowTxtStyle}
-                            />
-                        </View>
-                        <View style={styles.secondSelectButton}>
-                            <SelectDropdown
-                                data={['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032']}
-                                buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
-                                buttonTextStyle={styles.dropdown2BtnTxtStyle}
-                                statusBarTranslucent={true}
-                                renderDropdownIcon={isOpened => {
-                                    return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
-                                }}
-                                defaultButtonText='Selecione'
-                                defaultValue={this.props.data.ano}
-                                onSelect={(selectedItem, index) => {
-                                    //this.setState({ano: selectedItem})
-                                    this.props.setParamsAnoRelatorio(selectedItem)
-                                    //this.loadRelatorios(this.state.mes, selectedItem)
-                                    this.props.loadRelatorios(this.props.data.mes, selectedItem)
-                                }}
-                                buttonTextAfterSelection={(selectedItem, index) => {
-                                    return selectedItem
-                                }}
-                                rowTextForSelection={(item, index) => {
-                                    return item
-                                }}
-                                dropdownIconPosition={'right'}
-                                dropdownStyle={styles.dropdown2DropdownStyle}
-                                rowStyle={styles.dropdown2RowStyle}
-                                rowTextStyle={styles.dropdown2RowTxtStyle}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Visitas aos Crentes')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={styles.titleVisita}>Crentes</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.visitaCrente} visitas</Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'cross'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#f6c23e'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Visitas aos Não Crentes')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Não Crentes</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.visitaNaoCrente} visitas</Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'heart-broken'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor:'#f6c23e'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Visitas aos Presídios')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Presídios</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.visitaPresidio} visitas</Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'user-lock'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Visitas aos Enfermos')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Enfermos</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.visitaEnfermo} visitas</Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'syringe'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Visitas aos Hospitais')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#f6c23e'}]}>Hospitais</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.visitaHospital} visitas</Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'hospital'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#f6c23e'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Visitas às Escolas')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color:'#f6c23e'}]}>Escolas</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.visitaEscola} visitas</Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'school'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Estudos')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Estudos</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.estudos} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'book'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Sermões')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color:'#4e73df'}]}>Sermões</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.sermoes} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'user-tie'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Estudos Biblicos')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#4e73df'}]}>Estudos Biblicos</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.estudosBiblicos} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'bible'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#4e73df'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Discipulados')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color:'#4e73df'}]}>Discipulados</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.discipulados} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'people-arrows'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Batismos Infantis')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#85102f'}]}>Batismos Infantis</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.batismosInfantis} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'child'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Batismos e Profissões de Fé')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color:'#85102f'}]}>Batismos/Prof. Fé</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.batismosProfissoes} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'praying-hands'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Benções Nupciais')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#85102f'}]}>Benções Nupciais</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.bencoesNupciais} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'hand-holding-heart'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#85102f'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Santas Ceias')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color:'#85102f'}]}>Santas Ceias</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.santasCeias} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'wine-glass-alt'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.rowCards}>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#015b41'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Frequência aos Domingos')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color: '#015b41'}]}>Comungantes</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.comungante} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'users'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.card, styles.elevation, {borderLeftColor: '#015b41'}]}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Frequência aos Domingos')} activeOpacity={0.4}>
-                                <View style={styles.cardBody}>
-                                    <View style={styles.itens}>
-                                        <View>
-                                            <Text style={[styles.titleVisita, {color:'#015b41'}]}>Não Comungantes</Text>
-                                            <Text style={styles.numeroVisita}>{this.props.data.naoComungante} </Text>
-                                        </View>
-                                        <View>
-                                            <Icon size={32} style={styles.iconVisita} name={'user-times'}></Icon>
-                                        </View>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.sectionMembresia}>
-                        <View style={styles.cardMembros}>
-                            <View style={styles.cardHeader}>
-                                <Text style={{color: '#015b41'}}>
-                                    Membresia aos Domingos
-                                </Text>
-                            </View>
-                            <View style={styles.cardBody}>
-                                <View style={{width: '100%', height: 'auto'}}>
-                                    {this.props.data.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
-                                    {this.props.data.membresias && this.props.data.membresias.length != 0 ? Array.from(this.props.data.membresias).map((item, index)=> 
-                                        (
-                                        <View key={index}>
-                                            <ItemRelatorio {...item} cor="#015b41"/>
-                                        </View>
-                                        )
-                                    ) : (
-                                        <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
-                                        )
-                                    }
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </ScrollView>
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0f5d39" />
+                <Text style={{ marginTop: 10 }}>Carregando relatórios...</Text>
             </View>
-        )
+        );
     }
+
+    return (
+        <View style={styles.container}>
+            <ScrollView refreshControl={<RefreshControl refreshing={localRefreshing || dashboardData.refresh} onRefresh={onRefresh} />}>
+                <View style={styles.headerExcel}>
+                    <TouchableOpacity style={styles.buttonOpacityExcel} onPress={exportData}>
+                        <View style={styles.containerViewButtonExcel}>
+                            <Icon name="file-excel" color="white" size={20} />
+                            <Text style={styles.textButtonExcel}>Exportar para Excel</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.header}>
+                    <View style={styles.firstSelectButton}>
+                        <SelectDropdown
+                            data={['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']}
+                            buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
+                            buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                            statusBarTranslucent={true}
+                            renderDropdownIcon={isOpened => {
+                                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
+                            }}
+                            defaultButtonText='Selecione'
+                            defaultValueByIndex={dashboardData.mes - 1}
+                            onSelect={(selectedItem, index) => {
+                               // dispatch(setParamsMesRelatorio(index + 1));
+                                dispatch(fetchRelatorios(index + 1, dashboardData.ano));
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem;
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item;
+                            }}
+                            dropdownIconPosition={'right'}
+                            dropdownStyle={styles.dropdown2DropdownStyle}
+                            rowStyle={styles.dropdown2RowStyle}
+                            rowTextStyle={styles.dropdown2RowTxtStyle}
+                        />
+                    </View>
+                    <View style={styles.secondSelectButton}>
+                        <SelectDropdown
+                            data={yearsData}
+                            buttonStyle={[styles.dropdown2BtnStyle, styles.elevation]}
+                            buttonTextStyle={styles.dropdown2BtnTxtStyle}
+                            statusBarTranslucent={true}
+                            renderDropdownIcon={isOpened => {
+                                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#fff'} size={18} />;
+                            }}
+                            defaultButtonText='Selecione'
+                            defaultValue={dashboardData.ano}
+                            onSelect={(selectedItem, index) => {
+                                //dispatch(setParamsAnoRelatorio(selectedItem));
+                                dispatch(fetchRelatorios(dashboardData.mes, selectedItem));
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem;
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item;
+                            }}
+                            dropdownIconPosition={'right'}
+                            dropdownStyle={styles.dropdown2DropdownStyle}
+                            rowStyle={styles.dropdown2RowStyle}
+                            rowTextStyle={styles.dropdown2RowTxtStyle}
+                        />
+                    </View>
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Crentes"
+                        value={dashboardData.visitaCrente}
+                        isVisita={true}
+                        iconName="cross"
+                        iconColor="#f6c23e"
+                        onPress={() => navigation.navigate('Visitas aos Crentes')}
+                    />
+                    <CardRelatorio
+                        title="Não Crentes"
+                        value={dashboardData.visitaNaoCrente}
+                        isVisita={true}
+                        iconName="heart-broken"
+                        iconColor="#f6c23e"
+                        onPress={() => navigation.navigate('Visitas aos Não Crentes')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Presídios"
+                        value={dashboardData.visitaPresidio}
+                        isVisita={true}
+                        iconName="user-lock"
+                        iconColor="#f6c23e"
+                        onPress={() => navigation.navigate('Visitas aos Presídios')}
+                    />
+                    <CardRelatorio
+                        title="Enfermos"
+                        value={dashboardData.visitaEnfermo}
+                        isVisita={true}
+                        iconName="syringe"
+                        iconColor="#f6c23e"
+                        onPress={() => navigation.navigate('Visitas aos Enfermos')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Hospitais"
+                        value={dashboardData.visitaHospital}
+                        isVisita={true}
+                        iconName="hospital"
+                        iconColor="#f6c23e"
+                        onPress={() => navigation.navigate('Visitas aos Hospitais')}
+                    />
+                    <CardRelatorio
+                        title="Escolas"
+                        value={dashboardData.visitaEscola}
+                        isVisita={true}
+                        iconName="school"
+                        iconColor="#f6c23e"
+                        onPress={() => navigation.navigate('Visitas às Escolas')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Estudos"
+                        value={dashboardData.estudos}
+                        iconName="book"
+                        iconColor="#4e73df"
+                        onPress={() => navigation.navigate('Estudos')}
+                    />
+                    <CardRelatorio
+                        title="Sermões"
+                        value={dashboardData.sermoes}
+                        iconName="user-tie"
+                        iconColor="#4e73df"
+                        onPress={() => navigation.navigate('Sermões')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Estudos Biblicos"
+                        value={dashboardData.estudosBiblicos}
+                        iconName="bible"
+                        iconColor="#4e73df"
+                        onPress={() => navigation.navigate('Estudos Biblicos')}
+                    />
+                    <CardRelatorio
+                        title="Discipulados"
+                        value={dashboardData.discipulados}
+                        iconName="people-arrows"
+                        iconColor="#4e73df"
+                        onPress={() => navigation.navigate('Discipulados')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Batismos Infantis"
+                        value={dashboardData.batismosInfantis}
+                        iconName="child"
+                        iconColor="#85102f"
+                        onPress={() => navigation.navigate('Batismos Infantis')}
+                    />
+                    <CardRelatorio
+                        title="Batismos/Prof. Fé"
+                        value={dashboardData.batismosProfissoes}
+                        iconName="praying-hands"
+                        iconColor="#85102f"
+                        onPress={() => navigation.navigate('Batismos e Profissões de Fé')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Benções Nupciais"
+                        value={dashboardData.bencoesNupciais}
+                        iconName="hand-holding-heart"
+                        iconColor="#85102f"
+                        onPress={() => navigation.navigate('Benções Nupciais')}
+                    />
+                    <CardRelatorio
+                        title="Santas Ceias"
+                        value={dashboardData.santasCeias}
+                        iconName="wine-glass-alt"
+                        iconColor="#85102f"
+                        onPress={() => navigation.navigate('Santas Ceias')}
+                    />
+                </View>
+                <View style={styles.rowCards}>
+                    <CardRelatorio
+                        title="Comungantes"
+                        value={dashboardData.comungante}
+                        iconName="users"
+                        iconColor="#015b41"
+                        onPress={() => navigation.navigate('Frequência aos Domingos')}
+                    />
+                    <CardRelatorio
+                        title="Não Comungantes"
+                        value={dashboardData.naoComungante}
+                        iconName="user-times"
+                        iconColor="#015b41"
+                        onPress={() => navigation.navigate('Frequência aos Domingos')}
+                    />
+                </View>
+                <View style={styles.sectionMembresia}>
+                    <View style={styles.cardMembros}>
+                        <View style={styles.cardHeader}>
+                            <Text style={{color: '#015b41'}}>
+                                Membresia aos Domingos
+                            </Text>
+                        </View>
+                        <View style={styles.cardBody}>
+                            <View style={{width: '100%', height: 'auto'}}>
+                                {dashboardData.loading && <ActivityIndicator style={{justifyContent: 'center', marginTop: 80}} size="large" color="#015b41" />}
+                                {dashboardData.membresias && dashboardData.membresias.length != 0 ? Array.from(dashboardData.membresias).map((item, index)=> 
+                                    (
+                                    <View key={index}>
+                                        <ItemRelatorio {...item} cor="#015b41"/>
+                                    </View>
+                                    )
+                                ) : (
+                                    <Text style={{fontSize: 20, color: '#585b58', textAlign: 'center', marginTop: 80}}>Nenhum resultado encontrado!</Text>
+                                    )
+                                }
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+        </View>
+    )
+    
 };
 
 
@@ -517,12 +393,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f8f9fc',
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f8f9fc',
+    },
     dropdown2BtnStyle: {
         width: '100%',
-       
         backgroundColor: '#0f5d39',
         borderRadius: 8,
-     
     },
     dropdown2BtnTxtStyle: {
         color: '#FFF',
@@ -587,19 +467,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e3e6f0',
         borderBottomWidth: 1
     },
-    card:{
-        height:90,
-        backgroundColor: '#fff',
-        borderTopColor: '#e3e6f0',
-        borderBottomColor: '#e3e6f0',
-        borderRightColor: '#e3e6f0',
-        borderWidth: 1,
-        margin: 10,
-        borderLeftColor: '#f6c23e',
-        borderLeftWidth: 4,
-        flex: 1,
-        borderRadius: 5,
-    },
     cardMembros:{
         minHeight: 300,
         height:'auto',
@@ -615,27 +482,6 @@ const styles = StyleSheet.create({
     cardBody:{
         padding: 20
     },
-    itens:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    titleVisita:{
-        fontSize: 11,
-        color: '#f6c23e',
-        fontWeight: '700',
-    },
-    numeroVisita:{
-        color: '#5a5c69',
-        fontWeight: '700',
-        fontSize: 20
-    },
-    iconVisita:{
-        color: '#dddfeb',
-        fontWeight: '900',
-        fontSize: 32
-    },
-
     firstSelectButton: {
         flex: 1,
         height: 100,
@@ -652,43 +498,9 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
     },
-    title: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 30,
-        marginLeft: 20,
-        marginBottom: 7,
-        color: '#585b58'
-    },
-    subtitle: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.secondary,
-        fontSize: 17,
-        marginLeft: 20,
-        marginBottom: 30,
-        color: 'black',
-        fontWeight: '400',
-        color: '#585b58'
-    },
     sectionMembresia:{
         flex: 1,
     }
 })
 
-const mapStateToProps = ({ dashboard }) => {
-    return {
-        data: dashboard
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        appLoaded: () => dispatch(closeSplashScreen()),
-        loadRelatorios: (mes, ano) => dispatch(fetchRelatorios(mes, ano)),
-        setRefresh: () => dispatch(setRefreshingRelatorio()),
-        setParamsMesRelatorio: (mes) => dispatch(setParamsMesRelatorio(mes)),
-        setParamsAnoRelatorio: (ano) => dispatch(setParamsAnoRelatorio(ano))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
+export default Dashboard;
