@@ -230,7 +230,7 @@ const RelatorioAnual = ({ navigation }) => {
                         value={reportData.santasCeias}
                         iconName="wine-glass-alt"
                         iconColor="#85102f"
-                        onPress={() => navigation.navigate('wine-glass-alt')}
+                        onPress={() => navigation.navigate('Santas Ceias')}
                     />
                 </View>
                 <View style={styles.rowCards}>
